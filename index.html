@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bio-Matrix 탐구실</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
+
+  :root{
+    --bg:#F1F4EC;
+    --surface:#FFFFFF;
+    --surface-alt:#E7EDDF;
+    --ink:#1C2620;
+    --ink-muted:#57654F;
+    --ink-faint:#8A9683;
+    --border:#D3DBC7;
+    --border-strong:#B7C4A9;
+    --accent:#12925A;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#E1F0E4;
+    --warn:#B8650F;
+    --warn-soft:#FBEBD9;
+    --critical:#B4402E;
+    --critical-soft:#FBE6E1;
+    --cat-species:#12925A;
+    --cat-genetic:#D9770D;
+    --cat-ecosystem:#0E7FB0;
+    --shadow: 0 1px 2px rgba(28,38,32,.06), 0 8px 24px -12px rgba(28,38,32,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12160E;
+      --surface:#1A2016;
+      --surface-alt:#212A1B;
+      --ink:#E8EDE1;
+      --ink-muted:#A6B39B;
+      --ink-faint:#71806A;
+      --border:#31402B;
+      --border-strong:#425536;
+      --accent:#22A96A;
+      --accent-ink:#0B1309;
+      --accent-soft:#1E3324;
+      --warn:#D6912A;
+      --warn-soft:#3A2A15;
+      --critical:#E06456;
+      --critical-soft:#3A1C17;
+      --cat-species:#22A96A;
+      --cat-genetic:#C97F1C;
+      --cat-ecosystem:#2E9FCB;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12160E;
+    --surface:#1A2016;
+    --surface-alt:#212A1B;
+    --ink:#E8EDE1;
+    --ink-muted:#A6B39B;
+    --ink-faint:#71806A;
+    --border:#31402B;
+    --border-strong:#425536;
+    --accent:#22A96A;
+    --accent-ink:#0B1309;
+    --accent-soft:#1E3324;
+    --warn:#D6912A;
+    --warn-soft:#3A2A15;
+    --critical:#E06456;
+    --critical-soft:#3A1C17;
+    --cat-species:#22A96A;
+    --cat-genetic:#C97F1C;
+    --cat-ecosystem:#2E9FCB;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Work Sans', -apple-system, 'Malgun Gothic', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'휴먼둥근헤드라인', 'HMKMRHD', 'Black Han Sans', 'Malgun Gothic', sans-serif;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+  ::selection{ background:var(--accent); color:var(--accent-ink); }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:99px; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding-inline:20px; }
+
+  /* ---------- Header ---------- */
+  .site-header{
+    position:sticky; top:0; z-index:40;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .header-row{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding-block:14px; flex-wrap:nowrap;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; flex-shrink:1; min-width:0; }
+  .brand-mark{
+    width:42px; height:42px; border-radius:11px;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-text .eyebrow{
+    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent);
+  }
+  .brand-text{ min-width:0; }
+  .brand-text h1{ font-size:16.5px; font-weight:700; margin:1px 0 0; line-height:1.25; }
+
+  .stage-chip{
+    font-family:'IBM Plex Mono'; font-size:11px; font-weight:600;
+    padding:5px 10px; border-radius:99px;
+    background:var(--accent-soft); color:var(--accent);
+    display:inline-flex; align-items:center; gap:6px;
+    white-space:nowrap;
+  }
+
+  nav.tabs{
+    display:flex; gap:4px; background:var(--surface-alt); padding:4px; border-radius:12px;
+    flex-wrap:nowrap; overflow-x:auto; max-width:100%;
+  }
+  nav.tabs button{
+    display:flex; align-items:center; gap:7px; white-space:nowrap; flex-shrink:0;
+    border:none; background:transparent; cursor:pointer;
+    padding:8px 13px; border-radius:9px;
+    font-size:13px; font-weight:600; color:var(--ink-muted);
+    transition:background .15s,color .15s;
+  }
+  nav.tabs button svg{ width:15px; height:15px; }
+  nav.tabs button.active{ background:var(--accent); color:var(--accent-ink); }
+  nav.tabs button:not(.active):hover{ background:var(--border); color:var(--ink); }
+
+  /* ---------- Class code bar ---------- */
+  .class-bar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding-block:8px; border-top:1px solid var(--border); font-size:12px;
+  }
+  .class-bar-label{ color:var(--ink-muted); font-weight:600; }
+  .class-code-chip{
+    background:var(--accent-soft); color:var(--accent); padding:3px 10px;
+    border-radius:99px; font-weight:700; letter-spacing:.01em;
+  }
+  .conn-status{ margin-left:auto; color:var(--ink-faint); font-weight:600; white-space:nowrap; }
+  .conn-status.err{ color:var(--critical); }
+  .conn-status.ok{ color:var(--accent); }
+
+  main{ padding-block:28px 60px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  .section-title{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:16px; padding-bottom:12px; flex-wrap:wrap;
+    border-bottom:2px solid var(--border);
+  }
+  .section-title h2{
+    font-size:19px; font-weight:800; letter-spacing:-.01em;
+    display:flex; align-items:center; gap:9px; margin:0; color:var(--ink);
+  }
+  .section-title h2 svg{ width:19px; height:19px; color:var(--accent); flex-shrink:0; stroke-width:2.4; }
+  .tag-note{ font-family:'IBM Plex Mono'; font-size:11px; color:var(--ink-faint); background:var(--surface-alt); padding:3px 9px; border-radius:6px; border:1px solid var(--border); }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow);
+  }
+  .pad{ padding:20px; }
+
+  /* ---------- Config warning ---------- */
+  .config-warning{
+    background:var(--critical-soft); border:1.5px solid var(--critical); border-radius:14px;
+    padding:16px 18px; margin-block:18px; font-size:13px; line-height:1.65; color:var(--ink);
+  }
+  .config-warning b{ color:var(--critical); }
+  .config-warning code{ background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1px 6px; font-family:'IBM Plex Mono'; font-size:12px; }
+
+  /* ---------- Dashboard ---------- */
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+  @media (max-width:860px){ .kpi-grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:480px){ .kpi-grid{ grid-template-columns:1fr;} }
+  .kpi{ padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
+  .kpi .label{ font-size:12.5px; font-weight:600; color:var(--ink-muted); }
+  .kpi .value{ font-family:'IBM Plex Mono'; font-size:28px; font-weight:700; }
+  .kpi .sub{ font-size:11.5px; color:var(--accent); font-weight:600; }
+
+  .grid-12{ display:grid; grid-template-columns:repeat(12,1fr); gap:18px; }
+  @media (max-width:900px){ .grid-12{ grid-template-columns:1fr; } }
+  .col-5{ grid-column:span 5; } .col-7{ grid-column:span 7; }
+  .col-6{ grid-column:span 6; } .col-8{ grid-column:span 8; } .col-4{ grid-column:span 4; }
+  @media (max-width:900px){ .col-5,.col-7,.col-6,.col-8,.col-4{ grid-column:span 12; } }
+
+  .chart-row{ display:grid; grid-template-columns:5fr 7fr; gap:18px; }
+  @media (max-width:640px){ .chart-row{ grid-template-columns:1fr; } }
+
+  .grid-primary{ display:grid; grid-template-columns:65fr 35fr; gap:18px; }
+  @media (max-width:900px){ .grid-primary{ grid-template-columns:1fr; } }
+
+  .legend-row{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-muted); }
+  .legend-dot{ width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+
+  .best-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+  @media (max-width:820px){ .best-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .best-grid{ grid-template-columns:1fr; } }
+  .q-mini-card{
+    border:1px solid var(--border); border-radius:12px; padding:13px; cursor:pointer;
+    background:var(--surface); transition:border-color .15s, transform .1s;
+    display:flex; flex-direction:column; gap:7px;
+  }
+  .q-mini-card:hover{ border-color:var(--accent); transform:translateY(-1px); }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .team-badge{ font-family:'IBM Plex Mono'; font-size:10.5px; font-weight:700; background:var(--surface-alt); border:1px solid var(--border); padding:2px 8px; border-radius:6px; color:var(--ink-muted); }
+  .score-badge{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:700; color:var(--accent); }
+  .q-mini-text{ font-size:12.5px; font-weight:600; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .empty-note{ font-size:12.5px; color:var(--ink-faint); padding:18px 4px; text-align:center; }
+
+  /* ---------- Briefing cards ---------- */
+  .brief-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+  @media (max-width:760px){ .brief-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:420px){ .brief-grid{ grid-template-columns:minmax(0,1fr); } }
+  .brief-card{
+    text-align:left; cursor:pointer; border-radius:11px; padding:9px 10px;
+    border:1.5px solid var(--border); background:var(--surface);
+    display:flex; flex-direction:row; align-items:flex-start; gap:8px;
+    transition:border-color .15s, background .15s;
+    min-width:0; max-width:100%; overflow:hidden;
+  }
+  .brief-card:hover{ border-color:var(--border-strong); }
+  .brief-card.selected{ border-color:var(--accent); background:var(--accent-soft); }
+  .brief-icon{ width:24px; height:24px; border-radius:7px; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .brief-card.selected .brief-icon{ background:var(--accent); color:var(--accent-ink); }
+  .brief-icon svg{ width:13px; height:13px; color:var(--accent); }
+  .brief-card.selected .brief-icon svg{ color:var(--accent-ink); }
+  .brief-text{ display:flex; flex-direction:column; gap:2px; min-width:0; flex:1 1 auto; }
+  .brief-name{ font-size:12.5px; font-weight:800; letter-spacing:-.005em; color:var(--ink); }
+  .brief-def{
+    font-size:10px; color:var(--ink-muted); line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+    overflow:hidden; word-break:keep-all;
+  }
+  .brief-ex{ display:none; }
+
+  /* ---------- Forms ---------- */
+  label.field-label{ display:block; font-size:13.5px; font-weight:800; color:var(--ink); margin-bottom:6px; letter-spacing:-.005em; }
+  .hint{ font-size:11px; color:var(--ink-faint); font-weight:500; }
+  input[type=text], textarea, select{
+    width:100%; background:var(--surface-alt); border:1.5px solid var(--border);
+    border-radius:10px; padding:9px 11px; font-size:12.5px; font-weight:500; color:var(--ink);
+    font-family:inherit;
+  }
+  input[type=text]:focus, textarea:focus, select:focus{ outline:none; border-color:var(--accent); }
+  textarea{ resize:vertical; line-height:1.5; }
+  .field-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:480px){ .field-grid2{ grid-template-columns:1fr; } }
+  .stack{ display:flex; flex-direction:column; gap:14px; }
+
+  .radio-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .radio-card{
+    text-align:center; border:1.5px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer;
+    background:var(--surface-alt);
+  }
+  .radio-card input{ display:none; }
+  .radio-card span.t{ display:block; font-size:11.5px; font-weight:700; }
+  .radio-card span.s{ font-size:10px; color:var(--ink-faint); }
+  .radio-card.checked{ border-color:var(--accent); background:var(--accent-soft); }
+
+  .template-list{ display:flex; flex-direction:column; gap:6px; }
+  .template-btn{
+    text-align:left; background:var(--surface-alt); border:1px solid var(--border); border-radius:10px;
+    padding:9px 11px; font-size:11.5px; font-weight:500; color:var(--ink); cursor:pointer; line-height:1.5;
+    display:flex; gap:7px;
+  }
+  .template-btn:hover{ border-color:var(--accent); }
+  .template-btn b{ color:var(--accent); flex-shrink:0; font-weight:700; }
+
+  .btn-primary{
+    width:100%; padding:12px; border:none; border-radius:11px; cursor:pointer;
+    background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-primary:hover{ filter:brightness(1.06); }
+  .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+  .btn-ghost{
+    padding:7px 12px; border-radius:9px; border:1.5px solid var(--border); background:var(--surface);
+    font-size:11.5px; font-weight:700; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- Score card ---------- */
+  .score-panel{ border:1.5px solid var(--border); border-radius:14px; padding:16px; background:var(--surface-alt); }
+  .score-total{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; }
+  .score-total .num{ font-family:'IBM Plex Mono'; font-size:34px; font-weight:700; }
+  .grade-pill{ font-family:'IBM Plex Mono'; font-size:12px; font-weight:700; padding:4px 11px; border-radius:99px; }
+  .grade-A{ background:var(--accent-soft); color:var(--accent); }
+  .grade-B{ background:var(--warn-soft); color:var(--warn); }
+  .grade-C{ background:var(--critical-soft); color:var(--critical); }
+
+  .meter-row{ margin-bottom:10px; }
+  .meter-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:5px; }
+  .meter-track{ height:9px; background:var(--border); border-radius:99px; overflow:hidden; }
+  .meter-fill{ height:100%; background:var(--accent); border-radius:99px; transition:width .4s ease; }
+
+  .coach-box{
+    margin-top:12px; padding:12px 13px; border-radius:11px; background:var(--surface);
+    border-left:3px solid var(--accent); font-size:12.5px; line-height:1.55; color:var(--ink);
+  }
+  .coach-box.attn{ border-left-color:var(--warn); }
+
+  .detail-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+  @media (max-width:480px){ .detail-grid{ grid-template-columns:repeat(2,1fr); } }
+  .detail-cell{ background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:8px; text-align:center; }
+  .detail-cell .k{ font-size:10px; color:var(--ink-faint); font-weight:600; }
+  .detail-cell .v{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:700; color:var(--ink); }
+
+  /* ---------- Archive / list cards ---------- */
+  .archive-scroll{ max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:9px; padding-right:2px; }
+  .q-card{
+    border:1px solid var(--border); border-radius:12px; padding:12px; cursor:pointer; background:var(--surface);
+    transition:border-color .15s;
+  }
+  .q-card:hover{ border-color:var(--accent); }
+  .q-cat-badge{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; background:var(--surface-alt); color:var(--ink-muted); }
+  .q-card-text{ font-size:12.5px; font-weight:600; margin:6px 0; line-height:1.45; }
+  .q-card-foot{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:7px; margin-top:2px; }
+
+  .rule-card{ border:1px solid var(--border); border-radius:12px; padding:14px; background:var(--surface); }
+  .rule-card.done{ border-color:var(--accent); }
+  .rule-meta{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:11px; }
+  .rule-title{ font-size:13px; font-weight:700; margin:7px 0 6px; line-height:1.4; }
+  .metric-box{ font-family:'IBM Plex Mono'; font-size:11.5px; background:var(--surface-alt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--accent); }
+  .rule-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding-top:9px; border-top:1px solid var(--border); font-size:11.5px; font-weight:700; }
+  .check-label{ display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .check-label input{ width:16px; height:16px; accent-color:var(--accent); }
+  .linked-chip{ font-family:'IBM Plex Mono'; font-size:10px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:6px; }
+
+  table.log-table{ width:100%; border-collapse:collapse; font-size:12px; }
+  table.log-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); border-bottom:1.5px solid var(--border); padding:9px 8px; font-weight:700; }
+  table.log-table td{ padding:10px 8px; border-bottom:1px solid var(--border); font-weight:500; }
+  .status-pill{ font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+  .table-scroll{ overflow-x:auto; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(15,20,13,.55); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; padding:16px; z-index:100; }
+  .modal-overlay[hidden]{ display:none; }
+  .modal-box{ background:var(--surface); border:1px solid var(--border); border-radius:16px; max-width:560px; width:100%; max-height:88vh; overflow-y:auto; padding:22px; box-shadow:var(--shadow); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:14px; gap:10px; }
+  .icon-btn{ background:none; border:none; cursor:pointer; color:var(--ink-faint); padding:2px; }
+  .icon-btn:hover{ color:var(--ink); }
+  .modal-photo{ width:100%; height:190px; border-radius:11px; object-fit:cover; background:var(--surface-alt); margin-bottom:10px; }
+  .modal-q-box{ background:var(--surface-alt); border:1px solid var(--border); border-radius:11px; padding:13px; font-size:13px; font-weight:600; line-height:1.55; margin:10px 0; }
+
+  /* ---------- Toast ---------- */
+  #toast-container{ position:fixed; top:16px; right:16px; z-index:200; display:flex; flex-direction:column; gap:8px; }
+  .toast{
+    background:var(--surface); border:1.5px solid var(--accent); border-radius:11px; padding:11px 14px;
+    font-size:12.5px; font-weight:600; box-shadow:var(--shadow); max-width:300px; display:flex; gap:8px; align-items:flex-start;
+  }
+  .toast.error{ border-color:var(--critical); }
+  .toast svg{ width:16px; height:16px; flex-shrink:0; margin-top:1px; }
+
+  .brief-toggle-wrap{ margin-top:10px; }
+  .field-note{ background:var(--surface-alt); border:1px dashed var(--border-strong); border-radius:10px; padding:10px 12px; font-size:11.5px; color:var(--ink-muted); line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 3c1 5.5-.23 10.24-4.22 13.5C13.55 17.75 11.7 19.24 11 20Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="eyebrow">BIO-MATRIX</span>
+        <h1>교내 생물 다양성을 위한 실천 방안 탐구</h1>
+      </div>
+    </div>
+    <nav class="tabs" id="main-tabs">
+      <button class="active" data-view="dashboard" onclick="switchView('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>대시보드</span>
+      </button>
+      <button data-view="matrix" onclick="switchView('matrix')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.7"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>
+        <span>Q · 탐구질문</span>
+      </button>
+      <button data-view="checker" onclick="switchView('checker')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <span>I · 보전점검표</span>
+      </button>
+      <button data-view="records" onclick="switchView('records')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <span>S · 실천로그</span>
+      </button>
+    </nav>
+  </div>
+  <div class="wrap class-bar">
+    <span class="class-bar-label">현재 반 코드</span>
+    <span class="class-code-chip mono" id="current-class-code">-</span>
+    <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openClassGate(false)">반 코드 변경</button>
+    <span class="conn-status" id="conn-status">🟡 연결 준비 중...</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="config-warning" id="config-warning" hidden>
+    ⚠️ <b>Firebase 설정이 비어 있어요.</b> 이 파일의 <code>&lt;script&gt;</code> 안에 있는 <code>firebaseConfig</code> 값을 자신의 Firebase 프로젝트 값으로 바꿔넣어야 실시간 저장이 동작합니다. (Firebase 콘솔 → 프로젝트 설정 → 일반 → 내 앱에서 복사)
+  </div>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section id="view-dashboard" class="view active">
+    <div class="kpi-grid">
+      <div class="card kpi">
+        <span class="label">등록된 탐구 질문</span>
+        <span class="value mono" id="kpi-total-q">0</span>
+        <span class="sub" id="kpi-total-q-sub">건 등록됨</span>
+      </div>
+      <div class="card kpi">
+        <span class="label">학급 평균 Bio-Score</span>
+        <span class="value mono" id="kpi-avg-score">0</span>
+        <span class="sub">100점 만점</span>
+      </div>
+      <div class="card kpi">
+        <span class="label">등록된 보전 점검 항목</span>
+        <span class="value mono" id="kpi-total-rules">0</span>
+        <span class="sub">4대 사례 매핑</span>
+      </div>
+      <div class="card kpi">
+        <span class="label">보전 수칙 실천 이행률</span>
+        <span class="value mono" id="kpi-completion">0%</span>
+        <span class="sub">누적 인증 기준</span>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/></svg>3대 생물다양성 커버리지</h2>
+          <span class="tag-note">교과서 p.26~27</span>
+        </div>
+        <div style="width:170px;height:170px;margin:8px auto;"><canvas id="chart-diversity"></canvas></div>
+        <div class="legend-row" id="diversity-legend"></div>
+      </div>
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>모둠별 보전 수칙 이행률</h2>
+          <span class="tag-note" id="team-top-note">-</span>
+        </div>
+        <div style="height:190px;"><canvas id="chart-team"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card pad" style="margin-top:18px;">
+      <div class="section-title">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.6 5.8L21 9.6l-4.5 4.2L17.6 21 12 17.8 6.4 21l1.1-7.2L3 9.6l6.4-.8Z"/></svg>모둠 대표 BEST 탐구질문</h2>
+        <button class="btn-ghost" onclick="switchView('matrix')">질문 분석기로 이동 →</button>
+      </div>
+      <div class="best-grid" id="best-questions-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= Q-STAGE : 질문 분석기 ================= -->
+  <section id="view-matrix" class="view">
+
+    <div class="card pad" style="margin-bottom:18px;">
+      <div class="section-title">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>브리핑 · 4대 보전사례 유형</h2>
+        <span class="tag-note">교과서 p.30</span>
+      </div>
+      <p class="hint" style="margin-bottom:10px;">질문을 쓰기 전에, 지금 관찰한 내용이 아래 4가지 중 어디에 가장 가까운지 먼저 골라보세요. 고른 유형에 따라 아래 질문 템플릿과 채점 기준(보전가치)이 달라집니다.</p>
+      <div class="brief-grid" id="brief-grid"></div>
+    </div>
+
+    <div class="grid-primary">
+      <!-- 좌: 등록 폼 -->
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>탐구질문 등록 & Bio-Matrix 채점</h2>
+          <button class="btn-ghost" onclick="loadSample()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+            샘플
+          </button>
+        </div>
+
+        <form class="stack" id="question-form" onsubmit="event.preventDefault(); submitQuestion();">
+          <div class="field-grid2">
+            <div>
+              <label class="field-label" for="q-team">소속 모둠</label>
+              <select id="q-team">
+                <option>1모둠</option><option>2모둠</option><option>3모둠</option>
+                <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="q-author">작성자 학번·이름</label>
+              <input type="text" id="q-author" value="10412 김부광">
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">관찰 대상 생물다양성 영역</label>
+            <div class="radio-grid" id="diversity-radio"></div>
+          </div>
+
+          <div class="field-grid2">
+            <div>
+              <label class="field-label" for="q-target">관찰 위치·대상 생물</label>
+              <input type="text" id="q-target" value="교내 텃밭 외곽 호박·환삼덩굴 경계 구역">
+            </div>
+            <div>
+              <label class="field-label" for="q-photo">관찰 사진</label>
+              <input type="file" id="q-photo" accept="image/*" onchange="handlePhoto(event)">
+            </div>
+          </div>
+
+          <div>
+            <div class="row-between" style="margin-bottom:6px;">
+              <label class="field-label" style="margin:0;">질문 템플릿 <span id="template-tag-label" class="hint"></span></label>
+              <span class="hint">고른 유형에 맞춰 자동 추천됩니다</span>
+            </div>
+            <div class="template-list" id="template-list"></div>
+          </div>
+
+          <div>
+            <div class="row-between">
+              <label class="field-label" for="q-text" style="margin:0;">탐구 질문 (Why–How 구조)</label>
+              <span class="hint mono" id="q-char-count">0자</span>
+            </div>
+            <textarea id="q-text" rows="3" oninput="updateCharCount()" placeholder="위 템플릿을 눌러 불러오거나 직접 작성하세요."></textarea>
+          </div>
+
+          <div>
+            <label class="field-label" for="q-metric">이 질문을 확인하려면 무엇을 측정해야 할까요?</label>
+            <input type="text" id="q-metric" placeholder="예: 1주일간 텃새 방문 횟수(회), 개체수 변화율(%)">
+            <p class="hint" style="margin-top:4px;">수치와 단위를 쓰면 현장검증 점수가 크게 오르고, 3단계 체크리스트 항목으로 바로 이어집니다.</p>
+          </div>
+
+          <button type="submit" class="btn-primary" id="q-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M9 22h6"/></svg>
+            내 질문 점수 확인하기
+          </button>
+        </form>
+
+        <div id="score-panel" class="score-panel" style="display:none; margin-top:16px;">
+          <div class="score-total">
+            <div>
+              <div class="hint" style="margin-bottom:2px;">Bio-Score</div>
+              <span class="num mono" id="score-total-num">0</span>
+            </div>
+            <span class="grade-pill" id="score-grade">GRADE C</span>
+          </div>
+
+          <div class="meter-row">
+            <div class="meter-label"><span>🔗 질문의 논리력</span><span class="mono" id="meter-logic-label">0/60</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meter-logic" style="width:0%"></div></div>
+          </div>
+          <div class="meter-row">
+            <div class="meter-label"><span>🌱 탐구로 이어지는 힘</span><span class="mono" id="meter-bridge-label">0/40</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meter-bridge" style="width:0%; background:var(--warn);"></div></div>
+          </div>
+
+          <div class="coach-box" id="coach-box">질문을 등록하면 이곳에 코칭 피드백이 표시됩니다.</div>
+
+          <button type="button" class="btn-ghost" style="margin-top:10px;" onclick="toggleDetail()">
+            <span id="detail-toggle-label">세부 점수 자세히 보기 ▾</span>
+          </button>
+          <div class="detail-grid" id="detail-grid" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- 우: 아카이브 -->
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg>실시간 질문 아카이브</h2>
+          <span class="tag-note mono" id="archive-count">0건</span>
+        </div>
+        <p class="hint" style="margin-bottom:10px;">카드를 클릭하면 상세 분석이 열립니다. 우리 반 친구들이 등록하면 자동으로 여기에 나타나요.</p>
+        <div class="archive-scroll" id="questions-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= I-STAGE : 점검표 ================= -->
+  <section id="view-checker" class="view">
+    <div class="grid-primary">
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>보전사례 매트릭스 → 점검표 등록</h2>
+          <span class="tag-note">교과서 p.30~31</span>
+        </div>
+
+        <form class="stack" id="rule-form" onsubmit="event.preventDefault(); submitRule();">
+          <div>
+            <label class="field-label" for="r-link-q">이어서 조사할 탐구 질문 선택</label>
+            <select id="r-link-q" onchange="onLinkQuestionChange()">
+              <option value="">— 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>
+            </select>
+          </div>
+
+          <div class="field-grid2">
+            <div>
+              <label class="field-label" for="r-team">소속 모둠</label>
+              <select id="r-team">
+                <option>1모둠</option><option>2모둠</option><option>3모둠</option>
+                <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="r-author">기록자</label>
+              <input type="text" id="r-author" value="10412 김부광">
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label" for="r-policy">보전사례 유형 (질문에서 자동 연동)</label>
+            <select id="r-policy">
+              <option value="species">멸종위기종 복원</option>
+              <option value="zone">생태우수지역 지정</option>
+              <option value="invasive">외래생물 관리</option>
+              <option value="treaty">국제협약</option>
+            </select>
+          </div>
+
+          <div class="field-grid2">
+            <div>
+              <label class="field-label" for="r-purpose">사례 분석 · 목적</label>
+              <input type="text" id="r-purpose" placeholder="예: 토종 생물종의 서식 기반 보호">
+            </div>
+            <div>
+              <label class="field-label" for="r-content">사례 분석 · 내용</label>
+              <input type="text" id="r-content" placeholder="예: 외래식물 제거 및 자생지 복원">
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label" for="r-title">학교 현장 점검 항목 명칭</label>
+            <input type="text" id="r-title" placeholder="예: 생태숲 외곽 환삼덩굴 모니터링 구역화">
+          </div>
+
+          <div>
+            <div class="row-between" style="margin-bottom:4px;">
+              <label class="field-label" style="margin:0;" for="r-metric">정량 점검 기준 및 주기</label>
+              <span class="hint mono">수치·단위 필수</span>
+            </div>
+            <textarea id="r-metric" rows="2" placeholder="예: 주 1회 10m² 구역 조사, 피복도 5% 미만 유지"></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" id="r-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 5v14M5 12h14"/></svg>
+            점검표에 등록
+          </button>
+        </form>
+      </div>
+
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg>학교 보전 점검표 (Live Checklist)</h2>
+          <span class="tag-note mono" id="rules-count">0개</span>
+        </div>
+        <div class="archive-scroll" id="rules-list" style="max-height:600px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S-STAGE : 실천 로그 ================= -->
+  <section id="view-records" class="view">
+    <div class="card pad">
+      <div class="section-title">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>주차별 실천 누적 로그</h2>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-ghost" onclick="exportCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
+            CSV 내보내기
+          </button>
+          <button class="btn-ghost" onclick="addLog()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
+            오늘 실천 인증 추가
+          </button>
+        </div>
+      </div>
+      <p class="hint" style="margin-bottom:12px;">수업이 끝난 뒤에도 모둠별로 점검표 항목을 계속 인증하며 실천을 이어갑니다.</p>
+      <div class="table-scroll">
+        <table class="log-table">
+          <thead><tr><th>날짜</th><th>모둠</th><th>점검 항목</th><th>측정 결과</th><th>상태</th></tr></thead>
+          <tbody id="logs-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 모달: 질문 상세 -->
+<div class="modal-overlay" id="question-modal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+        <span class="team-badge" id="m-team"></span>
+        <span id="m-author" style="font-size:12px; font-weight:700;"></span>
+        <span class="q-cat-badge" id="m-cat"></span>
+      </div>
+      <button class="icon-btn" onclick="closeModal('question-modal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <img id="m-photo" class="modal-photo" src="" alt="관찰 사진">
+    <p class="hint" style="display:flex; gap:5px; align-items:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span id="m-target"></span>
+    </p>
+    <div class="modal-q-box" id="m-text"></div>
+    <div class="detail-grid" id="m-detail"></div>
+    <div class="coach-box" id="m-coach" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<!-- 모달: 사례유형 자세히 -->
+<div class="modal-overlay" id="brief-modal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 style="font-size:16px; margin:0;">보전사례 유형 자세히 보기</h3>
+      <button class="icon-btn" onclick="closeModal('brief-modal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="brief-modal-body" class="stack"></div>
+  </div>
+</div>
+
+<!-- 모달: 반 코드 입력 (최초 접속 시 반드시 입력) -->
+<div class="modal-overlay" id="class-gate-modal" hidden>
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-head">
+      <h3 style="font-size:16px; margin:0;">반 코드 입력</h3>
+      <button class="icon-btn" id="gate-close-btn" onclick="closeClassGate()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <p class="hint" style="margin-bottom:12px; line-height:1.6; font-size:12px;">
+      선생님이 안내한 반 코드를 입력하세요. 같은 반 코드를 입력한 친구들의 질문·점검표·실천 기록이 실시간으로 함께 모이고, 나중에 다시 접속해도 그대로 이어서 볼 수 있어요. (예: 3-2, class2026b)
+    </p>
+    <input type="text" id="gate-code-input" placeholder="반 코드 입력 (예: 3-2)" style="margin-bottom:12px;">
+    <button type="button" class="btn-primary" onclick="confirmClassGate()">시작하기</button>
+    <p class="hint" id="gate-error" style="margin-top:10px; color:var(--critical); display:none;"></p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Firebase SDK (compat) — 실시간 저장/공유를 위한 백엔드
+     ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+
+  /* =====================================================================
+     ⚙️ 여기에 자신의 Firebase 프로젝트 설정값을 붙여넣으세요.
+     Firebase 콘솔 → 프로젝트 설정(⚙️) → 일반 탭 → "내 앱" → SDK 설정 및 구성
+     에서 그대로 복사해서 아래 6개 값만 바꾸면 됩니다.
+     ===================================================================== */
+  var firebaseConfig = {
+    apiKey: "AIzaSyCTtXn2NY5_kma6zsrA5735vRwtIh50aAk",
+    authDomain: "bio-matrix-61bd3.firebaseapp.com",
+    projectId: "bio-matrix-61bd3",
+    storageBucket: "bio-matrix-61bd3.firebasestorage.app",
+    messagingSenderId: "290609366063",
+    appId: "1:290609366063:web:81e859a8bf16ecb7cb72da"
+  };
+
+  var CLASS_CODE_KEY = 'biomatrix_class_code';
+  var currentClassCode = null;
+  var db = null, auth = null, authReadyPromise = null;
+  var unsubQ = null, unsubR = null, unsubL = null;
+  var isConfigured = firebaseConfig.apiKey.indexOf('여기에') === -1;
+
+  /* ---------------- Reference data ---------------- */
+
+  var CASE_TYPES = {
+    species: {
+      name: "멸종위기종 복원",
+      icon: '<path d="M12 2C7 2 5 6 5 9c0 4 3 5 3 8a4 4 0 0 0 8 0c0-3 3-4 3-8 0-3-2-7-7-7Z"/>',
+      def: "사라질 위기에 처한 야생 생물을 국가 차원에서 보호하고 서식지로 되돌리는 것",
+      example: "예: 반달가슴곰, 수원청개구리, 여우",
+      keywords: ["멸종위기","복원","서식지 보호","야생생물","보호종","개체수 회복"],
+      templates: {
+        cause: "학교 화단에 보호가 필요한 텃새(예: 딱새)를 위한 둥지 상자를 늘리면, 방문 횟수는 늘어날까?",
+        compare: "둥지 상자를 설치한 구역과 설치하지 않은 구역에서 텃새 관찰 빈도의 차이는 서식 환경 때문일까?",
+        crisis: "학교 화단의 잡초 제거가 계속되면, 씨앗을 먹이로 삼는 텃새의 개체수는 어떻게 달라질까?"
+      }
+    },
+    zone: {
+      name: "생태우수지역 지정",
+      icon: '<path d="M3 12s3-7 9-7 9 7 9 7-3 7-9 7-9-7-9-7Z"/><circle cx="12" cy="12" r="3"/>',
+      def: "생물다양성이 특히 높은 지역을 보호구역으로 지정해 관리하는 것",
+      example: "예: 국립공원, 유네스코 생물권보전지역",
+      keywords: ["보호구역","지정","생태우수","서식지 보전","출입 제한"],
+      templates: {
+        cause: "생태숲의 낙엽층을 그대로 보존하는 구역을 지정하면, 토양 생물의 종수는 늘어날까?",
+        compare: "지정 보호구역과 그 외 구역에서 발견되는 곤충 종수의 차이는 사람의 출입 빈도 때문일까?",
+        crisis: "생태숲 안쪽의 습한 구역이 계속 훼손되면, 그곳에 사는 생물의 종다양성은 어떻게 달라질까?"
+      }
+    },
+    invasive: {
+      name: "외래생물 관리",
+      icon: '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="4"/>',
+      def: "원래 없던 지역에 들어와 토종 생태계를 위협하는 생물을 관리하는 것",
+      example: "예: 환삼덩굴, 가시박, 뉴트리아",
+      keywords: ["외래","교란","제거","방제","환삼덩굴","가시박","토종"],
+      templates: {
+        cause: "텃밭에 환삼덩굴이 계속 번지면, 토종 식물(강아지풀)의 개체수는 어떻게 달라질까?",
+        compare: "환삼덩굴 제거 구역과 방치 구역에서 토종 식물 개체수의 차이는 무엇 때문일까?",
+        crisis: "외래식물을 3주간 방치하면, 주변 토종 식물의 피복 면적은 몇 % 줄어들까?"
+      }
+    },
+    treaty: {
+      name: "국제협약",
+      icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18Z"/>',
+      def: "여러 나라가 함께 생물다양성을 지키기로 약속한 국제적 약속",
+      example: "예: 생물다양성협약, 람사르협약, 기후변화협약",
+      keywords: ["협약","람사르","기후변화","국제","습지","온실가스"],
+      templates: {
+        cause: "학교 텃밭에 작은 웅덩이(습지)를 만들면, 방문하는 곤충·양서류 종수는 늘어날까?",
+        compare: "볕이 잘 드는 남향 화단과 그늘진 북향 화단에서 관찰되는 곤충 종수 차이는 기온 때문일까?",
+        crisis: "올여름 폭염 일수가 늘어나면, 텃밭 곤충의 활동 시간대는 어떻게 달라질까?"
+      }
+    }
+  };
+
+  var DIVERSITY_OPTIONS = [
+    { value:"species-div", label:"종다양성", sub:"서식 생물종 수" },
+    { value:"genetic-div", label:"유전적 다양성", sub:"개체 형질 변이" },
+    { value:"ecosystem-div", label:"생태계다양성", sub:"서식지 환경 차이" }
+  ];
+
+  var CAUSALITY_WORDS = ["왜","하면","한다면","때문","그 결과","그러면","영향","달라질까","변할까","늘어날까","줄어들까","무엇일까"];
+  var CONCEPT_WORDS = ["서식지","개체수","종다양성","유전적 다양성","생태계다양성","먹이그물","자연선택","변이","적응","멸종","외래종","외래생물","보전","군집","개체군","서식","피복도"];
+  var METRIC_UNIT_WORDS = ["회","%","개","마리","㎡","m2","m²","종","g","cm","건"];
+  var FEASIBILITY_WORDS = ["측정","관찰","조사","비교","횟수","면적","개체수","주 1회","월 1회"];
+
+  var FEEDBACK = {
+    causality: [
+      { max:10, msg:"질문에 '왜'가 빠졌어요. '~하면 ~해질까?'처럼 원인이 되는 조건을 먼저 써보세요." },
+      { max:20, msg:"원인은 있지만 결과와 자연스럽게 안 이어져요. '그래서', '그 결과' 같은 인과어로 다시 연결해보세요." },
+      { max:30, msg:"원인→결과 흐름이 뚜렷해요! 이 인과관계를 어떻게 확인할지(측정 방법)까지 생각해보면 더 좋아요." }
+    ],
+    concept: [
+      { max:10, msg:"일상어로만 쓰여 있어요. 교과서 개념어(서식지, 개체수, 먹이그물, 종다양성 등)를 한 개 이상 넣어보세요." },
+      { max:20, msg:"개념어는 있지만 뜻이 정확한지 다시 확인해보세요. 교과서 정의와 비교해보세요." },
+      { max:30, msg:"교과 개념어를 정확하게 사용했어요! 이 개념이 보전 사례와 어떻게 연결되는지도 생각해보세요." }
+    ],
+    feasibility: [
+      { max:8, msg:"이 질문을 확인하려면 무엇을 세거나 측정해야 할까요? '측정' 칸에 수치와 단위를 채워보세요." },
+      { max:17, msg:"측정할 대상은 좋아요. 여기에 단위(개, %, 마리, ㎡ 등)를 붙이면 체크리스트 항목으로 바로 쓸 수 있어요." },
+      { max:25, msg:"수치와 단위까지 갖춰서 현장에서 바로 확인할 수 있어요. 이대로 3단계 점검표 항목으로 옮겨보세요." }
+    ],
+    conservation: [
+      { max:5, msg:"이 질문이 4대 보전 사례 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요." },
+      { max:10, msg:"사례 유형은 골랐지만 학교 현장과의 연결이 약해요. 구체적인 장소·생물을 한 문장 더 붙여보세요." },
+      { max:15, msg:"보전사례와 학교 현장이 잘 연결됐어요! 이 방향 그대로 3단계 매트릭스 분석에 활용할 수 있어요." }
+    ]
+  };
+
+  var TEMPLATE_LABELS = { cause:"원인-결과", compare:"비교-추론", crisis:"위기-영향" };
+
+  var DEFAULT_PHOTO = 'https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=600&auto=format&fit=crop&q=80';
+
+  /* ---------------- State (실시간 데이터는 Firestore에서 채워짐) ---------------- */
+
+  var state = {
+    selectedCase: null,
+    photoData: null,
+    questions: [],
+    rules: [],
+    logs: []
+  };
+
+  /* ================= Firebase 초기화 & 반 코드 ================= */
+
+  function setConnStatus(text, cls){
+    var el = document.getElementById('conn-status');
+    el.textContent = text;
+    el.className = 'conn-status' + (cls ? ' ' + cls : '');
+  }
+
+  function initFirebaseIfNeeded(){
+    if(!isConfigured){
+      document.getElementById('config-warning').hidden = false;
+      setConnStatus('🔴 Firebase 설정 필요', 'err');
+      return false;
+    }
+    if(db) return true;
+    try{
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      authReadyPromise = new Promise(function(resolve){
+        auth.onAuthStateChanged(function(user){
+          if(user){ setConnStatus('🟢 실시간 연결됨', 'ok'); resolve(user); }
+        });
+      });
+      auth.signInAnonymously().catch(function(err){
+        console.error(err);
+        setConnStatus('🔴 인증 실패 (설정 확인)', 'err');
+        showToast('Firebase 인증에 실패했습니다. 콘솔에서 익명 로그인이 켜져 있는지 확인하세요.', 'error');
+      });
+      return true;
+    }catch(e){
+      console.error(e);
+      setConnStatus('🔴 Firebase 초기화 실패', 'err');
+      showToast('Firebase 초기화에 실패했습니다. firebaseConfig 값을 확인하세요.', 'error');
+      return false;
+    }
+  }
+
+  function openClassGate(forceNew){
+    document.getElementById('gate-error').style.display = 'none';
+    document.getElementById('gate-code-input').value = currentClassCode || '';
+    document.getElementById('gate-close-btn').style.display = forceNew ? 'none' : '';
+    openModal('class-gate-modal');
+    setTimeout(function(){ document.getElementById('gate-code-input').focus(); }, 50);
+  }
+  function closeClassGate(){
+    if(!currentClassCode) return; // 최초 접속 시에는 반드시 코드를 입력해야 함
+    closeModal('class-gate-modal');
+  }
+  function confirmClassGate(){
+    var raw = document.getElementById('gate-code-input').value.trim();
+    var code = raw.replace(/[\/\.\#\$\[\]\s]+/g, '-').slice(0, 40);
+    if(!code){
+      var errEl = document.getElementById('gate-error');
+      errEl.textContent = '반 코드를 입력해주세요.';
+      errEl.style.display = 'block';
+      return;
+    }
+    startClass(code);
+    closeModal('class-gate-modal');
+  }
+
+  function startClass(code){
+    currentClassCode = code;
+    localStorage.setItem(CLASS_CODE_KEY, code);
+    document.getElementById('current-class-code').textContent = code;
+    if(!initFirebaseIfNeeded()) return;
+    if(authReadyPromise){
+      authReadyPromise.then(function(){ subscribeClass(code); });
+    }
+  }
+
+  function subscribeClass(code){
+    if(unsubQ) unsubQ();
+    if(unsubR) unsubR();
+    if(unsubL) unsubL();
+    var base = db.collection('classes').doc(code);
+
+    unsubQ = base.collection('questions').orderBy('createdAt','desc').onSnapshot(function(snap){
+      state.questions = snap.docs.map(docToQuestion);
+      renderQuestions(); renderDashboard(); populateLinkQSelect();
+    }, firestoreErrorHandler('탐구질문'));
+
+    unsubR = base.collection('rules').orderBy('createdAt','desc').onSnapshot(function(snap){
+      state.rules = snap.docs.map(docToRule);
+      renderRules(); renderDashboard();
+    }, firestoreErrorHandler('보전점검표'));
+
+    unsubL = base.collection('logs').orderBy('createdAt','desc').onSnapshot(function(snap){
+      state.logs = snap.docs.map(docToLog);
+      renderLogs();
+    }, firestoreErrorHandler('실천로그'));
+  }
+
+  function firestoreErrorHandler(label){
+    return function(err){
+      console.error(label, err);
+      setConnStatus('🔴 ' + label + ' 동기화 오류', 'err');
+      showToast(label + ' 데이터를 불러오지 못했습니다. Firestore 보안 규칙과 인터넷 연결을 확인하세요.', 'error');
+    };
+  }
+
+  function docToQuestion(d){ var data = d.data(); data.id = d.id; data.time = tsToLabel(data.createdAt); return data; }
+  function docToRule(d){ var data = d.data(); data.id = d.id; return data; }
+  function docToLog(d){ var data = d.data(); data.id = d.id; return data; }
+  function tsToLabel(ts){
+    if(!ts || !ts.toDate) return '방금';
+    var diffMs = Date.now() - ts.toDate().getTime();
+    if(diffMs < 90000) return '방금';
+    return ts.toDate().toLocaleString('ko-KR', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+  }
+
+  /* ---------------- Rendering: static blocks ---------------- */
+
+  function renderBriefGrid(){
+    var grid = document.getElementById('brief-grid');
+    grid.innerHTML = '';
+    Object.keys(CASE_TYPES).forEach(function(key){
+      var c = CASE_TYPES[key];
+      var el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'brief-card' + (state.selectedCase === key ? ' selected' : '');
+      el.onclick = function(){ selectCase(key); };
+      el.title = c.def + ' (' + c.example + ')';
+      el.innerHTML =
+        '<div class="brief-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+c.icon+'</svg></div>' +
+        '<div class="brief-text"><span class="brief-name">'+c.name+'</span><span class="brief-def">'+c.def+'</span></div>';
+      grid.appendChild(el);
+    });
+  }
+
+  function renderDiversityRadio(){
+    var wrap = document.getElementById('diversity-radio');
+    wrap.innerHTML = '';
+    DIVERSITY_OPTIONS.forEach(function(opt, i){
+      var label = document.createElement('label');
+      label.className = 'radio-card' + (i===0 ? ' checked' : '');
+      label.innerHTML = '<input type="radio" name="q-diversity" value="'+opt.label+'" '+(i===0?'checked':'')+'>' +
+        '<span class="t">'+opt.label+'</span><span class="s">'+opt.sub+'</span>';
+      label.querySelector('input').addEventListener('change', function(){
+        document.querySelectorAll('#diversity-radio .radio-card').forEach(function(el){ el.classList.remove('checked'); });
+        label.classList.add('checked');
+      });
+      wrap.appendChild(label);
+    });
+  }
+
+  function selectCase(key){
+    state.selectedCase = key;
+    renderBriefGrid();
+    renderTemplates();
+  }
+
+  function renderTemplates(){
+    var list = document.getElementById('template-list');
+    var tagLabel = document.getElementById('template-tag-label');
+    list.innerHTML = '';
+    if(!state.selectedCase){
+      tagLabel.textContent = '(먼저 위에서 사례유형을 선택하세요)';
+      list.innerHTML = '<p class="hint">사례유형을 선택하면 그에 맞는 질문 예시 3가지가 나타납니다.</p>';
+      return;
+    }
+    var c = CASE_TYPES[state.selectedCase];
+    tagLabel.textContent = '· ' + c.name + ' 맞춤 예시';
+    ['cause','compare','crisis'].forEach(function(k){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'template-btn';
+      btn.onclick = function(){ applyTemplate(c.templates[k]); };
+      btn.innerHTML = '<b>['+TEMPLATE_LABELS[k]+']</b><span>"'+c.templates[k]+'"</span>';
+      list.appendChild(btn);
+    });
+  }
+
+  function applyTemplate(text){
+    document.getElementById('q-text').value = text;
+    updateCharCount();
+    showToast('템플릿을 불러왔어요. 우리 학교 현장에 맞게 다듬어보세요.');
+  }
+
+  function updateCharCount(){
+    var t = document.getElementById('q-text').value;
+    document.getElementById('q-char-count').textContent = t.length + '자';
+  }
+
+  function handlePhoto(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(evt){
+      var img = new Image();
+      img.onload = function(){
+        var maxW = 480;
+        var scale = Math.min(1, maxW / img.width);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        state.photoData = canvas.toDataURL('image/jpeg', 0.6);
+        showToast('관찰 사진이 등록되었습니다. (자동 압축됨)');
+      };
+      img.onerror = function(){ showToast('사진을 읽는 중 문제가 발생했습니다.', 'error'); };
+      img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadSample(){
+    document.getElementById('q-text').value = "텃밭의 호박과 환삼덩굴 경계에서, 환삼덩굴이 계속 번지면 호박의 성장 면적은 어떻게 달라질까? 유전적 변이에 따른 적응력 차이 때문일까?";
+    document.getElementById('q-target').value = "교내 텃밭 외곽 호박·환삼덩굴 경계 구역";
+    document.getElementById('q-metric').value = "매주 1회 두 종의 피복 면적(㎡) 측정";
+    selectCase('invasive');
+    updateCharCount();
+    showToast('A등급 샘플 질문을 불러왔습니다.');
+  }
+
+  /* ---------------- Scoring ---------------- */
+
+  function countHits(text, words){
+    var n = 0;
+    words.forEach(function(w){ if(text.indexOf(w) !== -1) n++; });
+    return n;
+  }
+
+  function scoreQuestion(text, metric, caseKey){
+    var causality = Math.min(30, 8 + countHits(text, CAUSALITY_WORDS) * 4);
+    var concept = Math.min(30, 6 + countHits(text, CONCEPT_WORDS) * 4);
+
+    var feasibility = 6;
+    feasibility += countHits(text, FEASIBILITY_WORDS) * 2;
+    var metricText = metric || '';
+    var hasUnit = METRIC_UNIT_WORDS.some(function(u){ return metricText.indexOf(u) !== -1; });
+    var hasDigit = /\d/.test(metricText);
+    if(metricText.trim().length > 0) feasibility += 4;
+    if(hasDigit) feasibility += 7;
+    if(hasUnit) feasibility += 8;
+    feasibility = Math.min(25, Math.round(feasibility));
+
+    var conservation = 0;
+    if(caseKey){
+      conservation = 4;
+      conservation += countHits(text, CASE_TYPES[caseKey].keywords) * 3;
+    }
+    conservation = Math.min(15, Math.round(conservation));
+
+    return { causality:causality, concept:concept, feasibility:feasibility, conservation:conservation };
+  }
+
+  function pickFeedback(score){
+    var axes = ['causality','concept','feasibility','conservation'];
+    var maxes = {causality:30, concept:30, feasibility:25, conservation:15};
+    var lowestKey = null, lowestRatio = 2;
+    axes.forEach(function(k){
+      var ratio = score[k] / maxes[k];
+      if(ratio < lowestRatio){ lowestRatio = ratio; lowestKey = k; }
+    });
+    var bank = FEEDBACK[lowestKey];
+    var chosen = bank[bank.length-1];
+    for(var i=0;i<bank.length;i++){ if(score[lowestKey] <= bank[i].max){ chosen = bank[i]; break; } }
+    return { key:lowestKey, msg:chosen.msg, attention: lowestRatio < 0.6 };
+  }
+
+  function renderScorePanel(score, total){
+    var logic = score.causality + score.concept;
+    var bridge = score.feasibility + score.conservation;
+    document.getElementById('score-panel').style.display = 'block';
+    document.getElementById('score-total-num').textContent = total;
+    var grade = total >= 90 ? 'A' : total >= 78 ? 'B' : 'C';
+    var pill = document.getElementById('score-grade');
+    pill.textContent = 'GRADE ' + grade;
+    pill.className = 'grade-pill grade-' + grade;
+
+    document.getElementById('meter-logic-label').textContent = logic + '/60';
+    document.getElementById('meter-logic').style.width = (logic/60*100) + '%';
+    document.getElementById('meter-bridge-label').textContent = bridge + '/40';
+    document.getElementById('meter-bridge').style.width = (bridge/40*100) + '%';
+
+    var fb = pickFeedback(score);
+    var coachBox = document.getElementById('coach-box');
+    var prefix = '👉 지금 가장 먼저 고칠 것: ';
+    if(total >= 90){
+      coachBox.className = 'coach-box';
+      coachBox.textContent = '🎉 이 질문은 3단계 사례 조사로 바로 넘어갈 준비가 됐어요! ' + fb.msg;
+    } else if(fb.key === 'conservation' && score.conservation <= 5){
+      coachBox.className = 'coach-box attn';
+      coachBox.textContent = '⚠️ ' + fb.msg;
+    } else {
+      coachBox.className = 'coach-box' + (fb.attention ? ' attn' : '');
+      coachBox.textContent = prefix + fb.msg;
+    }
+
+    var dg = document.getElementById('detail-grid');
+    dg.innerHTML =
+      cell('인과성', score.causality, 30) + cell('교과개념', score.concept, 30) +
+      cell('현장검증', score.feasibility, 25) + cell('보전가치', score.conservation, 15);
+  }
+  function cell(k, v, max){
+    return '<div class="detail-cell"><div class="k">'+k+'</div><div class="v">'+v+'/'+max+'</div></div>';
+  }
+  function toggleDetail(){
+    var dg = document.getElementById('detail-grid');
+    var label = document.getElementById('detail-toggle-label');
+    var show = dg.style.display === 'none';
+    dg.style.display = show ? 'grid' : 'none';
+    label.textContent = show ? '세부 점수 접기 ▴' : '세부 점수 자세히 보기 ▾';
+  }
+
+  /* ---------------- Submit handlers (Firestore 저장) ---------------- */
+
+  function requireClass(){
+    if(!currentClassCode || !db){
+      showToast('먼저 반 코드를 입력해주세요.', 'error');
+      openClassGate(false);
+      return false;
+    }
+    return true;
+  }
+
+  async function submitQuestion(){
+    if(!requireClass()) return;
+    var text = document.getElementById('q-text').value.trim();
+    var metric = document.getElementById('q-metric').value.trim();
+    var team = document.getElementById('q-team').value;
+    var author = document.getElementById('q-author').value.trim();
+    var target = document.getElementById('q-target').value.trim();
+    var diversity = document.querySelector('input[name="q-diversity"]:checked').value;
+
+    if(!state.selectedCase){
+      showToast('먼저 위 브리핑 카드에서 보전사례 유형을 선택해주세요.', 'error');
+      return;
+    }
+    if(!text || !author || !target){
+      showToast('질문, 작성자, 관찰 위치를 모두 입력해주세요.', 'error');
+      return;
+    }
+
+    var score = scoreQuestion(text, metric, state.selectedCase);
+    var total = score.causality + score.concept + score.feasibility + score.conservation;
+    var fb = pickFeedback(score);
+
+    renderScorePanel(score, total);
+
+    var newQ = {
+      team:team, author:author, caseType:state.selectedCase, diversity:diversity,
+      target:target, question:text, metric:metric, score:score, total:total,
+      coach: total>=90 ? '완성도 높은 A등급 질문입니다.' : fb.msg,
+      photo: state.photoData || DEFAULT_PHOTO,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    var btn = document.getElementById('q-submit-btn');
+    btn.disabled = true;
+    try{
+      await authReadyPromise;
+      await db.collection('classes').doc(currentClassCode).collection('questions').add(newQ);
+      showToast('Bio-Score ' + total + '점으로 아카이브에 등록되었습니다!');
+    }catch(e){
+      console.error(e);
+      showToast('저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  async function submitRule(){
+    if(!requireClass()) return;
+    var team = document.getElementById('r-team').value;
+    var author = document.getElementById('r-author').value.trim();
+    var caseType = document.getElementById('r-policy').value;
+    var purpose = document.getElementById('r-purpose').value.trim();
+    var content = document.getElementById('r-content').value.trim();
+    var title = document.getElementById('r-title').value.trim();
+    var metric = document.getElementById('r-metric').value.trim();
+    var linkedQ = document.getElementById('r-link-q').value || null;
+
+    if(!title || !metric){
+      showToast('점검 항목 명칭과 정량 기준을 모두 입력하세요.', 'error');
+      return;
+    }
+    if(!/\d/.test(metric)){
+      showToast("정량 기준에 '주 1회', '10㎡', '5%' 처럼 수치와 단위를 포함하세요.", 'error');
+      return;
+    }
+    var newRule = {
+      team:team, author:author, caseType:caseType, purpose:purpose, content:content,
+      title:title, metric:metric, done:true, checks:1, linkedQ:linkedQ,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    var btn = document.getElementById('r-submit-btn');
+    btn.disabled = true;
+    try{
+      await authReadyPromise;
+      await db.collection('classes').doc(currentClassCode).collection('rules').add(newRule);
+      showToast('[' + team + '] 점검 항목이 등록되었습니다.');
+      document.getElementById('r-title').value = '';
+      document.getElementById('r-metric').value = '';
+      document.getElementById('r-purpose').value = '';
+      document.getElementById('r-content').value = '';
+    }catch(e){
+      console.error(e);
+      showToast('저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  function onLinkQuestionChange(){
+    var sel = document.getElementById('r-link-q');
+    var id = sel.value;
+    if(!id) return;
+    var q = state.questions.find(function(item){ return item.id === id; });
+    if(!q) return;
+    document.getElementById('r-policy').value = q.caseType;
+    showToast(q.team + '의 질문에서 [' + CASE_TYPES[q.caseType].name + '] 유형을 불러왔습니다.');
+  }
+
+  function populateLinkQSelect(){
+    var sel = document.getElementById('r-link-q');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">— 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>';
+    state.questions.forEach(function(q){
+      var opt = document.createElement('option');
+      opt.value = q.id;
+      opt.textContent = '[' + q.team + '] ' + q.question.slice(0,28) + '…';
+      sel.appendChild(opt);
+    });
+    sel.value = current;
+  }
+
+  async function toggleRuleCheck(id){
+    if(!requireClass()) return;
+    var r = state.rules.find(function(item){ return item.id === id; });
+    if(!r) return;
+    var newDone = !r.done;
+    try{
+      await db.collection('classes').doc(currentClassCode).collection('rules').doc(id).update({
+        done: newDone,
+        checks: newDone ? (r.checks||0) + 1 : (r.checks||0)
+      });
+      showToast(newDone ? '실천 인증이 기록되었습니다.' : '미완료로 전환되었습니다.');
+    }catch(e){
+      console.error(e);
+      showToast('업데이트에 실패했습니다.', 'error');
+    }
+  }
+
+  async function addLog(){
+    if(!requireClass()) return;
+    var now = new Date();
+    var ds = String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    try{
+      await db.collection('classes').doc(currentClassCode).collection('logs').add({
+        date: ds, team:'4모둠', rule:'학교 텃밭 생물종 모니터링',
+        result:'환삼덩굴 피복 0.5㎡ 제거 및 자생식물 보호', status:'달성',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showToast('실천 로그가 추가되었습니다.');
+    }catch(e){
+      console.error(e);
+      showToast('저장에 실패했습니다.', 'error');
+    }
+  }
+
+  function exportCSV(){
+    var csv = "﻿유형,모둠,작성자,사례유형,내용,점수/측정\n";
+    state.questions.forEach(function(q){
+      csv += '질문,' + q.team + ',' + q.author + ',' + CASE_TYPES[q.caseType].name + ',"' + q.question.replace(/"/g,'""') + '",' + q.total + '\n';
+    });
+    state.rules.forEach(function(r){
+      csv += '점검항목,' + r.team + ',' + r.author + ',' + CASE_TYPES[r.caseType].name + ',"' + r.title.replace(/"/g,'""') + '","' + r.metric.replace(/"/g,'""') + '"\n';
+    });
+    var blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'bio-matrix_' + (currentClassCode||'class') + '_' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('CSV 파일을 저장했습니다.');
+  }
+
+  /* ---------------- Rendering: lists ---------------- */
+
+  function renderQuestions(){
+    var container = document.getElementById('questions-list');
+    container.innerHTML = '';
+    document.getElementById('archive-count').textContent = state.questions.length + '건';
+    if(!state.questions.length){
+      container.innerHTML = '<p class="empty-note">아직 등록된 질문이 없어요. 왼쪽에서 첫 질문을 등록해보세요!</p>';
+      return;
+    }
+    state.questions.forEach(function(q){
+      var el = document.createElement('div');
+      el.className = 'q-card';
+      el.onclick = function(){ openQuestionModal(q.id); };
+      el.innerHTML =
+        '<div class="row-between">' +
+          '<div style="display:flex; gap:6px; align-items:center;">' +
+            '<span class="team-badge">'+q.team+'</span>' +
+            '<span class="q-cat-badge">'+CASE_TYPES[q.caseType].name+'</span>' +
+          '</div>' +
+          '<span class="score-badge mono">'+q.total+'점</span>' +
+        '</div>' +
+        '<p class="q-card-text">"'+q.question+'"</p>' +
+        '<div class="q-card-foot"><span>'+q.author+'</span><span>'+q.target+'</span></div>';
+      container.appendChild(el);
+    });
+  }
+
+  function renderRules(){
+    var container = document.getElementById('rules-list');
+    container.innerHTML = '';
+    document.getElementById('rules-count').textContent = state.rules.length + '개';
+    if(!state.rules.length){
+      container.innerHTML = '<p class="empty-note">아직 등록된 점검 항목이 없어요.</p>';
+      return;
+    }
+    state.rules.forEach(function(r){
+      var el = document.createElement('div');
+      el.className = 'rule-card' + (r.done ? ' done' : '');
+      var linkChip = r.linkedQ ? '<button type="button" class="linked-chip" style="border:none;cursor:pointer;" onclick="openQuestionModal(\''+r.linkedQ+'\')">🔗 연결된 질문 보기</button>' : '';
+      el.innerHTML =
+        '<div class="rule-meta">' +
+          '<span class="team-badge">'+r.team+'</span>' +
+          '<span class="q-cat-badge">'+CASE_TYPES[r.caseType].name+'</span>' +
+          linkChip +
+        '</div>' +
+        '<div class="rule-title">'+r.title+'</div>' +
+        (r.purpose ? '<p class="hint" style="margin-bottom:6px;"><b>목적:</b> '+r.purpose+' &nbsp; <b>내용:</b> '+(r.content||'-')+'</p>' : '') +
+        '<div class="metric-box">📏 '+r.metric+'</div>' +
+        '<div class="rule-foot">' +
+          '<label class="check-label"><input type="checkbox" '+(r.done?'checked':'')+' onchange="toggleRuleCheck(\''+r.id+'\')"><span>'+(r.done?'오늘 실천 인증 완료':'미완료')+'</span></label>' +
+          '<span class="mono">누적 '+(r.checks||0)+'회</span>' +
+        '</div>';
+      container.appendChild(el);
+    });
+  }
+
+  function renderLogs(){
+    var tbody = document.getElementById('logs-body');
+    tbody.innerHTML = '';
+    state.logs.forEach(function(l){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="mono">'+l.date+'</td><td>'+l.team+'</td><td>'+l.rule+'</td><td class="mono">'+l.result+'</td><td><span class="status-pill">'+l.status+'</span></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderDashboard(){
+    document.getElementById('kpi-total-q').textContent = state.questions.length;
+    document.getElementById('kpi-total-q-sub').textContent = state.questions.length + '건 등록됨';
+    var avg = state.questions.length ? Math.round(state.questions.reduce(function(s,q){return s+q.total;},0)/state.questions.length) : 0;
+    document.getElementById('kpi-avg-score').textContent = avg;
+    document.getElementById('kpi-total-rules').textContent = state.rules.length;
+    var doneCount = state.rules.filter(function(r){return r.done;}).length;
+    var pct = state.rules.length ? Math.round(doneCount/state.rules.length*100) : 0;
+    document.getElementById('kpi-completion').textContent = pct + '%';
+
+    var bestGrid = document.getElementById('best-questions-grid');
+    bestGrid.innerHTML = '';
+    if(!state.questions.length){
+      bestGrid.innerHTML = '<p class="empty-note">아직 등록된 질문이 없어요.</p>';
+    } else {
+      state.questions.slice().sort(function(a,b){return b.total-a.total;}).slice(0,3).forEach(function(q){
+        var el = document.createElement('div');
+        el.className = 'q-mini-card';
+        el.onclick = function(){ switchView('matrix'); setTimeout(function(){ openQuestionModal(q.id); }, 50); };
+        el.innerHTML =
+          '<div class="row-between"><span class="team-badge">'+q.team+'</span><span class="score-badge mono">'+q.total+'점</span></div>' +
+          '<p class="q-mini-text">"'+q.question+'"</p>' +
+          '<div class="row-between"><span class="hint">'+q.author+'</span><span class="hint" style="color:var(--accent); font-weight:700;">'+CASE_TYPES[q.caseType].name+'</span></div>';
+        bestGrid.appendChild(el);
+      });
+    }
+
+    updateCharts();
+  }
+
+  function openQuestionModal(id){
+    var q = state.questions.find(function(item){ return item.id === id; });
+    if(!q) return;
+    document.getElementById('m-team').textContent = q.team;
+    document.getElementById('m-author').textContent = q.author;
+    document.getElementById('m-cat').textContent = CASE_TYPES[q.caseType].name;
+    document.getElementById('m-photo').src = q.photo;
+    document.getElementById('m-target').textContent = q.target;
+    document.getElementById('m-text').textContent = '"' + q.question + '"';
+    document.getElementById('m-detail').innerHTML =
+      cell('인과성', q.score.causality, 30) + cell('교과개념', q.score.concept, 30) +
+      cell('현장검증', q.score.feasibility, 25) + cell('보전가치', q.score.conservation, 15);
+    document.getElementById('m-coach').textContent = q.coach;
+    openModal('question-modal');
+  }
+
+  function openModal(id){ document.getElementById(id).hidden = false; }
+  function closeModal(id){ document.getElementById(id).hidden = true; }
+
+  function openBriefModal(){
+    var body = document.getElementById('brief-modal-body');
+    body.innerHTML = '';
+    Object.keys(CASE_TYPES).forEach(function(key){
+      var c = CASE_TYPES[key];
+      var row = document.createElement('div');
+      row.className = 'field-note';
+      row.innerHTML = '<b>'+c.name+'</b> — '+c.def+' ('+c.example+')';
+      body.appendChild(row);
+    });
+    openModal('brief-modal');
+  }
+
+  /* ---------------- Charts ---------------- */
+
+  var diversityChart, teamChart;
+
+  function initCharts(){
+    var ctxD = document.getElementById('chart-diversity').getContext('2d');
+    diversityChart = new Chart(ctxD, {
+      type:'doughnut',
+      data:{ labels:['종다양성','유전적 다양성','생태계다양성'],
+        datasets:[{ data:[0,0,0], backgroundColor:['#12925A','#D9770D','#0E7FB0'], borderColor:getComputedStyle(document.body).getPropertyValue('--surface') || '#fff', borderWidth:3, hoverOffset:4 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'70%', plugins:{ legend:{ display:false } } }
+    });
+
+    var ctxT = document.getElementById('chart-team').getContext('2d');
+    teamChart = new Chart(ctxT, {
+      type:'bar',
+      data:{ labels:['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'],
+        datasets:[{ label:'이행률(%)', data:[0,0,0,0,0,0], backgroundColor:'#12925A', borderRadius:6, maxBarThickness:38 }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        scales:{
+          y:{ beginAtZero:true, max:100, grid:{ color:'rgba(120,130,110,.15)' }, ticks:{ font:{family:"IBM Plex Mono", size:10} } },
+          x:{ grid:{ display:false }, ticks:{ font:{weight:'600', size:11} } }
+        },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+
+  function updateCharts(){
+    var counts = { '종다양성':0, '유전적 다양성':0, '생태계다양성':0 };
+    state.questions.forEach(function(q){ if(counts[q.diversity] !== undefined) counts[q.diversity]++; });
+    diversityChart.data.datasets[0].data = [counts['종다양성'], counts['유전적 다양성'], counts['생태계다양성']];
+    diversityChart.update();
+
+    var legend = document.getElementById('diversity-legend');
+    var colors = ['#12925A','#D9770D','#0E7FB0'];
+    var labels = ['종다양성','유전적 다양성','생태계다양성'];
+    legend.innerHTML = labels.map(function(l,i){
+      return '<span class="legend-item"><span class="legend-dot" style="background:'+colors[i]+'"></span>'+l+' '+counts[l]+'</span>';
+    }).join('');
+
+    var teamMap = {};
+    ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'].forEach(function(t){ teamMap[t] = { done:0, total:0 }; });
+    state.rules.forEach(function(r){
+      if(!teamMap[r.team]) teamMap[r.team] = { done:0, total:0 };
+      teamMap[r.team].total++;
+      if(r.done) teamMap[r.team].done++;
+    });
+    var labelsT = Object.keys(teamMap);
+    var data = labelsT.map(function(t){ var m=teamMap[t]; return m.total? Math.round(m.done/m.total*100) : 0; });
+    teamChart.data.labels = labelsT;
+    teamChart.data.datasets[0].data = data;
+    teamChart.update();
+
+    var top = labelsT.reduce(function(best,t,i){ return data[i] > (best.v||-1) ? {t:t, v:data[i]} : best; }, {});
+    document.getElementById('team-top-note').textContent = top.t ? ('1위: ' + top.t + ' (' + top.v + '%)') : '-';
+  }
+
+  /* ---------------- Nav ---------------- */
+
+  window.switchView = function(view){
+    ['dashboard','matrix','checker','records'].forEach(function(v){
+      document.getElementById('view-'+v).classList.toggle('active', v===view);
+      document.querySelector('#main-tabs button[data-view="'+v+'"]').classList.toggle('active', v===view);
+    });
+    if(view === 'checker') populateLinkQSelect();
+  };
+
+  window.selectCase = selectCase;
+  window.applyTemplate = applyTemplate;
+  window.updateCharCount = updateCharCount;
+  window.handlePhoto = handlePhoto;
+  window.loadSample = loadSample;
+  window.submitQuestion = submitQuestion;
+  window.submitRule = submitRule;
+  window.onLinkQuestionChange = onLinkQuestionChange;
+  window.toggleRuleCheck = toggleRuleCheck;
+  window.addLog = addLog;
+  window.exportCSV = exportCSV;
+  window.openQuestionModal = openQuestionModal;
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+  window.openBriefModal = openBriefModal;
+  window.toggleDetail = toggleDetail;
+  window.openClassGate = openClassGate;
+  window.closeClassGate = closeClassGate;
+  window.confirmClassGate = confirmClassGate;
+
+  /* ---------------- Toast ---------------- */
+
+  function showToast(msg, type){
+    var container = document.getElementById('toast-container');
+    var t = document.createElement('div');
+    t.className = 'toast' + (type==='error' ? ' error' : '');
+    var icon = type==='error'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg>';
+    t.innerHTML = icon + '<span>'+msg+'</span>';
+    container.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 3000);
+  }
+
+  /* ---------------- Boot ---------------- */
+
+  function start(){
+    renderBriefGrid();
+    renderDiversityRadio();
+    renderTemplates();
+    initCharts();
+    renderQuestions();
+    renderRules();
+    renderLogs();
+    renderDashboard();
+    populateLinkQSelect();
+    updateCharCount();
+
+    if(!isConfigured){
+      document.getElementById('config-warning').hidden = false;
+      setConnStatus('🔴 Firebase 설정 필요', 'err');
+    }
+
+    var saved = localStorage.getItem(CLASS_CODE_KEY);
+    if(saved){
+      startClass(saved);
+    } else {
+      openClassGate(true);
+    }
+
+    document.getElementById('gate-code-input').addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); confirmClassGate(); }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', start);
+
+})();
+</script>
+</body>
+</html>
