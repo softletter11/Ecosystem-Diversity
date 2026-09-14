@@ -1105,16 +1105,19 @@
     unsubQ = base.collection('questions').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.questions = snap.docs.map(docToQuestion);
       renderQuestions(); renderDashboard(); populateLinkQSelect();
+      setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('탐구질문'));
 
     unsubR = base.collection('rules').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.rules = snap.docs.map(docToRule);
       renderRules(); renderDashboard();
+      setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('보전점검표'));
 
     unsubL = base.collection('logs').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.logs = snap.docs.map(docToLog);
       renderLogs();
+      setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('실천로그'));
   }
 
