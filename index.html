@@ -457,6 +457,7 @@
     <span class="class-code-chip mono" id="current-class-code">-</span>
     <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openClassGate(false)">반 코드 변경</button>
     <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openTeacherGate()">🔒 교사용</button>
+    <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="logoutClass()">🚪 로그아웃</button>
     <span class="conn-status" id="conn-status">🟡 연결 준비 중...</span>
   </div>
 </header>
@@ -1115,6 +1116,45 @@
       state.logs = snap.docs.map(docToLog);
       renderLogs();
     }, firestoreErrorHandler('실천로그'));
+  }
+
+  function logoutClass(){
+    if(!currentClassCode){ openClassGate(true); return; }
+    var ok = confirm('현재 반 코드(' + currentClassCode + ')에서 로그아웃할까요?\n이 기기에 저장된 반 코드만 지워지며, 이미 등록한 데이터는 그대로 유지됩니다.');
+    if(!ok) return;
+
+    if(unsubQ) unsubQ();
+    if(unsubR) unsubR();
+    if(unsubL) unsubL();
+    unsubQ = unsubR = unsubL = null;
+
+    currentClassCode = null;
+    localStorage.removeItem(CLASS_CODE_KEY);
+    document.getElementById('current-class-code').textContent = '-';
+
+    state.questions = [];
+    state.rules = [];
+    state.logs = [];
+    state.selectedCase = null;
+    state.photoData = null;
+    renderQuestions();
+    renderRules();
+    renderLogs();
+    renderDashboard();
+    populateLinkQSelect();
+    renderBriefGrid();
+    renderTemplates();
+
+    document.getElementById('score-panel').style.display = 'none';
+    var qForm = document.getElementById('question-form');
+    if(qForm) qForm.reset();
+    var rForm = document.getElementById('rule-form');
+    if(rForm) rForm.reset();
+
+    setConnStatus('🟡 연결 준비 중...', '');
+    showToast('로그아웃했습니다. 새 반 코드를 입력해주세요.');
+    switchView('dashboard');
+    openClassGate(true);
   }
 
   /* ================= 교사용 페이지 ================= */
@@ -1822,6 +1862,7 @@
   window.openClassGate = openClassGate;
   window.closeClassGate = closeClassGate;
   window.confirmClassGate = confirmClassGate;
+  window.logoutClass = logoutClass;
   window.openTeacherGate = openTeacherGate;
   window.confirmTeacherGate = confirmTeacherGate;
   window.loadTeacherClass = loadTeacherClass;
