@@ -8,66 +8,66 @@
   @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
 
   :root{
-    --bg:#F1F4EC;
+    --bg:#ECEFF4;
     --surface:#FFFFFF;
-    --surface-alt:#E7EDDF;
-    --ink:#1C2620;
-    --ink-muted:#57654F;
-    --ink-faint:#8A9683;
-    --border:#D3DBC7;
-    --border-strong:#B7C4A9;
-    --accent:#12925A;
+    --surface-alt:#DFE5ED;
+    --ink:#1C2026;
+    --ink-muted:#4F5865;
+    --ink-faint:#838B96;
+    --border:#C7CFDB;
+    --border-strong:#A9B4C4;
+    --accent:#124792;
     --accent-ink:#FFFFFF;
-    --accent-soft:#E1F0E4;
+    --accent-soft:#E1E7F0;
     --warn:#B8650F;
     --warn-soft:#FBEBD9;
     --critical:#B4402E;
     --critical-soft:#FBE6E1;
-    --cat-species:#12925A;
+    --cat-species:#124792;
     --cat-genetic:#D9770D;
     --cat-ecosystem:#0E7FB0;
-    --shadow: 0 1px 2px rgba(28,38,32,.06), 0 8px 24px -12px rgba(28,38,32,.18);
+    --shadow: 0 1px 2px rgba(28,32,38,.06), 0 8px 24px -12px rgba(28,32,38,.18);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#12160E;
-      --surface:#1A2016;
-      --surface-alt:#212A1B;
-      --ink:#E8EDE1;
-      --ink-muted:#A6B39B;
-      --ink-faint:#71806A;
-      --border:#31402B;
-      --border-strong:#425536;
-      --accent:#22A96A;
-      --accent-ink:#0B1309;
-      --accent-soft:#1E3324;
+      --bg:#0E1116;
+      --surface:#161A20;
+      --surface-alt:#1B212A;
+      --ink:#E1E6ED;
+      --ink-muted:#9BA5B3;
+      --ink-faint:#6A7380;
+      --border:#2B3440;
+      --border-strong:#364355;
+      --accent:#225AA9;
+      --accent-ink:#090D13;
+      --accent-soft:#1E2733;
       --warn:#D6912A;
       --warn-soft:#3A2A15;
       --critical:#E06456;
       --critical-soft:#3A1C17;
-      --cat-species:#22A96A;
+      --cat-species:#225AA9;
       --cat-genetic:#C97F1C;
       --cat-ecosystem:#2E9FCB;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#12160E;
-    --surface:#1A2016;
-    --surface-alt:#212A1B;
-    --ink:#E8EDE1;
-    --ink-muted:#A6B39B;
-    --ink-faint:#71806A;
-    --border:#31402B;
-    --border-strong:#425536;
-    --accent:#22A96A;
-    --accent-ink:#0B1309;
-    --accent-soft:#1E3324;
+    --bg:#0E1116;
+    --surface:#161A20;
+    --surface-alt:#1B212A;
+    --ink:#E1E6ED;
+    --ink-muted:#9BA5B3;
+    --ink-faint:#6A7380;
+    --border:#2B3440;
+    --border-strong:#364355;
+    --accent:#225AA9;
+    --accent-ink:#090D13;
+    --accent-soft:#1E2733;
     --warn:#D6912A;
     --warn-soft:#3A2A15;
     --critical:#E06456;
     --critical-soft:#3A1C17;
-    --cat-species:#22A96A;
+    --cat-species:#225AA9;
     --cat-genetic:#C97F1C;
     --cat-ecosystem:#2E9FCB;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
@@ -940,9 +940,9 @@
       example: "예: 반달가슴곰, 수원청개구리, 여우",
       keywords: ["멸종위기","복원","서식지 보호","야생생물","보호종","개체수 회복"],
       templates: {
-        cause: "학교 화단에 서식지 보호를 위한 둥지 상자를 설치하면 그 결과, 멸종위기 야생생물인 딱새의 방문 횟수와 개체수를 조사해 보면 얼마나 늘어날까? 이는 서식 환경 개선이 개체수 회복에 미치는 영향 때문일까?",
-        compare: "왜 멸종위기 야생생물인 딱새를 위해 둥지 상자를 설치한 구역과 설치하지 않은 구역에서 방문 횟수와 개체수 차이가 나타날까? 두 구역을 관찰해 그 결과를 비교하면, 이는 서식지 보호와 개체수 회복 효과 때문에 달라질까?",
-        crisis: "학교 화단의 잡초 제거가 계속되면 그 결과, 씨앗을 먹이로 삼는 멸종위기 야생생물의 방문 횟수와 개체수는 서식지 보호 부족 때문에 얼마나 줄어들까? 매주 관찰하고 비교하면 개체수 회복에는 어떤 영향을 줄까?"
+        cause: "학교 화단에 둥지 상자를 설치하면 그 결과 멸종위기 야생생물인 딱새의 방문 횟수와 개체수는 얼마나 늘어날까? 서식지 보호가 개체수 회복에 주는 영향을 매주 관찰하고 조사해서 비교해 보자.",
+        compare: "둥지 상자를 설치한 화단과 설치하지 않은 화단에서 멸종위기 야생생물인 딱새의 방문 횟수와 개체수는 왜 서로 달라질까? 그 결과를 두 화단에서 매주 관찰하고 비교하면 서식지 보호와 보호종의 개체수 회복 사이의 관계를 알아볼 수 있을 것이다.",
+        crisis: "왜 학교 화단의 잡초를 계속 제거하면 그 결과 씨앗을 먹이로 삼는 멸종위기 야생생물의 방문 횟수와 개체수는 얼마나 줄어들까? 서식지 보호가 사라지면 개체수 회복에 어떤 영향을 줄지 매주 관찰하고 조사해 보자."
       }
     },
     zone: {
@@ -952,9 +952,9 @@
       example: "예: 국립공원, 유네스코 생물권보전지역",
       keywords: ["보호구역","지정","생태우수","서식지 보전","출입 제한"],
       templates: {
-        cause: "생태숲의 낙엽층을 보존구역으로 지정하면 그 결과, 서식지 보전 효과로 토양 생물의 종다양성과 개체수는 얼마나 늘어날까? 이를 조사하고 관찰하면 생태우수지역 지정 효과 때문일까?",
-        compare: "왜 보호구역으로 지정된 구역과 지정되지 않은 구역에서 곤충의 종다양성과 개체수 차이가 나타날까? 두 구역을 관찰해 그 결과를 비교하면, 이는 서식지 보전과 출입 제한 효과 때문에 달라질까?",
-        crisis: "생태숲 습지 구역의 출입 제한이 사라지면 그 결과, 서식지 보전이 되지 않아 종다양성과 개체수는 얼마나 줄어들까? 매주 조사하고 비교하면 보호구역 지정 필요성에 어떤 영향을 줄까?"
+        cause: "생태숲의 낙엽층을 보호구역으로 지정해 출입 제한을 강화하면 그 결과 토양 생물의 종다양성과 개체수는 얼마나 늘어날까? 서식지 보전 효과가 주는 영향을 매주 조사하고 관찰해 보자.",
+        compare: "보호구역으로 지정된 생태우수 구역과 지정되지 않은 구역에서 곤충의 종다양성과 개체수는 왜 서로 달라질까? 그 결과를 두 구역에서 매주 관찰하고 비교하면 서식지 보전과 출입 제한의 효과를 알아볼 수 있을 것이다.",
+        crisis: "생태숲 습지 구역의 출입 제한이 사라지면 그 결과 서식지 보전이 어려워져 종다양성과 개체수는 얼마나 줄어들까? 보호구역 지정의 필요성이 주는 영향을 매주 조사하고 관찰하며 비교해 보자."
       }
     },
     invasive: {
@@ -964,9 +964,9 @@
       example: "예: 환삼덩굴, 가시박, 뉴트리아",
       keywords: ["외래","교란","제거","방제","환삼덩굴","가시박","토종"],
       templates: {
-        cause: "텃밭에 환삼덩굴 방제를 하지 않고 방치하면 그 결과, 토종 식물인 강아지풀의 서식지와 개체수, 종다양성은 얼마나 줄어들까? 매주 조사하고 관찰하며 비교하면, 외래식물의 교란이 서식 환경에 어떤 영향을 주며 달라질까?",
-        compare: "왜 환삼덩굴을 제거한 구역과 방치한 구역에서 토종 식물의 서식지, 개체수, 종다양성 차이가 나타날까? 두 구역을 관찰해 그 결과를 비교하면, 이는 외래식물의 교란과 방제 효과 때문에 달라질까?",
-        crisis: "외래식물인 환삼덩굴을 3주간 방제하지 않고 방치하면 그 결과, 토종 식물의 서식지와 개체수, 종다양성은 얼마나 줄어들까? 매주 조사하고 관찰하면 교란 효과가 서식 환경에 어떤 영향을 주는 것일까? 이는 방제 부족 때문일까?"
+        cause: "텃밭에서 외래식물인 환삼덩굴을 방제하지 않고 방치하면 그 결과 토종 식물의 서식지와 개체수, 종다양성은 얼마나 줄어들까? 교란이 서식 환경에 주는 영향을 매주 조사하고 관찰하며 비교해 보자.",
+        compare: "환삼덩굴을 제거한 구역과 그대로 방치한 구역에서 토종 식물의 서식지, 개체수, 종다양성은 왜 서로 달라질까? 그 결과를 매주 관찰하고 비교하면, 이는 외래생물의 교란과 방제 효과 때문일까?",
+        crisis: "외래식물인 환삼덩굴을 3주간 방제하지 않고 방치하면 그 결과 토종 식물의 서식지와 개체수, 종다양성은 얼마나 줄어들까? 교란이 서식 환경에 주는 영향이 왜 그런지 매주 조사하고 관찰해 보자."
       }
     },
     treaty: {
@@ -976,9 +976,9 @@
       example: "예: 생물다양성협약, 람사르협약, 기후변화협약",
       keywords: ["협약","람사르","기후변화","국제","습지","온실가스"],
       templates: {
-        cause: "왜 학교 텃밭에 작은 습지 웅덩이를 조성하면 그 결과, 국제협약이 강조하는 습지 서식지의 곤충과 양서류 종다양성, 개체수는 얼마나 늘어날까? 매주 조사하고 관찰하면 람사르협약 취지에 어떤 영향이 있을까?",
-        compare: "왜 볕이 잘 드는 남향 화단과 그늘진 북향 화단에서 곤충의 서식지, 종다양성과 개체수 차이가 나타날까? 두 화단을 관찰해 그 결과를 비교하면, 이는 기후변화와 국제협약이 강조하는 온실가스 영향 때문에 달라질까?",
-        crisis: "왜 온실가스 증가로 폭염 일수가 계속 늘어나면 그 결과, 기후변화 국제협약에서 우려하는 텃밭 곤충의 서식지와 종다양성, 개체수는 얼마나 줄어들까? 매주 조사하고 관찰하면 습지 생태계에는 어떤 영향을 줄까?"
+        cause: "학교 텃밭에 작은 습지 웅덩이를 조성하면 그 결과 국제협약이 강조하는 습지 서식지의 곤충과 양서류 종다양성, 개체수는 얼마나 늘어날까? 람사르협약의 취지가 주는 영향을 매주 조사하고 관찰하며 비교해 보자.",
+        compare: "볕이 잘 드는 화단과 그늘진 화단에서 곤충 군집의 서식지, 개체수, 종다양성은 왜 서로 달라질까? 그 결과를 매주 조사하고 관찰하며 비교하면, 이는 기후변화와 국제협약이 강조하는 온실가스 감축이 생태계에 주는 영향 때문일까?",
+        crisis: "왜 온실가스 증가로 폭염 일수가 계속 늘어나면 그 결과 기후변화 국제협약에서 우려하는 텃밭 곤충의 서식지와 종다양성, 개체수는 얼마나 줄어들까? 습지 생태계에 주는 영향을 매주 조사하고 관찰하며 비교해 보자."
       }
     }
   };
@@ -1419,15 +1419,24 @@
   function pickFeedback(score){
     var axes = ['causality','concept','feasibility','conservation'];
     var maxes = {causality:30, concept:30, feasibility:25, conservation:15};
-    var lowestKey = null, lowestRatio = 2;
+    // 각 축이 어떤 등급(구간)에 있는지, 그리고 이미 최고 등급(만점권)인지 먼저 파악합니다.
+    var info = {};
     axes.forEach(function(k){
-      var ratio = score[k] / maxes[k];
-      if(ratio < lowestRatio){ lowestRatio = ratio; lowestKey = k; }
+      var bank = FEEDBACK[k];
+      var idx = bank.length - 1;
+      for(var i=0;i<bank.length;i++){ if(score[k] <= bank[i].max){ idx = i; break; } }
+      info[k] = { idx: idx, isTop: idx === bank.length - 1, ratio: score[k] / maxes[k] };
     });
+    // "지금 가장 먼저 고칠 것"으로 안내할 축은 아직 최고 등급에 도달하지 못한 축 중에서만 고릅니다.
+    // 이렇게 해야 이미 만점권인 축(칭찬 메시지)이 "고칠 것"으로 잘못 안내되는 일이 없습니다.
+    var improvable = axes.filter(function(k){ return !info[k].isTop; });
+    var mastered = improvable.length === 0; // 네 축 모두 최고 등급이면 '완성' 상태
+    var pool = mastered ? axes : improvable;
+    var lowestKey = pool[0];
+    pool.forEach(function(k){ if(info[k].ratio < info[lowestKey].ratio){ lowestKey = k; } });
     var bank = FEEDBACK[lowestKey];
-    var chosen = bank[bank.length-1];
-    for(var i=0;i<bank.length;i++){ if(score[lowestKey] <= bank[i].max){ chosen = bank[i]; break; } }
-    return { key:lowestKey, msg:chosen.msg, attention: lowestRatio < 0.6 };
+    var chosen = bank[info[lowestKey].idx];
+    return { key:lowestKey, msg:chosen.msg, attention: info[lowestKey].ratio < 0.6, mastered: mastered };
   }
 
   function renderScorePanel(score, total){
@@ -1448,7 +1457,7 @@
     var fb = pickFeedback(score);
     var coachBox = document.getElementById('coach-box');
     var prefix = '👉 지금 가장 먼저 고칠 것: ';
-    if(total >= 90){
+    if(total >= 90 || fb.mastered){
       coachBox.className = 'coach-box';
       coachBox.textContent = '🎉 이 질문은 3단계 사례 조사로 바로 넘어갈 준비가 됐어요! ' + fb.msg;
     } else if(fb.key === 'conservation' && score.conservation <= 5){
@@ -1803,7 +1812,7 @@
     diversityChart = new Chart(ctxD, {
       type:'doughnut',
       data:{ labels:['종다양성','유전적 다양성','생태계다양성'],
-        datasets:[{ data:[0,0,0], backgroundColor:['#12925A','#D9770D','#0E7FB0'], borderColor:getComputedStyle(document.body).getPropertyValue('--surface') || '#fff', borderWidth:3, hoverOffset:4 }] },
+        datasets:[{ data:[0,0,0], backgroundColor:['#124792','#D9770D','#0E7FB0'], borderColor:getComputedStyle(document.body).getPropertyValue('--surface') || '#fff', borderWidth:3, hoverOffset:4 }] },
       options:{ responsive:true, maintainAspectRatio:false, cutout:'70%', plugins:{ legend:{ display:false } } }
     });
 
@@ -1811,7 +1820,7 @@
     teamChart = new Chart(ctxT, {
       type:'bar',
       data:{ labels:['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'],
-        datasets:[{ label:'이행률(%)', data:[0,0,0,0,0,0], backgroundColor:'#12925A', borderRadius:6, maxBarThickness:38 }] },
+        datasets:[{ label:'이행률(%)', data:[0,0,0,0,0,0], backgroundColor:'#124792', borderRadius:6, maxBarThickness:38 }] },
       options:{
         responsive:true, maintainAspectRatio:false,
         scales:{
@@ -1830,7 +1839,7 @@
     diversityChart.update();
 
     var legend = document.getElementById('diversity-legend');
-    var colors = ['#12925A','#D9770D','#0E7FB0'];
+    var colors = ['#124792','#D9770D','#0E7FB0'];
     var labels = ['종다양성','유전적 다양성','생태계다양성'];
     legend.innerHTML = labels.map(function(l,i){
       return '<span class="legend-item"><span class="legend-dot" style="background:'+colors[i]+'"></span>'+l+' '+counts[l]+'</span>';
