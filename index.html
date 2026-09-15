@@ -259,6 +259,17 @@
   .grid-primary{ display:grid; grid-template-columns:65fr 35fr; gap:18px; }
   @media (max-width:900px){ .grid-primary{ grid-template-columns:1fr; } }
 
+  /* ---------- 탐구질문 등록/아카이브 영역 너비 조절 ---------- */
+  #matrix-grid{ grid-template-columns:65% 14px 1fr; gap:0; align-items:stretch; }
+  #matrix-grid > .card{ min-width:0; }
+  .col-resizer{ cursor:col-resize; position:relative; align-self:stretch; touch-action:none; }
+  .col-resizer::before{
+    content:''; position:absolute; top:10px; bottom:10px; left:50%; width:4px; transform:translateX(-50%);
+    background:var(--border); border-radius:99px; transition:background .15s;
+  }
+  .col-resizer:hover::before, .col-resizer.dragging::before{ background:var(--accent); }
+  @media (max-width:900px){ #matrix-grid{ grid-template-columns:1fr !important; } .col-resizer{ display:none; } }
+
   .legend-row{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
   .legend-item{ display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-muted); }
   .legend-dot{ width:10px; height:10px; border-radius:3px; flex-shrink:0; }
@@ -681,7 +692,7 @@
       <div class="brief-grid" id="brief-grid"></div>
     </div>
 
-    <div class="grid-primary">
+    <div class="grid-primary" id="matrix-grid">
       <!-- 좌: 등록 폼 -->
       <div class="card pad">
         <div class="section-title">
@@ -776,6 +787,9 @@
           <div class="detail-grid" id="detail-grid" style="display:none;"></div>
         </div>
       </div>
+
+      <!-- 가운데: 폭 조절 핸들 -->
+      <div class="col-resizer" id="matrix-col-resizer" title="드래그해서 좌우 영역 폭을 조절하세요"></div>
 
       <!-- 우: 아카이브 -->
       <div class="card pad">
@@ -2851,11 +2865,56 @@
 
   /* ---------------- Boot ---------------- */
 
+  function initMatrixResizer(){
+    var grid = document.getElementById('matrix-grid');
+    var resizer = document.getElementById('matrix-col-resizer');
+    if(!grid || !resizer) return;
+
+    var MIN_PCT = 25, MAX_PCT = 80, DEFAULT_PCT = 65;
+    var STORAGE_KEY = 'bioMatrixColSplitPct';
+
+    function applySplit(pct){
+      grid.style.gridTemplateColumns = pct + '% 14px 1fr';
+    }
+
+    var saved = parseFloat(localStorage.getItem(STORAGE_KEY));
+    applySplit((saved >= MIN_PCT && saved <= MAX_PCT) ? saved : DEFAULT_PCT);
+
+    var dragging = false;
+    resizer.addEventListener('pointerdown', function(e){
+      dragging = true;
+      resizer.classList.add('dragging');
+      try{ resizer.setPointerCapture(e.pointerId); }catch(err){}
+      e.preventDefault();
+    });
+    resizer.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      var rect = grid.getBoundingClientRect();
+      var pct = ((e.clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(MIN_PCT, Math.min(MAX_PCT, pct));
+      applySplit(pct);
+    });
+    function endDrag(){
+      if(!dragging) return;
+      dragging = false;
+      resizer.classList.remove('dragging');
+      var m = /^([\d.]+)%/.exec(grid.style.gridTemplateColumns);
+      if(m) localStorage.setItem(STORAGE_KEY, m[1]);
+    }
+    resizer.addEventListener('pointerup', endDrag);
+    resizer.addEventListener('pointercancel', endDrag);
+    resizer.addEventListener('dblclick', function(){
+      applySplit(DEFAULT_PCT);
+      localStorage.setItem(STORAGE_KEY, DEFAULT_PCT);
+    });
+  }
+
   function start(){
     renderBriefGrid();
     renderDiversityRadio();
     renderTemplates();
     initCharts();
+    initMatrixResizer();
     renderQuestions();
     renderRules();
     renderLogs();
