@@ -2580,7 +2580,8 @@
     if(!sel) return;
     var current = sel.value;
     sel.innerHTML = '<option value="">— 아카이브에서 원본 질문을 선택하세요 —</option>';
-    state.questions.forEach(function(q){
+    // 실시간 아카이브와 동일하게, 같은 학생이 여러 번 등록했다면 가장 최근 질문만 목록에 보여줍니다.
+    latestQuestionsByAuthor().forEach(function(q){
       var opt = document.createElement('option');
       opt.value = q.id;
       opt.textContent = '[' + q.team + '] ' + q.question.slice(0,28) + '…';
