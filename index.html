@@ -277,6 +277,25 @@
   .q-mini-text{ font-size:12.5px; font-weight:600; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .empty-note{ font-size:12.5px; color:var(--ink-faint); padding:18px 4px; text-align:center; }
 
+  /* ---------- Growth report ---------- */
+  .growth-header{ border-bottom:2px solid var(--ink); padding-bottom:12px; margin-bottom:18px; }
+  .growth-header h3{ font-size:19px; font-weight:800; margin:0 0 8px; letter-spacing:-.01em; }
+  .growth-meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-muted); }
+  .growth-meta strong{ color:var(--ink); font-weight:700; }
+  .growth-section{ margin-bottom:22px; }
+  .growth-section h4{ font-size:14px; font-weight:700; margin:0 0 12px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .growth-q-item{ border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; background:var(--surface); }
+  .growth-q-head{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:10px; }
+  .growth-q-num{ font-family:'IBM Plex Mono'; font-size:12px; font-weight:800; color:var(--accent); background:var(--accent-soft); padding:2px 8px; border-radius:6px; }
+  .growth-q-body{ display:flex; gap:14px; align-items:flex-start; }
+  .growth-q-photo{ width:110px; height:110px; object-fit:cover; border-radius:10px; border:1px solid var(--border); flex-shrink:0; }
+  .growth-q-text{ flex:1 1 auto; min-width:0; }
+  .growth-q-target{ font-size:12.5px; margin:0 0 6px; color:var(--ink-muted); }
+  .growth-q-question{ font-size:13.5px; font-weight:600; line-height:1.5; margin:0 0 6px; }
+  .growth-q-metric{ font-size:12px; color:var(--ink-muted); margin:0; }
+  .growth-best-box{ display:flex; gap:14px; align-items:flex-start; border:1px solid var(--border); border-radius:12px; padding:14px; background:var(--accent-soft); }
+  @media (max-width:560px){ .growth-q-body, .growth-best-box{ flex-direction:column; } .growth-q-photo{ width:100%; height:160px; } }
+
   /* ---------- Briefing cards ---------- */
   .brief-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
   @media (max-width:760px){ .brief-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
@@ -502,6 +521,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.8L21 9.6l-4.5 4.2L17.6 21 12 17.8 6.4 21l1.1-7.2L3 9.6l6.4-.8Z"/></svg>
         <span>Q · 모둠별 베스트 질문</span>
       </button>
+      <button data-view="growth" onclick="switchView('growth')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17V9m6 8V5m6 12v-6m6 6V3"/></svg>
+        <span>Q · 나의 질문 성장기록</span>
+      </button>
       <button data-view="checker" onclick="switchView('checker')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
         <span>I · 보전점검표</span>
@@ -586,8 +609,7 @@
           <div>
             <label class="field-label" for="best-team">모둠</label>
             <select id="best-team">
-              <option>1모둠</option><option>2모둠</option><option>3모둠</option>
-              <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+              <option>1모둠</option><option>2모둠</option><option>3모둠</option><option selected>4모둠</option><option>5모둠</option><option>6모둠</option><option>7모둠</option><option>8모둠</option><option>9모둠</option>
             </select>
           </div>
           <div>
@@ -645,8 +667,7 @@
             <div>
               <label class="field-label" for="q-team">소속 모둠</label>
               <select id="q-team">
-                <option>1모둠</option><option>2모둠</option><option>3모둠</option>
-                <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+                <option>1모둠</option><option>2모둠</option><option>3모둠</option><option selected>4모둠</option><option>5모둠</option><option>6모둠</option><option>7모둠</option><option>8모둠</option><option>9모둠</option>
               </select>
             </div>
             <div>
@@ -742,6 +763,44 @@
     </div>
   </section>
 
+  <!-- ================= 나의 질문 성장기록 ================= -->
+  <section id="view-growth" class="view">
+    <div class="card pad" style="margin-bottom:18px;">
+      <div class="section-title">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17V9m6 8V5m6 12v-6m6 6V3"/></svg>나의 질문 성장기록 조회</h2>
+      </div>
+      <p class="hint" style="margin-bottom:10px;">탐구질문을 등록할 때 썼던 학번·이름을 똑같이 입력하면, 지금까지 쓴 질문을 등록 순서대로 모아 보고서 형식으로 볼 수 있어요.</p>
+      <div class="field-grid2">
+        <div>
+          <label class="field-label" for="gr-author">학번·이름</label>
+          <input type="text" id="gr-author" placeholder="예: 10412 김부광">
+        </div>
+        <div>
+          <label class="field-label" for="gr-team">소속 모둠</label>
+          <select id="gr-team">
+            <option>1모둠</option><option>2모둠</option><option>3모둠</option><option selected>4모둠</option><option>5모둠</option><option>6모둠</option><option>7모둠</option><option>8모둠</option><option>9모둠</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <button type="button" class="btn-primary" style="width:auto; padding:9px 18px;" onclick="loadGrowthRecord()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M9 12.75 11.25 15 15 9.75"/><circle cx="12" cy="12" r="9"/></svg>
+          성장기록 조회하기
+        </button>
+        <button type="button" class="btn-ghost" onclick="downloadGrowthPDF()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
+          PDF로 다운로드
+        </button>
+      </div>
+    </div>
+
+    <div class="card pad" id="growth-report">
+      <div id="growth-report-inner">
+        <p class="empty-note">학번·이름을 입력하고 "성장기록 조회하기"를 눌러보세요.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= I-STAGE : 점검표 ================= -->
   <section id="view-checker" class="view">
     <div class="grid-primary">
@@ -763,8 +822,7 @@
             <div>
               <label class="field-label" for="r-team">소속 모둠</label>
               <select id="r-team">
-                <option>1모둠</option><option>2모둠</option><option>3모둠</option>
-                <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+                <option>1모둠</option><option>2모둠</option><option>3모둠</option><option selected>4모둠</option><option>5모둠</option><option>6모둠</option><option>7모둠</option><option>8모둠</option><option>9모둠</option>
               </select>
             </div>
             <div>
@@ -828,26 +886,66 @@
 
   <!-- ================= S-STAGE : 실천 로그 ================= -->
   <section id="view-records" class="view">
-    <div class="card pad">
-      <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>주차별 실천 누적 로그</h2>
-        <div style="display:flex; gap:8px;">
+    <div class="grid-primary">
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>오늘 실천 기록하기</h2>
+        </div>
+        <form class="stack" id="log-form" onsubmit="event.preventDefault(); addLog();">
+          <div class="field-grid2">
+            <div>
+              <label class="field-label" for="l-team">모둠</label>
+              <select id="l-team" onchange="populateLogRuleSelect()">
+                <option>1모둠</option><option>2모둠</option><option>3모둠</option><option selected>4모둠</option><option>5모둠</option><option>6모둠</option><option>7모둠</option><option>8모둠</option><option>9모둠</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="l-date">날짜</label>
+              <input type="date" id="l-date">
+            </div>
+          </div>
+          <div>
+            <label class="field-label" for="l-rule">어떤 점검 항목을 확인했나요?</label>
+            <select id="l-rule">
+              <option value="">— 보전점검표에서 먼저 점검 항목을 등록하세요 —</option>
+            </select>
+          </div>
+          <div>
+            <div class="row-between" style="margin-bottom:4px;">
+              <label class="field-label" style="margin:0;" for="l-result">오늘 측정한 수치·결과는?</label>
+              <span class="hint mono">수치·단위 필수</span>
+            </div>
+            <input type="text" id="l-result" placeholder="예: 피복도 3%, 환삼덩굴 2㎡ 제거 확인">
+          </div>
+          <div>
+            <label class="field-label" for="l-status">달성 여부</label>
+            <select id="l-status">
+              <option value="달성">달성</option>
+              <option value="미달성">미달성</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" id="l-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M12 5v14M5 12h14"/></svg>
+            실천 로그 추가
+          </button>
+        </form>
+      </div>
+
+      <div class="card pad">
+        <div class="section-title">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>주차별 실천 누적 로그</h2>
           <button class="btn-ghost" onclick="exportCSV()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
             CSV 내보내기
           </button>
-          <button class="btn-ghost" onclick="addLog()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
-            오늘 실천 인증 추가
-          </button>
         </div>
-      </div>
-      <p class="hint" style="margin-bottom:12px;">수업이 끝난 뒤에도 모둠별로 점검표 항목을 계속 인증하며 실천을 이어갑니다.</p>
-      <div class="table-scroll">
-        <table class="log-table">
-          <thead><tr><th>날짜</th><th>모둠</th><th>점검 항목</th><th>측정 결과</th><th>상태</th></tr></thead>
-          <tbody id="logs-body"></tbody>
-        </table>
+        <p class="hint" style="margin-bottom:12px;">수업이 끝난 뒤에도 모둠별로 등록한 점검 항목을 골라 실제 측정값을 계속 기록합니다.</p>
+        <div class="table-scroll">
+          <table class="log-table">
+            <thead><tr><th>날짜</th><th>모둠</th><th>점검 항목</th><th>측정 결과</th><th>상태</th></tr></thead>
+            <tbody id="logs-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -1045,6 +1143,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 (function(){
 
@@ -1332,7 +1431,7 @@
 
     unsubR = base.collection('rules').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.rules = snap.docs.map(docToRule);
-      renderRules(); renderDashboard();
+      renderRules(); renderDashboard(); populateLogRuleSelect();
       setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('보전점검표'));
 
@@ -1377,6 +1476,7 @@
     renderDashboard();
     renderBestGrid();
     populateLinkQSelect();
+    populateLogRuleSelect();
     renderBriefGrid();
     renderTemplates();
 
@@ -1391,6 +1491,10 @@
     if(photoLabel){ photoLabel.textContent = '사진 선택하기'; var pk = photoLabel.closest('.file-picker'); if(pk) pk.classList.remove('has-file'); }
     var bestPhotoLabel = document.getElementById('best-photo-label');
     if(bestPhotoLabel){ bestPhotoLabel.textContent = '사진 선택하기'; var bpk = bestPhotoLabel.closest('.file-picker'); if(bpk) bpk.classList.remove('has-file'); }
+    var grAuthor = document.getElementById('gr-author');
+    if(grAuthor) grAuthor.value = '';
+    var growthReportInner = document.getElementById('growth-report-inner');
+    if(growthReportInner) growthReportInner.innerHTML = '<p class="empty-note">학번·이름을 입력하고 "성장기록 조회하기"를 눌러보세요.</p>';
 
     setConnStatus('🟡 연결 준비 중...', '');
     showToast('로그아웃했습니다. 새 반 코드를 입력해주세요.');
@@ -1995,20 +2099,80 @@
     }
   }
 
+  function setDefaultLogDate(){
+    var el = document.getElementById('l-date');
+    if(!el) return;
+    var now = new Date();
+    var iso = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    el.value = iso;
+  }
+
+  function populateLogRuleSelect(){
+    var sel = document.getElementById('l-rule');
+    if(!sel) return;
+    var teamSel = document.getElementById('l-team');
+    var team = teamSel ? teamSel.value : '';
+    var current = sel.value;
+    var matched = state.rules.filter(function(r){ return r.team === team; });
+    if(!matched.length){
+      sel.innerHTML = '<option value="">— 이 모둠이 등록한 점검 항목이 없습니다. 보전점검표에서 먼저 등록하세요 —</option>';
+      sel.value = '';
+      return;
+    }
+    sel.innerHTML = '';
+    matched.forEach(function(r){
+      var opt = document.createElement('option');
+      opt.value = r.id;
+      opt.textContent = r.title + ' (' + r.metric.slice(0,24) + (r.metric.length>24?'…':'') + ')';
+      sel.appendChild(opt);
+    });
+    if(matched.some(function(r){ return r.id === current; })) sel.value = current;
+  }
+
   async function addLog(){
     if(!requireClass()) return;
-    var now = new Date();
-    var ds = String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    var team = document.getElementById('l-team').value;
+    var dateVal = document.getElementById('l-date').value;
+    var ruleId = document.getElementById('l-rule').value;
+    var result = document.getElementById('l-result').value.trim();
+    var status = document.getElementById('l-status').value;
+
+    if(!ruleId){
+      showToast('먼저 보전점검표에서 이 모둠의 점검 항목을 등록하세요.', 'error');
+      return;
+    }
+    if(!result){
+      showToast('오늘 측정한 수치·결과를 입력하세요.', 'error');
+      return;
+    }
+    if(!/\d/.test(result)){
+      showToast("측정 결과에 '3%', '2㎡', '5마리' 처럼 수치와 단위를 포함하세요.", 'error');
+      return;
+    }
+    var rule = state.rules.find(function(r){ return r.id === ruleId; });
+    var ruleTitle = rule ? rule.title : '';
+    var ds = dateVal || (function(){
+      var now = new Date();
+      return now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    })();
+
+    var btn = document.getElementById('l-submit-btn');
+    if(btn) btn.disabled = true;
     try{
+      await authReadyPromise;
       await db.collection('classes').doc(currentClassCode).collection('logs').add({
-        date: ds, team:'4모둠', rule:'학교 텃밭 생물종 모니터링',
-        result:'환삼덩굴 피복 0.5㎡ 제거 및 자생식물 보호', status:'달성',
+        date: ds, team:team, ruleId:ruleId, rule:ruleTitle,
+        result:result, status:status,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      showToast('실천 로그가 추가되었습니다.');
+      showToast('[' + team + '] 실천 로그가 추가되었습니다.');
+      document.getElementById('l-result').value = '';
+      setDefaultLogDate();
     }catch(e){
       console.error(e);
-      showToast('저장에 실패했습니다.', 'error');
+      showToast('저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
+    }finally{
+      if(btn) btn.disabled = false;
     }
   }
 
@@ -2133,7 +2297,7 @@
     openModal('question-modal');
   }
 
-  var TEAM_ORDER = ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'];
+  var TEAM_ORDER = ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠','7모둠','8모둠','9모둠'];
 
   function renderBestGrid(){
     var countEl = document.getElementById('best-questions-count');
@@ -2174,6 +2338,105 @@
   function openModal(id){ document.getElementById(id).hidden = false; }
   function closeModal(id){ document.getElementById(id).hidden = true; }
 
+  function escapeHtml(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  function loadGrowthRecord(){
+    if(!requireClass()) return;
+    var authorName = document.getElementById('gr-author').value.trim();
+    var team = document.getElementById('gr-team').value;
+    if(!authorName){
+      showToast('탐구질문을 등록할 때 썼던 학번·이름을 입력하세요.', 'error');
+      return;
+    }
+    renderGrowthReport(authorName, team);
+  }
+
+  function renderGrowthReport(authorName, team){
+    var container = document.getElementById('growth-report-inner');
+    var matched = state.questions.filter(function(q){ return (q.author||'').trim() === authorName; });
+    matched = matched.slice().reverse(); // 쿼리가 최신순이므로 뒤집어서 등록 순서(오래된 것부터)로 보여줌
+    var bestQ = state.bestQuestions.find(function(b){ return b.team === team; });
+
+    var html = '';
+    html += '<div class="growth-header">' +
+      '<h3>나의 질문 성장기록</h3>' +
+      '<div class="growth-meta">' +
+        '<span>반 코드: <strong>'+escapeHtml(currentClassCode||'-')+'</strong></span>' +
+        '<span>학번·이름: <strong>'+escapeHtml(authorName)+'</strong></span>' +
+        '<span>모둠: <strong>'+escapeHtml(team)+'</strong></span>' +
+        '<span>등록된 질문: <strong>'+matched.length+'개</strong></span>' +
+        '<span>생성일: <strong>'+new Date().toLocaleDateString('ko-KR')+'</strong></span>' +
+      '</div>' +
+    '</div>';
+
+    html += '<div class="growth-section"><h4>① 내가 등록한 탐구 질문 (등록 순서대로)</h4>';
+    if(!matched.length){
+      html += '<p class="empty-note">이 이름으로 등록된 탐구질문이 아직 없어요. 탐구질문 등록 폼에서 썼던 학번·이름과 정확히 같은지 확인해주세요.</p>';
+    }else{
+      matched.forEach(function(q, i){
+        html += '<div class="growth-q-item">' +
+          '<div class="growth-q-head">' +
+            '<span class="growth-q-num">Q'+(i+1)+'</span>' +
+            '<span class="team-badge">'+escapeHtml(q.team)+'</span>' +
+            '<span class="q-cat-badge">'+escapeHtml(CASE_TYPES[q.caseType] ? CASE_TYPES[q.caseType].name : '-')+'</span>' +
+            '<span class="tag-note">'+escapeHtml(q.diversity||'-')+'</span>' +
+            '<span class="score-badge mono">'+q.total+'점</span>' +
+            '<span class="hint mono" style="margin-left:auto;">'+escapeHtml(q.time||'')+'</span>' +
+          '</div>' +
+          '<div class="growth-q-body">' +
+            '<img class="growth-q-photo" src="'+q.photo+'" alt="관찰 사진">' +
+            '<div class="growth-q-text">' +
+              '<p class="growth-q-target"><strong>관찰 위치·대상:</strong> '+escapeHtml(q.target||'-')+'</p>' +
+              '<p class="growth-q-question">"'+escapeHtml(q.question)+'"</p>' +
+              (q.metric ? '<p class="growth-q-metric"><strong>측정 방법:</strong> '+escapeHtml(q.metric)+'</p>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    html += '<div class="growth-section"><h4>② 우리 '+escapeHtml(team)+'의 베스트 질문</h4>';
+    if(!bestQ){
+      html += '<p class="empty-note">아직 이 모둠의 베스트 질문이 등록되지 않았어요.</p>';
+    }else{
+      html += '<div class="growth-best-box">' +
+        (bestQ.photo ? '<img class="growth-q-photo" src="'+bestQ.photo+'" alt="베스트 질문 사진">' : '') +
+        '<div class="growth-q-text">' +
+          '<p class="growth-q-question">🏆 "'+escapeHtml(bestQ.question||'')+'"</p>' +
+          '<p class="hint">입력자: '+escapeHtml(bestQ.author||'-')+'</p>' +
+        '</div>' +
+      '</div>';
+    }
+    html += '</div>';
+
+    container.innerHTML = html;
+  }
+
+  function downloadGrowthPDF(){
+    var inner = document.getElementById('growth-report-inner');
+    if(!inner || inner.querySelector('.empty-note') && !inner.querySelector('.growth-q-item') && inner.children.length <= 1){
+      showToast('먼저 "성장기록 조회하기"를 눌러 내용을 불러오세요.', 'error');
+      return;
+    }
+    var authorName = document.getElementById('gr-author').value.trim() || 'student';
+    var el = document.getElementById('growth-report');
+    showToast('PDF를 만들고 있어요. 잠시만 기다려주세요...');
+    var opt = {
+      margin: 8,
+      filename: 'bio-matrix_성장기록_' + authorName.replace(/\s+/g,'') + '.pdf',
+      image: { type:'jpeg', quality:0.95 },
+      html2canvas: { scale:2, useCORS:true },
+      jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+      pagebreak: { mode:['avoid-all','css','legacy'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+
   function openBriefModal(){
     var body = document.getElementById('brief-modal-body');
     body.innerHTML = '';
@@ -2203,8 +2466,8 @@
     var ctxT = document.getElementById('chart-team').getContext('2d');
     teamChart = new Chart(ctxT, {
       type:'bar',
-      data:{ labels:['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'],
-        datasets:[{ label:'이행률(%)', data:[0,0,0,0,0,0], backgroundColor:'#124792', borderRadius:6, maxBarThickness:38 }] },
+      data:{ labels:['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠','7모둠','8모둠','9모둠'],
+        datasets:[{ label:'이행률(%)', data:[0,0,0,0,0,0,0,0,0], backgroundColor:'#124792', borderRadius:6, maxBarThickness:38 }] },
       options:{
         responsive:true, maintainAspectRatio:false,
         scales:{
@@ -2230,7 +2493,7 @@
     }).join('');
 
     var teamMap = {};
-    ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'].forEach(function(t){ teamMap[t] = { done:0, total:0 }; });
+    ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠','7모둠','8모둠','9모둠'].forEach(function(t){ teamMap[t] = { done:0, total:0 }; });
     state.rules.forEach(function(r){
       if(!teamMap[r.team]) teamMap[r.team] = { done:0, total:0 };
       teamMap[r.team].total++;
@@ -2248,7 +2511,7 @@
 
   /* ---------------- Nav ---------------- */
 
-  var ALL_VIEWS = ['dashboard','matrix','best','checker','records','teacher'];
+  var ALL_VIEWS = ['dashboard','matrix','best','growth','checker','records','teacher'];
 
   window.switchView = function(view){
     if(view === 'teacher' && !teacherAuthed){ openTeacherGate(); return; }
@@ -2261,6 +2524,7 @@
     var headerBackBtn = document.getElementById('header-back-student-btn');
     if(headerBackBtn) headerBackBtn.hidden = view !== 'teacher';
     if(view === 'checker') populateLinkQSelect();
+    if(view === 'records'){ populateLogRuleSelect(); setDefaultLogDate(); }
     if(view === 'teacher') showTeacherPanel('questions');
   };
 
@@ -2286,6 +2550,9 @@
   window.updatePurposeCaseName = updatePurposeCaseName;
   window.toggleRuleCheck = toggleRuleCheck;
   window.addLog = addLog;
+  window.loadGrowthRecord = loadGrowthRecord;
+  window.downloadGrowthPDF = downloadGrowthPDF;
+  window.populateLogRuleSelect = populateLogRuleSelect;
   window.exportCSV = exportCSV;
   window.openQuestionModal = openQuestionModal;
   window.openModal = openModal;
@@ -2329,6 +2596,8 @@
     renderLogs();
     renderDashboard();
     populateLinkQSelect();
+    populateLogRuleSelect();
+    setDefaultLogDate();
     updateCharCount();
     updatePurposeCaseName();
 
