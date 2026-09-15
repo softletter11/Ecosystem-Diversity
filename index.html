@@ -11,14 +11,16 @@
     --bg:#ECEFF4;
     --surface:#FFFFFF;
     --surface-alt:#DFE5ED;
+    --input-bg:#F3F5F8;
     --ink:#1C2026;
     --ink-muted:#4F5865;
     --ink-faint:#838B96;
-    --border:#C7CFDB;
+    --border:#D8DEE6;
     --border-strong:#A9B4C4;
     --accent:#124792;
     --accent-ink:#FFFFFF;
     --accent-soft:#E1E7F0;
+    --accent-soft-hover:#D3DDEC;
     --warn:#B8650F;
     --warn-soft:#FBEBD9;
     --critical:#B4402E;
@@ -33,6 +35,7 @@
       --bg:#0E1116;
       --surface:#161A20;
       --surface-alt:#1B212A;
+      --input-bg:#20262F;
       --ink:#E1E6ED;
       --ink-muted:#9BA5B3;
       --ink-faint:#6A7380;
@@ -41,6 +44,7 @@
       --accent:#225AA9;
       --accent-ink:#090D13;
       --accent-soft:#1E2733;
+      --accent-soft-hover:#26344A;
       --warn:#D6912A;
       --warn-soft:#3A2A15;
       --critical:#E06456;
@@ -55,6 +59,7 @@
     --bg:#0E1116;
     --surface:#161A20;
     --surface-alt:#1B212A;
+    --input-bg:#20262F;
     --ink:#E1E6ED;
     --ink-muted:#9BA5B3;
     --ink-faint:#6A7380;
@@ -63,6 +68,7 @@
     --accent:#225AA9;
     --accent-ink:#090D13;
     --accent-soft:#1E2733;
+    --accent-soft-hover:#26344A;
     --warn:#D6912A;
     --warn-soft:#3A2A15;
     --critical:#E06456;
@@ -115,12 +121,12 @@
     flex-shrink:0;
   }
   .brand-text .eyebrow{
-    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
     color:var(--accent);
   }
   .brand-text{ min-width:0; }
   .brand-text h1{
-    font-size:16.5px; font-weight:700; margin:1px 0 0; line-height:1.25;
+    font-size:16.5px; font-weight:600; margin:1px 0 0; line-height:1.25;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;
   }
 
@@ -144,8 +150,8 @@
     transition:background .15s,color .15s;
   }
   nav.tabs button svg{ width:15px; height:15px; }
-  nav.tabs button.active{ background:var(--accent); color:var(--accent-ink); }
-  nav.tabs button:not(.active):hover{ background:var(--border); color:var(--ink); }
+  nav.tabs button.active{ background:var(--surface); color:var(--accent); box-shadow:0 1px 2px rgba(0,0,0,.06); }
+  nav.tabs button:not(.active):hover{ background:var(--accent-soft-hover); color:var(--ink); }
 
   /* ---------- Class code bar ---------- */
   .class-bar{
@@ -155,7 +161,7 @@
   .class-bar-label{ color:var(--ink-muted); font-weight:600; }
   .class-code-chip{
     background:var(--accent-soft); color:var(--accent); padding:3px 10px;
-    border-radius:99px; font-weight:700; letter-spacing:.01em;
+    border-radius:99px; font-weight:600; letter-spacing:.01em;
   }
   .conn-status{ margin-left:auto; color:var(--ink-faint); font-weight:600; white-space:nowrap; }
   .conn-status.err{ color:var(--critical); }
@@ -195,9 +201,9 @@
   }
 
   input[type=password]{
-    width:100%; background:var(--surface-alt); border:1.5px solid var(--border);
+    width:100%; background:var(--input-bg); border:1px solid var(--border);
     border-radius:10px; padding:9px 11px; font-size:12.5px; font-weight:500; color:var(--ink);
-    font-family:inherit;
+    font-family:inherit; transition:border-color .15s;
   }
   input[type=password]:focus{ outline:none; border-color:var(--accent); }
 
@@ -208,13 +214,13 @@
   .section-title{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
     margin-bottom:16px; padding-bottom:12px; flex-wrap:wrap;
-    border-bottom:2px solid var(--border);
+    border-bottom:1px solid var(--border);
   }
   .section-title h2{
-    font-size:19px; font-weight:800; letter-spacing:-.01em;
+    font-size:19px; font-weight:700; letter-spacing:-.01em;
     display:flex; align-items:center; gap:9px; margin:0; color:var(--ink);
   }
-  .section-title h2 svg{ width:19px; height:19px; color:var(--accent); flex-shrink:0; stroke-width:2.4; }
+  .section-title h2 svg{ width:19px; height:19px; color:var(--accent); flex-shrink:0; stroke-width:1.5; }
   .tag-note{ font-family:'IBM Plex Mono'; font-size:11px; color:var(--ink-faint); background:var(--surface-alt); padding:3px 9px; border-radius:6px; border:1px solid var(--border); }
 
   .card{
@@ -225,7 +231,7 @@
 
   /* ---------- Config warning ---------- */
   .config-warning{
-    background:var(--critical-soft); border:1.5px solid var(--critical); border-radius:14px;
+    background:var(--critical-soft); border:1px solid var(--critical); border-radius:14px;
     padding:16px 18px; margin-block:18px; font-size:13px; line-height:1.65; color:var(--ink);
   }
   .config-warning b{ color:var(--critical); }
@@ -237,7 +243,7 @@
   @media (max-width:480px){ .kpi-grid{ grid-template-columns:1fr;} }
   .kpi{ padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
   .kpi .label{ font-size:12.5px; font-weight:600; color:var(--ink-muted); }
-  .kpi .value{ font-family:'IBM Plex Mono'; font-size:28px; font-weight:700; }
+  .kpi .value{ font-family:'IBM Plex Mono'; font-size:28px; font-weight:600; }
   .kpi .sub{ font-size:11.5px; color:var(--accent); font-weight:600; }
 
   .grid-12{ display:grid; grid-template-columns:repeat(12,1fr); gap:18px; }
@@ -262,12 +268,12 @@
   .q-mini-card{
     border:1px solid var(--border); border-radius:12px; padding:13px; cursor:pointer;
     background:var(--surface); transition:border-color .15s, transform .1s;
-    display:flex; flex-direction:column; gap:7px;
+    display:flex; flex-direction:column; gap:7px; width:100%; font-family:inherit;
   }
   .q-mini-card:hover{ border-color:var(--accent); transform:translateY(-1px); }
   .row-between{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .team-badge{ font-family:'IBM Plex Mono'; font-size:10.5px; font-weight:700; background:var(--surface-alt); border:1px solid var(--border); padding:2px 8px; border-radius:6px; color:var(--ink-muted); }
-  .score-badge{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:700; color:var(--accent); }
+  .team-badge{ font-family:'IBM Plex Mono'; font-size:10.5px; font-weight:600; background:var(--surface-alt); border:1px solid var(--border); padding:2px 8px; border-radius:6px; color:var(--ink-muted); }
+  .score-badge{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:600; color:var(--accent); }
   .q-mini-text{ font-size:12.5px; font-weight:600; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .empty-note{ font-size:12.5px; color:var(--ink-faint); padding:18px 4px; text-align:center; }
 
@@ -277,7 +283,7 @@
   @media (max-width:420px){ .brief-grid{ grid-template-columns:minmax(0,1fr); } }
   .brief-card{
     text-align:left; cursor:pointer; border-radius:11px; padding:9px 10px;
-    border:1.5px solid var(--border); background:var(--surface);
+    border:1px solid var(--border); background:var(--surface);
     display:flex; flex-direction:row; align-items:flex-start; gap:8px;
     transition:border-color .15s, background .15s;
     min-width:0; max-width:100%; overflow:hidden;
@@ -289,7 +295,7 @@
   .brief-icon svg{ width:13px; height:13px; color:var(--accent); }
   .brief-card.selected .brief-icon svg{ color:var(--accent-ink); }
   .brief-text{ display:flex; flex-direction:column; gap:2px; min-width:0; flex:1 1 auto; }
-  .brief-name{ font-size:12.5px; font-weight:800; letter-spacing:-.005em; color:var(--ink); }
+  .brief-name{ font-size:12.5px; font-weight:700; letter-spacing:-.005em; color:var(--ink); }
   .brief-def{
     font-size:10px; color:var(--ink-muted); line-height:1.3;
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
@@ -298,26 +304,46 @@
   .brief-ex{ display:none; }
 
   /* ---------- Forms ---------- */
-  label.field-label{ display:block; font-size:13.5px; font-weight:800; color:var(--ink); margin-bottom:6px; letter-spacing:-.005em; }
+  label.field-label{ display:block; font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:6px; letter-spacing:-.005em; }
   .hint{ font-size:11px; color:var(--ink-faint); font-weight:500; }
   input[type=text], textarea, select{
-    width:100%; background:var(--surface-alt); border:1.5px solid var(--border);
+    width:100%; background:var(--input-bg); border:1px solid var(--border);
     border-radius:10px; padding:9px 11px; font-size:12.5px; font-weight:500; color:var(--ink);
-    font-family:inherit;
+    font-family:inherit; transition:border-color .15s, background .15s;
   }
-  input[type=text]:focus, textarea:focus, select:focus{ outline:none; border-color:var(--accent); }
+  input[type=text]:hover, textarea:hover, select:hover{ border-color:var(--border-strong); }
+  input[type=text]:focus, textarea:focus, select:focus{ outline:none; border-color:var(--accent); background:var(--surface); }
   textarea{ resize:vertical; line-height:1.5; }
+  select{
+    appearance:none; -webkit-appearance:none; cursor:pointer;
+    padding-right:32px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23838B96' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 10px center; background-size:16px;
+  }
+  .file-input-visually-hidden{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .file-picker{
+    display:flex; align-items:center; gap:8px; width:100%; min-height:37px;
+    background:var(--input-bg); border:1px dashed var(--border-strong); border-radius:10px;
+    padding:9px 11px; font-size:12.5px; font-weight:500; color:var(--ink-muted); cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .file-picker svg{ flex-shrink:0; color:var(--ink-faint); }
+  .file-picker:hover{ border-color:var(--accent); color:var(--ink); }
+  .file-picker:hover svg{ color:var(--accent); }
+  .file-picker.has-file{ color:var(--ink); border-style:solid; border-color:var(--border); }
+  .file-picker.has-file svg{ color:var(--accent); }
+
   .field-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   @media (max-width:480px){ .field-grid2{ grid-template-columns:1fr; } }
   .stack{ display:flex; flex-direction:column; gap:14px; }
 
   .radio-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
   .radio-card{
-    text-align:center; border:1.5px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer;
+    text-align:center; border:1px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer;
     background:var(--surface-alt);
   }
   .radio-card input{ display:none; }
-  .radio-card span.t{ display:block; font-size:11.5px; font-weight:700; }
+  .radio-card span.t{ display:block; font-size:11.5px; font-weight:600; }
   .radio-card span.s{ font-size:10px; color:var(--ink-faint); }
   .radio-card.checked{ border-color:var(--accent); background:var(--accent-soft); }
 
@@ -327,32 +353,32 @@
     padding:9px 11px; font-size:11.5px; font-weight:500; color:var(--ink); cursor:default; line-height:1.5;
     display:flex; gap:7px;
   }
-  .template-btn b{ color:var(--accent); flex-shrink:0; font-weight:700; }
+  .template-btn b{ color:var(--accent); flex-shrink:0; font-weight:600; }
 
   .btn-primary{
     width:100%; padding:12px; border:none; border-radius:11px; cursor:pointer;
-    background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:13px;
+    background:var(--accent); color:var(--accent-ink); font-weight:600; font-size:13px;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn-primary:hover{ filter:brightness(1.06); }
   .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
   .btn-ghost{
-    padding:7px 12px; border-radius:9px; border:1.5px solid var(--border); background:var(--surface);
-    font-size:11.5px; font-weight:700; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    padding:7px 12px; border-radius:9px; border:1px solid var(--border); background:var(--surface);
+    font-size:11.5px; font-weight:600; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:6px;
   }
   .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
 
   /* ---------- Score card ---------- */
-  .score-panel{ border:1.5px solid var(--border); border-radius:14px; padding:16px; background:var(--surface-alt); }
+  .score-panel{ border:1px solid var(--border); border-radius:14px; padding:16px; background:var(--surface-alt); }
   .score-total{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; }
-  .score-total .num{ font-family:'IBM Plex Mono'; font-size:34px; font-weight:700; }
-  .grade-pill{ font-family:'IBM Plex Mono'; font-size:12px; font-weight:700; padding:4px 11px; border-radius:99px; }
+  .score-total .num{ font-family:'IBM Plex Mono'; font-size:34px; font-weight:600; }
+  .grade-pill{ font-family:'IBM Plex Mono'; font-size:12px; font-weight:600; padding:4px 11px; border-radius:99px; }
   .grade-A{ background:var(--accent-soft); color:var(--accent); }
   .grade-B{ background:var(--warn-soft); color:var(--warn); }
   .grade-C{ background:var(--critical-soft); color:var(--critical); }
 
   .meter-row{ margin-bottom:10px; }
-  .meter-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:5px; }
+  .meter-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:600; margin-bottom:5px; }
   .meter-track{ height:9px; background:var(--border); border-radius:99px; overflow:hidden; }
   .meter-fill{ height:100%; background:var(--accent); border-radius:99px; transition:width .4s ease; }
 
@@ -362,11 +388,12 @@
   }
   .coach-box.attn{ border-left-color:var(--warn); }
 
-  .detail-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
-  @media (max-width:480px){ .detail-grid{ grid-template-columns:repeat(2,1fr); } }
-  .detail-cell{ background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:8px; text-align:center; }
-  .detail-cell .k{ font-size:10px; color:var(--ink-faint); font-weight:600; }
-  .detail-cell .v{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:700; color:var(--ink); }
+  .detail-grid{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .detail-cell{ background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:9px 11px; }
+  .detail-cell .row-between{ margin-bottom:4px; }
+  .detail-cell .k{ font-size:11px; color:var(--ink-faint); font-weight:600; }
+  .detail-cell .v{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:600; color:var(--ink); }
+  .detail-cell .tip{ font-size:11.5px; color:var(--ink-muted); line-height:1.5; }
 
   /* ---------- Archive / list cards ---------- */
   .archive-scroll{ max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:9px; padding-right:2px; }
@@ -378,24 +405,48 @@
   .q-card-inner{ display:flex; gap:10px; align-items:flex-start; }
   .q-card-thumb{ width:44px; height:44px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--surface-alt); }
   .q-card-body{ min-width:0; flex:1 1 auto; }
-  .q-cat-badge{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; background:var(--surface-alt); color:var(--ink-muted); }
+  .q-cat-badge{ font-size:10px; font-weight:600; padding:2px 8px; border-radius:99px; background:var(--surface-alt); color:var(--ink-muted); }
   .q-card-text{ font-size:12.5px; font-weight:600; margin:6px 0; line-height:1.45; }
   .q-card-foot{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:7px; margin-top:2px; }
 
   .rule-card{ border:1px solid var(--border); border-radius:12px; padding:14px; background:var(--surface); }
   .rule-card.done{ border-color:var(--accent); }
   .rule-meta{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:11px; }
-  .rule-title{ font-size:13px; font-weight:700; margin:7px 0 6px; line-height:1.4; }
+  .rule-title{ font-size:13px; font-weight:600; margin:7px 0 6px; line-height:1.4; }
   .metric-box{ font-family:'IBM Plex Mono'; font-size:11.5px; background:var(--surface-alt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--accent); }
-  .rule-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding-top:9px; border-top:1px solid var(--border); font-size:11.5px; font-weight:700; }
+  .rule-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding-top:9px; border-top:1px solid var(--border); font-size:11.5px; font-weight:600; }
   .check-label{ display:flex; align-items:center; gap:8px; cursor:pointer; }
   .check-label input{ width:16px; height:16px; accent-color:var(--accent); }
   .linked-chip{ font-family:'IBM Plex Mono'; font-size:10px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:6px; }
 
   table.log-table{ width:100%; border-collapse:collapse; font-size:12px; }
-  table.log-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); border-bottom:1.5px solid var(--border); padding:9px 8px; font-weight:700; }
-  table.log-table td{ padding:10px 8px; border-bottom:1px solid var(--border); font-weight:500; }
-  .status-pill{ font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+  table.log-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); border-bottom:1px solid var(--border); padding:9px 8px; font-weight:600; }
+  table.log-table td{ padding:10px 8px; border-bottom:1px solid var(--border); font-weight:500; word-break:keep-all; }
+  table.log-table td, table.log-table th{ overflow-wrap:break-word; }
+  table.table-questions{ table-layout:fixed; }
+  table.table-questions td:nth-child(5), table.table-questions td:nth-child(6){ white-space:nowrap; }
+  .teacher-controls{ display:flex; gap:14px; flex-wrap:wrap; align-items:end; }
+  .teacher-controls-code{ flex:0 1 40%; min-width:180px; }
+  .teacher-controls-actions{ flex:1 1 auto; display:flex; gap:8px; flex-wrap:wrap; }
+  @media (max-width:640px){ .teacher-controls-code{ flex:1 1 100%; } }
+  .teacher-tabs{ display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:14px; margin-top:14px; }
+  .teacher-tab{
+    display:flex; align-items:center; gap:7px; border:1px solid var(--border); background:var(--surface-alt);
+    color:var(--ink-muted); font-weight:600; font-size:12.5px; padding:8px 13px; border-radius:9px;
+    cursor:pointer; font-family:inherit; transition:border-color .15s, background .15s, color .15s;
+  }
+  .teacher-tab:hover:not(.active){ border-color:var(--border-strong); color:var(--ink); }
+  .teacher-tab.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
+  .teacher-panel + .teacher-panel{ margin-top:18px; }
+  .pager{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:14px; }
+  .pager button{
+    border:1px solid var(--border); background:var(--surface); color:var(--ink); cursor:pointer;
+    border-radius:9px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit;
+  }
+  .pager button:hover:not(:disabled){ border-color:var(--accent); color:var(--accent); }
+  .pager button:disabled{ opacity:.4; cursor:not-allowed; }
+  .pager .pager-label{ font-size:12px; color:var(--ink-muted); font-family:'IBM Plex Mono'; }
+  .status-pill{ font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
   .table-scroll{ overflow-x:auto; }
 
   /* ---------- Modal ---------- */
@@ -411,7 +462,7 @@
   /* ---------- Toast ---------- */
   #toast-container{ position:fixed; top:16px; right:16px; z-index:200; display:flex; flex-direction:column; gap:8px; }
   .toast{
-    background:var(--surface); border:1.5px solid var(--accent); border-radius:11px; padding:11px 14px;
+    background:var(--surface); border:1px solid var(--accent); border-radius:11px; padding:11px 14px;
     font-size:12.5px; font-weight:600; box-shadow:var(--shadow); max-width:300px; display:flex; gap:8px; align-items:flex-start;
   }
   .toast.error{ border-color:var(--critical); }
@@ -419,8 +470,8 @@
 
   .brief-toggle-wrap{ margin-top:10px; }
   .field-note{ background:var(--surface-alt); border:1px dashed var(--border-strong); border-radius:10px; padding:10px 12px; font-size:11.5px; color:var(--ink-muted); line-height:1.5; }
-  .activity-instruction{ font-size:13.5px; font-weight:800; color:var(--ink); letter-spacing:-.005em; margin:13px 0 4px; line-height:1.4; }
-  .activity-instruction #purpose-case-name{ color:var(--accent); font-weight:800; }
+  .activity-instruction{ font-size:13.5px; font-weight:700; color:var(--ink); letter-spacing:-.005em; margin:13px 0 4px; line-height:1.4; }
+  .activity-instruction #purpose-case-name{ color:var(--accent); font-weight:700; }
 </style>
 </head>
 <body>
@@ -431,7 +482,7 @@
   <div class="wrap header-row">
     <div class="brand">
       <div class="brand-mark">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 3c1 5.5-.23 10.24-4.22 13.5C13.55 17.75 11.7 19.24 11 20Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg>
       </div>
       <div class="brand-text">
         <span class="eyebrow">BIO-MATRIX</span>
@@ -440,19 +491,23 @@
     </div>
     <nav class="tabs" id="main-tabs">
       <button class="active" data-view="dashboard" onclick="switchView('dashboard')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
         <span>대시보드</span>
       </button>
       <button data-view="matrix" onclick="switchView('matrix')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.7"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75"/><path d="M12 17.25h.008v.008H12v-.008Z"/><circle cx="12" cy="12" r="9"/></svg>
         <span>Q · 탐구질문</span>
       </button>
+      <button data-view="best" onclick="switchView('best')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.8L21 9.6l-4.5 4.2L17.6 21 12 17.8 6.4 21l1.1-7.2L3 9.6l6.4-.8Z"/></svg>
+        <span>Q · 모둠별 베스트 질문</span>
+      </button>
       <button data-view="checker" onclick="switchView('checker')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
         <span>I · 보전점검표</span>
       </button>
       <button data-view="records" onclick="switchView('records')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
         <span>S · 실천로그</span>
       </button>
     </nav>
@@ -462,6 +517,7 @@
     <span class="class-code-chip mono" id="current-class-code">-</span>
     <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openClassGate(false)">반 코드 변경</button>
     <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openTeacherGate()">🔒 교사용</button>
+    <button class="btn-ghost" id="header-back-student-btn" hidden style="padding:4px 10px;font-size:11px;" onclick="switchView('dashboard')">← 학생용으로 돌아가기</button>
     <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="logoutClass()">🚪 로그아웃</button>
     <span class="conn-status" id="conn-status">🟡 연결 준비 중...</span>
   </div>
@@ -501,7 +557,7 @@
     <div class="chart-row">
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/></svg>3대 생물다양성 커버리지</h2>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/></svg>3대 생물다양성 커버리지</h2>
           <span class="tag-note">교과서 p.26~27</span>
         </div>
         <div style="width:170px;height:170px;margin:8px auto;"><canvas id="chart-diversity"></canvas></div>
@@ -509,18 +565,58 @@
       </div>
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>모둠별 보전 수칙 이행률</h2>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>모둠별 보전 수칙 이행률</h2>
           <span class="tag-note" id="team-top-note">-</span>
         </div>
         <div style="height:190px;"><canvas id="chart-team"></canvas></div>
       </div>
     </div>
 
+  </section>
+
+  <!-- ================= Q-BEST : 모둠별 베스트 질문 ================= -->
+  <section id="view-best" class="view">
+    <div class="card pad">
+      <div class="section-title">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 3 2.6 5.8L21 9.6l-4.5 4.2L17.6 21 12 17.8 6.4 21l1.1-7.2L3 9.6l6.4-.8Z"/></svg>모둠 베스트 질문 등록</h2>
+      </div>
+      <p class="hint" style="margin-bottom:10px;">모둠에서 가장 잘 썼다고 생각하는 질문 하나를 모둠별로 직접 골라 입력해보세요. 관련 사진도 함께 올릴 수 있어요. 다시 등록하면 이전 내용을 덮어씁니다.</p>
+      <form class="stack" id="best-question-form" onsubmit="event.preventDefault(); submitBestQuestion();">
+        <div class="field-grid2">
+          <div>
+            <label class="field-label" for="best-team">모둠</label>
+            <select id="best-team">
+              <option>1모둠</option><option>2모둠</option><option>3모둠</option>
+              <option selected>4모둠</option><option>5모둠</option><option>6모둠</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="best-author">입력자</label>
+            <input type="text" id="best-author" placeholder="예: 10412 김부광">
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="best-text">우리 모둠 베스트 질문</label>
+          <textarea id="best-text" rows="2" placeholder="모둠 친구들이 등록한 질문 중 가장 잘 썼다고 생각하는 것을 그대로 옮겨 적어보세요."></textarea>
+        </div>
+        <div>
+          <label class="field-label" for="best-photo">관련 사진 (선택)</label>
+          <label class="file-picker" for="best-photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            <span id="best-photo-label">사진 선택하기</span>
+          </label>
+          <input type="file" id="best-photo" accept="image/*" onchange="handleBestPhoto(event)" class="file-input-visually-hidden">
+        </div>
+        <button type="submit" class="btn-primary" id="best-submit-btn" style="width:auto; padding:9px 18px;">모둠 베스트 질문 등록</button>
+      </form>
+    </div>
+
     <div class="card pad" style="margin-top:18px;">
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.6 5.8L21 9.6l-4.5 4.2L17.6 21 12 17.8 6.4 21l1.1-7.2L3 9.6l6.4-.8Z"/></svg>모둠 대표 BEST 탐구질문</h2>
-        <button class="btn-ghost" onclick="switchView('matrix')">질문 분석기로 이동 →</button>
+        <h2>모둠별 베스트 질문 목록</h2>
+        <span class="tag-note mono" id="best-questions-count">0개</span>
       </div>
+      <p class="hint" style="margin-bottom:10px;">카드를 클릭하면 질문과 사진을 크게 볼 수 있어요.</p>
       <div class="best-grid" id="best-questions-grid"></div>
     </div>
   </section>
@@ -530,7 +626,7 @@
 
     <div class="card pad" style="margin-bottom:18px;">
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>브리핑 · 4대 보전사례 유형</h2>
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>브리핑 · 4대 보전사례 유형</h2>
         <span class="tag-note">교과서 p.30</span>
       </div>
       <p class="hint" style="margin-bottom:10px;">질문을 쓰기 전에, 지금 관찰한 내용이 아래 4가지 중 어디에 가장 가까운지 먼저 골라보세요. 고른 유형에 따라 아래 질문 템플릿과 채점 기준(보전가치)이 달라집니다.</p>
@@ -541,11 +637,7 @@
       <!-- 좌: 등록 폼 -->
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>탐구질문 등록 & Bio-Matrix 채점</h2>
-          <button class="btn-ghost" onclick="loadSample()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
-            샘플
-          </button>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>탐구질문 등록 & Bio-Matrix 채점</h2>
         </div>
 
         <form class="stack" id="question-form" onsubmit="event.preventDefault(); submitQuestion();">
@@ -575,7 +667,11 @@
             </div>
             <div>
               <label class="field-label" for="q-photo">관찰 사진</label>
-              <input type="file" id="q-photo" accept="image/*" onchange="handlePhoto(event)">
+              <label class="file-picker" for="q-photo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                <span id="q-photo-label">사진 선택하기</span>
+              </label>
+              <input type="file" id="q-photo" accept="image/*" onchange="handlePhoto(event)" class="file-input-visually-hidden">
             </div>
           </div>
 
@@ -602,7 +698,7 @@
           </div>
 
           <button type="submit" class="btn-primary" id="q-submit-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M9 22h6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 12.75 11.25 15 15 9.75"/><circle cx="12" cy="12" r="9"/></svg>
             내 질문 점수 확인하기
           </button>
         </form>
@@ -637,7 +733,7 @@
       <!-- 우: 아카이브 -->
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg>실시간 질문 아카이브</h2>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg>실시간 질문 아카이브</h2>
           <span class="tag-note mono" id="archive-count">0건</span>
         </div>
         <p class="hint" style="margin-bottom:10px;">카드를 클릭하면 상세 분석이 열립니다. 우리 반 친구들이 등록하면 자동으로 여기에 나타나요.</p>
@@ -651,7 +747,7 @@
     <div class="grid-primary">
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>보전사례 매트릭스 → 점검표 등록</h2>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>보전사례 매트릭스 → 점검표 등록</h2>
           <span class="tag-note">교과서 p.30~31</span>
         </div>
 
@@ -714,7 +810,7 @@
           </div>
 
           <button type="submit" class="btn-primary" id="r-submit-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 5v14M5 12h14"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><path d="M12 5v14M5 12h14"/></svg>
             점검표에 등록
           </button>
         </form>
@@ -722,7 +818,7 @@
 
       <div class="card pad">
         <div class="section-title">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg>학교 보전 점검표 (Live Checklist)</h2>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 13 4 4L19 7"/></svg>학교 보전 점검표 (Live Checklist)</h2>
           <span class="tag-note mono" id="rules-count">0개</span>
         </div>
         <div class="archive-scroll" id="rules-list" style="max-height:600px;"></div>
@@ -734,14 +830,14 @@
   <section id="view-records" class="view">
     <div class="card pad">
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>주차별 실천 누적 로그</h2>
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>주차별 실천 누적 로그</h2>
         <div style="display:flex; gap:8px;">
           <button class="btn-ghost" onclick="exportCSV()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
             CSV 내보내기
           </button>
           <button class="btn-ghost" onclick="addLog()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 5v14M5 12h14"/></svg>
             오늘 실천 인증 추가
           </button>
         </div>
@@ -760,62 +856,76 @@
   <section id="view-teacher" class="view">
     <div class="card pad" style="margin-bottom:18px;">
       <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>교사용 통합 조회</h2>
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>교사용 통합 조회</h2>
         <span class="tag-note">비밀번호로 보호됨</span>
       </div>
-      <div class="field-grid2" style="align-items:end;">
-        <div>
+      <div class="teacher-controls">
+        <div class="teacher-controls-code">
           <label class="field-label" for="teacher-code-input">조회할 반 코드</label>
           <input type="text" id="teacher-code-input" placeholder="예: 3-2">
         </div>
-        <div style="display:flex; gap:8px;">
+        <div class="teacher-controls-actions">
           <button type="button" class="btn-primary" style="width:auto; padding:9px 18px;" onclick="loadTeacherClass()">조회하기</button>
+          <button type="button" class="btn-ghost" onclick="openStudentCountModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
+            학생별 등록 횟수
+          </button>
           <button type="button" class="btn-ghost" onclick="exportTeacherCSV()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
             CSV 내보내기
           </button>
         </div>
       </div>
       <p class="hint" style="margin-top:10px;">현재 조회 중인 반: <span class="mono" id="teacher-current-label">-</span> · 데이터는 실시간으로 갱신됩니다.</p>
+
+      <div class="teacher-tabs">
+        <button type="button" class="teacher-tab active" id="teacher-tab-questions" onclick="showTeacherPanel('questions')">
+          탐구질문 전체 목록 <span class="tag-note mono" id="teacher-q-count">0건</span>
+        </button>
+        <button type="button" class="teacher-tab" id="teacher-tab-rules" onclick="showTeacherPanel('rules')">
+          보전점검표 전체 목록 <span class="tag-note mono" id="teacher-r-count">0개</span>
+        </button>
+        <button type="button" class="teacher-tab" id="teacher-tab-logs" onclick="showTeacherPanel('logs')">
+          실천로그 전체 목록 <span class="tag-note mono" id="teacher-l-count">0건</span>
+        </button>
+      </div>
     </div>
 
-    <div class="card pad" style="margin-bottom:18px;">
-      <div class="section-title">
-        <h2>탐구질문 전체 목록</h2>
-        <span class="tag-note mono" id="teacher-q-count">0건</span>
-      </div>
+    <div class="card pad teacher-panel" id="teacher-panel-questions">
       <div class="table-scroll">
-        <table class="log-table">
-          <thead><tr><th>모둠</th><th>작성자</th><th>사례유형</th><th>질문</th><th>점수</th><th>시간</th></tr></thead>
+        <table class="log-table table-questions">
+          <thead><tr>
+            <th style="width:90px;">모둠</th>
+            <th style="width:140px;">작성자</th>
+            <th style="width:150px;">사례유형</th>
+            <th>질문</th>
+            <th style="width:80px;">점수</th>
+            <th style="width:170px;">시간</th>
+          </tr></thead>
           <tbody id="teacher-q-body"></tbody>
         </table>
       </div>
+      <div class="pager" id="teacher-q-pager"></div>
     </div>
 
-    <div class="card pad" style="margin-bottom:18px;">
-      <div class="section-title">
-        <h2>보전점검표 전체 목록</h2>
-        <span class="tag-note mono" id="teacher-r-count">0개</span>
-      </div>
+    <div class="card pad teacher-panel" id="teacher-panel-rules" hidden>
       <div class="table-scroll">
         <table class="log-table">
           <thead><tr><th>모둠</th><th>기록자</th><th>사례유형</th><th>항목명</th><th>정량 기준</th><th>완료</th><th>누적</th></tr></thead>
           <tbody id="teacher-r-body"></tbody>
         </table>
       </div>
+      <div class="pager" id="teacher-r-pager"></div>
     </div>
 
-    <div class="card pad">
-      <div class="section-title">
-        <h2>실천로그 전체 목록</h2>
-        <span class="tag-note mono" id="teacher-l-count">0건</span>
-      </div>
+    <div class="card pad teacher-panel" id="teacher-panel-logs" hidden>
       <div class="table-scroll">
         <table class="log-table">
           <thead><tr><th>날짜</th><th>모둠</th><th>항목</th><th>결과</th><th>상태</th></tr></thead>
           <tbody id="teacher-l-body"></tbody>
         </table>
       </div>
+      <div class="pager" id="teacher-l-pager"></div>
     </div>
   </section>
 
@@ -827,7 +937,7 @@
     <div class="modal-head">
       <h3 style="font-size:16px; margin:0;">교사용 페이지</h3>
       <button class="icon-btn" onclick="closeModal('teacher-gate-modal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <p class="hint" style="margin-bottom:12px; font-size:12px;">비밀번호를 입력하면 반별 탐구질문·점검표·실천로그를 한 화면에서 모두 확인할 수 있습니다.</p>
@@ -837,27 +947,63 @@
   </div>
 </div>
 
+<!-- 모달: 학생별 질문 등록 횟수 -->
+<div class="modal-overlay" id="student-count-modal" hidden>
+  <div class="modal-box" style="max-width:460px;">
+    <div class="modal-head">
+      <h3 style="font-size:16px; margin:0;">학생별 질문 등록 횟수</h3>
+      <button class="icon-btn" onclick="closeModal('student-count-modal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <p class="hint" style="margin-bottom:10px;">현재 조회 중인 반(<span class="mono" id="student-count-class-label">-</span>)의 학생별 탐구질문 등록 횟수입니다.</p>
+    <div class="table-scroll" style="max-height:60vh; overflow-y:auto;">
+      <table class="log-table">
+        <thead><tr><th>작성자</th><th>모둠</th><th style="width:90px;">등록 횟수</th></tr></thead>
+        <tbody id="student-count-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- 모달: 질문 상세 -->
 <div class="modal-overlay" id="question-modal" hidden>
   <div class="modal-box">
     <div class="modal-head">
       <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
         <span class="team-badge" id="m-team"></span>
-        <span id="m-author" style="font-size:12px; font-weight:700;"></span>
+        <span id="m-author" style="font-size:12px; font-weight:600;"></span>
         <span class="q-cat-badge" id="m-cat"></span>
       </div>
       <button class="icon-btn" onclick="closeModal('question-modal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <img id="m-photo" class="modal-photo" src="" alt="관찰 사진">
     <p class="hint" style="display:flex; gap:5px; align-items:center;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
       <span id="m-target"></span>
     </p>
     <div class="modal-q-box" id="m-text"></div>
     <div class="detail-grid" id="m-detail"></div>
     <div class="coach-box" id="m-coach" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<!-- 모달: 모둠 베스트 질문 상세 -->
+<div class="modal-overlay" id="best-modal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+        <span class="team-badge" id="bm-team"></span>
+        <span id="bm-author" style="font-size:12px; font-weight:600;"></span>
+      </div>
+      <button class="icon-btn" onclick="closeModal('best-modal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <img id="bm-photo" class="modal-photo" src="" alt="모둠 베스트 질문 사진" hidden>
+    <div class="modal-q-box" id="bm-text"></div>
   </div>
 </div>
 
@@ -867,7 +1013,7 @@
     <div class="modal-head">
       <h3 style="font-size:16px; margin:0;">보전사례 유형 자세히 보기</h3>
       <button class="icon-btn" onclick="closeModal('brief-modal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div id="brief-modal-body" class="stack"></div>
@@ -880,7 +1026,7 @@
     <div class="modal-head">
       <h3 style="font-size:16px; margin:0;">반 코드 입력</h3>
       <button class="icon-btn" id="gate-close-btn" onclick="closeClassGate()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <p class="hint" style="margin-bottom:12px; line-height:1.6; font-size:12px;">
@@ -919,7 +1065,7 @@
   var CLASS_CODE_KEY = 'biomatrix_class_code';
   var currentClassCode = null;
   var db = null, auth = null, authReadyPromise = null;
-  var unsubQ = null, unsubR = null, unsubL = null;
+  var unsubQ = null, unsubR = null, unsubL = null, unsubB = null;
   var isConfigured = firebaseConfig.apiKey.indexOf('여기에') === -1;
 
   /* 교사용 페이지 비밀번호 — 화면 어디에도 표시되지 않으며, 클라이언트 코드 안에서만 비교됩니다.
@@ -929,13 +1075,15 @@
   var teacherAuthed = false;
   var unsubTQ = null, unsubTR = null, unsubTL = null;
   var teacherState = { questions:[], rules:[], logs:[] };
+  var TEACHER_PAGE_SIZE = 20;
+  var teacherPage = { q:1, r:1, l:1 };
 
   /* ---------------- Reference data ---------------- */
 
   var CASE_TYPES = {
     species: {
       name: "멸종위기종 복원",
-      icon: '<path d="M12 2C7 2 5 6 5 9c0 4 3 5 3 8a4 4 0 0 0 8 0c0-3 3-4 3-8 0-3-2-7-7-7Z"/>',
+      icon: '<path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/>',
       def: "사라질 위기에 처한 야생 생물을 국가 차원에서 보호하고 서식지로 되돌리는 것",
       example: "예: 반달가슴곰, 수원청개구리, 여우",
       keywords: ["멸종위기","복원","서식지 보호","야생생물","보호종","개체수 회복"],
@@ -947,7 +1095,7 @@
     },
     zone: {
       name: "생태우수지역 지정",
-      icon: '<path d="M3 12s3-7 9-7 9 7 9 7-3 7-9 7-9-7-9-7Z"/><circle cx="12" cy="12" r="3"/>',
+      icon: '<path d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"/>',
       def: "생물다양성이 특히 높은 지역을 보호구역으로 지정해 관리하는 것",
       example: "예: 국립공원, 유네스코 생물권보전지역",
       keywords: ["보호구역","지정","생태우수","서식지 보전","출입 제한"],
@@ -959,7 +1107,7 @@
     },
     invasive: {
       name: "외래생물 관리",
-      icon: '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="4"/>',
+      icon: '<path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>',
       def: "원래 없던 지역에 들어와 토종 생태계를 위협하는 생물을 관리하는 것",
       example: "예: 환삼덩굴, 가시박, 뉴트리아",
       keywords: ["외래","교란","제거","방제","환삼덩굴","가시박","토종"],
@@ -994,28 +1142,92 @@
   var METRIC_UNIT_WORDS = ["회","%","개","마리","㎡","m2","m²","종","g","cm","건"];
   var FEASIBILITY_WORDS = ["측정","관찰","조사","비교","횟수","면적","개체수","주 1회","월 1회"];
 
+  // 교과서 20~29쪽 핵심 개념어 (구체적 피드백에 인용)
+  var CONCEPT_HINTS = ["변이","종다양성","유전적 다양성","생태계다양성","먹이그물","생산자","소비자","자연선택","적응","개체군","군집","서식지","개체수"];
+
   var FEEDBACK = {
     causality: [
-      { max:10, msg:"질문에 '왜'가 빠졌어요. '~하면 ~해질까?'처럼 원인이 되는 조건을 먼저 써보세요." },
-      { max:20, msg:"원인은 있지만 결과와 자연스럽게 안 이어져요. '그래서', '그 결과' 같은 인과어로 다시 연결해보세요." },
-      { max:30, msg:"원인→결과 흐름이 뚜렷해요! 이 인과관계를 어떻게 확인할지(측정 방법)까지 생각해보면 더 좋아요." }
+      { max:10, msgs:[
+        "아직 인과어가 없어요. '(조건)을 하면 (결과)는 어떻게 될까?'처럼 원인이 되는 조건을 문장 앞에 먼저 써보세요.",
+        "지금은 관찰 대상만 적혀 있어요. '만약 ~라면', '~때문에' 같은 표현으로 원인을 먼저 제시해보세요.",
+        "사실 확인형 질문에 머물러 있어요. '그 결과 ~은 얼마나 늘어날까(줄어들까)?'처럼 결과를 묻는 문장으로 바꿔보세요.",
+        "원인 없이 결과만 궁금해하고 있어요. 그 결과가 '무엇 때문에' 나타나는지부터 문장에 넣어보세요."
+      ]},
+      { max:20, msgs:[
+        "원인과 결과는 있지만 두 문장이 따로 놀아요. '그 결과', '그러면' 같은 연결어로 하나의 흐름으로 이어보세요.",
+        "인과관계가 드러나긴 하지만 다소 막연해요. 무엇이 늘어나거나 줄어드는지 대상을 구체적으로 짚어보세요.",
+        "조건과 결과는 있는데 결과 표현이 약해요. '늘어날까?', '줄어들까?', '달라질까?'처럼 변화의 방향을 분명히 드러내보세요.",
+        "인과 구조가 절반만 보여요. 조건절('~하면')과 결과절('~할까?')을 한 문장 안에 함께 넣어 완성해보세요."
+      ]},
+      { max:30, msgs:[
+        "원인→결과 흐름이 뚜렷해요! 이 인과관계를 확인하려면 무엇을 측정할지도 함께 생각해보세요.",
+        "인과관계가 명확하게 드러났어요! 이 변화가 '왜' 일어나는지 그 이유가 되는 개념까지 한 문장 덧붙이면 더 좋아요.",
+        "훌륭한 인과 구조예요! 이 결과가 다른 생물이나 먹이그물 전체에 미치는 영향까지 확장해보면 탐구가 더 깊어져요.",
+        "원인과 결과를 논리적으로 잘 연결했어요! 이제 이 결과를 어떤 수치로 확인할 수 있을지 구체화해보세요."
+      ]}
     ],
     concept: [
-      { max:10, msg:"일상어로만 쓰여 있어요. 교과서 개념어(서식지, 개체수, 먹이그물, 종다양성 등)를 한 개 이상 넣어보세요." },
-      { max:20, msg:"개념어는 있지만 뜻이 정확한지 다시 확인해보세요. 교과서 정의와 비교해보세요." },
-      { max:30, msg:"교과 개념어를 정확하게 사용했어요! 이 개념이 보전 사례와 어떻게 연결되는지도 생각해보세요." }
+      { max:10, msgs:[
+        "교과서 개념어가 아직 안 보여요. 20~29쪽의 '변이', '종다양성', '유전적 다양성', '생태계다양성' 중 하나를 질문에 넣어보세요.",
+        "일상어로만 쓰여 있어요. '개체수', '서식지', '생산자', '소비자' 같은 교과 개념어를 최소 한 개 이상 사용해보세요.",
+        "지금 문장에는 생물학 용어가 빠져 있어요. '먹이그물', '자연선택', '적응', '군집', '개체군' 중 관찰 내용에 맞는 것을 골라보세요.",
+        "개념어 없이 현상만 묘사하고 있어요. 이 현상을 교과서 용어로 바꾸면 어떤 개념이 될지 먼저 떠올려보세요."
+      ]},
+      { max:20, msgs:[
+        "개념어를 사용했지만 뜻이 정확한지 확인해보세요. '변이'는 같은 종 안에서 형질이 다르게 나타나는 것, '적응'은 환경에 맞게 살아남는 능력을 뜻해요.",
+        "개념어가 하나 있지만 조금 더 필요해요. '유전적 다양성'과 '종다양성'의 차이를 떠올리며 문장을 보완해보세요.",
+        "개념어는 있는데 관찰 대상과 연결이 약해요. '먹이그물 속에서 이 생물은 생산자일까, 소비자일까?'처럼 위치를 분명히 해보세요.",
+        "개념 사용은 좋지만 한 가지뿐이에요. '개체군'과 '군집'처럼 관련된 개념 하나를 더 연결해서 설명해보세요."
+      ]},
+      { max:30, msgs:[
+        "교과 개념어를 정확하게 사용했어요! 이 개념이 4대 보전 사례(멸종위기종 복원 등)와 어떻게 연결되는지도 생각해보세요.",
+        "개념 사용이 탄탄해요! 여기에 '먹이그물'이나 '생태계다양성' 같은 상위 개념까지 연결하면 탐구 수준이 한층 올라가요.",
+        "정확한 개념어예요! 이 개념을 학교 생태공간(텃밭·생태숲)의 실제 사례와 연결해서 설명해보면 더 좋아요.",
+        "개념어 사용이 훌륭해요! '변이'나 '자연선택'처럼 원인을 설명할 수 있는 개념까지 곁들이면 인과성 점수도 함께 오를 거예요."
+      ]}
     ],
     feasibility: [
-      { max:8, msg:"이 질문을 확인하려면 무엇을 세거나 측정해야 할까요? '측정' 칸에 수치와 단위를 채워보세요." },
-      { max:17, msg:"측정할 대상은 좋아요. 여기에 단위(개, %, 마리, ㎡ 등)를 붙이면 체크리스트 항목으로 바로 쓸 수 있어요." },
-      { max:25, msg:"수치와 단위까지 갖춰서 현장에서 바로 확인할 수 있어요. 이대로 3단계 점검표 항목으로 옮겨보세요." }
+      { max:8, msgs:[
+        "이 질문을 확인하려면 무엇을 세거나 측정해야 할지 아직 안 보여요. 아래 '측정' 칸에 '방문 횟수', '개체수', '면적' 중 하나를 적어보세요.",
+        "관찰 방법이 빠져 있어요. '주 1회 관찰', '2주간 비교'처럼 언제, 몇 번 확인할지 적어보세요.",
+        "무엇을 비교할지 정해지지 않았어요. '설치한 구역 vs 설치하지 않은 구역'처럼 비교 대상을 질문에 넣어보세요.",
+        "측정 계획이 전혀 없어요. 질문 속 대상을 '숫자로 셀 수 있는 것'으로 바꿔서 다시 표현해보세요."
+      ]},
+      { max:17, msgs:[
+        "측정할 대상은 좋아요! 여기에 단위(개, %, 마리, ㎡, 회)를 붙이면 체크리스트 항목으로 바로 쓸 수 있어요.",
+        "관찰 계획은 있지만 수치가 빠졌어요. '방문 횟수 3회 이상'처럼 구체적인 숫자를 더해보세요.",
+        "좋은 시작이에요! '측정' 칸에 '주 1회 10㎡ 조사'처럼 빈도·면적·단위를 함께 적어보세요.",
+        "관찰 대상은 명확해요. 이제 '얼마나 자주' 측정할지 주기(주 1회, 월 1회 등)를 정해보세요."
+      ]},
+      { max:25, msgs:[
+        "수치와 단위까지 갖춰서 현장에서 바로 확인할 수 있어요. 이대로 3단계 체크리스트 항목으로 옮겨보세요.",
+        "현장 검증 계획이 아주 구체적이에요! 이 측정 방법을 그대로 보전 점검표의 '점검 기준'란에 활용해보세요.",
+        "완벽해요! 이 수치 기준이면 누가 측정해도 같은 결과를 얻을 수 있어요.",
+        "측정 방법이 명확하고 재현 가능해요! 이 기준을 모둠 친구들과도 공유해 함께 점검해보세요."
+      ]}
     ],
     conservation: [
-      { max:5, msg:"이 질문이 4대 보전 사례 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요." },
-      { max:10, msg:"사례 유형은 골랐지만 학교 현장과의 연결이 약해요. 구체적인 장소·생물을 한 문장 더 붙여보세요." },
-      { max:15, msg:"보전사례와 학교 현장이 잘 연결됐어요! 이 방향 그대로 3단계 매트릭스 분석에 활용할 수 있어요." }
+      { max:0, msgs:[
+        "이 질문이 4대 보전 사례(멸종위기종 복원 · 생태우수지역 지정 · 외래생물 관리 · 국제협약) 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요."
+      ]},
+      { max:7, msgs:[
+        "사례 유형은 골랐지만 그 사례를 나타내는 낱말이 질문에 없어요. 예) 멸종위기종 복원 → '서식지 보호·개체수 회복', 생태우수지역 지정 → '보호구역·지정', 외래생물 관리 → '외래·방제·교란', 국제협약 → '협약·람사르·기후변화' 중 내가 고른 사례에 맞는 단어를 넣어보세요.",
+        "사례 유형과 질문이 아직 따로예요. 골라둔 사례의 핵심 단어(서식지 보호, 보호구역, 방제, 협약 등)를 한두 개 문장에 포함해보세요.",
+        "사례는 선택했는데 관련성이 잘 안 보여요. 학교 텃밭·생태숲에서 이 사례와 가장 비슷한 장소나 생물을 구체적으로 짚어보세요."
+      ]},
+      { max:11, msgs:[
+        "사례 단어가 한두 개 들어갔어요. 학교 현장(텃밭·생태숲)의 구체적인 장소·생물 이름을 한 문장 더 붙이면 연결이 더 뚜렷해져요.",
+        "보전사례와의 연결이 절반쯤 보여요. 이 사례가 왜 학교 생태공간에도 필요한지 이유를 한 문장 더해보세요.",
+        "사례 관련 단어는 있지만 조금 더 필요해요. 교과서 4대 사례 표(p.30)의 핵심 단어를 하나 더 참고해보세요."
+      ]},
+      { max:15, msgs:[
+        "보전사례와 학교 현장이 잘 연결됐어요! 이 방향 그대로 3단계 매트릭스 분석에 활용할 수 있어요.",
+        "사례 연결이 탄탄해요! 이 질문을 그대로 보전 점검표의 '사례분석-목적/내용'으로 옮겨써도 좋아요.",
+        "보전 가치가 명확하게 드러났어요! 이 사례가 실제로 어떤 효과를 냈는지도 조사해보면 탐구가 더 풍부해질 거예요."
+      ]}
     ]
   };
+  function pickMsg(bank){ return bank.msgs[Math.floor(Math.random()*bank.msgs.length)]; }
 
   var TEMPLATE_LABELS = { cause:"원인-결과", compare:"비교-추론", crisis:"위기-영향" };
 
@@ -1026,9 +1238,11 @@
   var state = {
     selectedCase: null,
     photoData: null,
+    bestPhotoData: null,
     questions: [],
     rules: [],
-    logs: []
+    logs: [],
+    bestQuestions: []
   };
 
   /* ================= Firebase 초기화 & 반 코드 ================= */
@@ -1107,6 +1321,7 @@
     if(unsubQ) unsubQ();
     if(unsubR) unsubR();
     if(unsubL) unsubL();
+    if(unsubB) unsubB();
     var base = db.collection('classes').doc(code);
 
     unsubQ = base.collection('questions').orderBy('createdAt','desc').onSnapshot(function(snap){
@@ -1126,6 +1341,12 @@
       renderLogs();
       setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('실천로그'));
+
+    unsubB = base.collection('bestQuestions').onSnapshot(function(snap){
+      state.bestQuestions = snap.docs.map(docToBestQuestion);
+      renderBestGrid();
+      setConnStatus('🟢 실시간 연결됨', 'ok');
+    }, firestoreErrorHandler('모둠 베스트 질문'));
   }
 
   function logoutClass(){
@@ -1136,7 +1357,8 @@
     if(unsubQ) unsubQ();
     if(unsubR) unsubR();
     if(unsubL) unsubL();
-    unsubQ = unsubR = unsubL = null;
+    if(unsubB) unsubB();
+    unsubQ = unsubR = unsubL = unsubB = null;
 
     currentClassCode = null;
     localStorage.removeItem(CLASS_CODE_KEY);
@@ -1145,12 +1367,15 @@
     state.questions = [];
     state.rules = [];
     state.logs = [];
+    state.bestQuestions = [];
     state.selectedCase = null;
     state.photoData = null;
+    state.bestPhotoData = null;
     renderQuestions();
     renderRules();
     renderLogs();
     renderDashboard();
+    renderBestGrid();
     populateLinkQSelect();
     renderBriefGrid();
     renderTemplates();
@@ -1160,6 +1385,12 @@
     if(qForm) qForm.reset();
     var rForm = document.getElementById('rule-form');
     if(rForm) rForm.reset();
+    var bForm = document.getElementById('best-question-form');
+    if(bForm) bForm.reset();
+    var photoLabel = document.getElementById('q-photo-label');
+    if(photoLabel){ photoLabel.textContent = '사진 선택하기'; var pk = photoLabel.closest('.file-picker'); if(pk) pk.classList.remove('has-file'); }
+    var bestPhotoLabel = document.getElementById('best-photo-label');
+    if(bestPhotoLabel){ bestPhotoLabel.textContent = '사진 선택하기'; var bpk = bestPhotoLabel.closest('.file-picker'); if(bpk) bpk.classList.remove('has-file'); }
 
     setConnStatus('🟡 연결 준비 중...', '');
     showToast('로그아웃했습니다. 새 반 코드를 입력해주세요.');
@@ -1200,6 +1431,7 @@
     if(!initFirebaseIfNeeded()) return;
 
     document.getElementById('teacher-current-label').textContent = code;
+    teacherPage = { q:1, r:1, l:1 };
     if(unsubTQ) unsubTQ();
     if(unsubTR) unsubTR();
     if(unsubTL) unsubTL();
@@ -1223,26 +1455,83 @@
     }, firestoreErrorHandler('교사용 실천로그'));
   }
 
+  // 목록을 페이지 단위로 잘라내고, 페이지 번호가 범위를 벗어나면 마지막 페이지로 보정합니다.
+  function paginate(list, pageKey){
+    var totalPages = Math.max(1, Math.ceil(list.length / TEACHER_PAGE_SIZE));
+    if(teacherPage[pageKey] > totalPages) teacherPage[pageKey] = totalPages;
+    if(teacherPage[pageKey] < 1) teacherPage[pageKey] = 1;
+    var start = (teacherPage[pageKey] - 1) * TEACHER_PAGE_SIZE;
+    return { rows: list.slice(start, start + TEACHER_PAGE_SIZE), page: teacherPage[pageKey], totalPages: totalPages };
+  }
+
+  function renderPager(elId, pageKey, list){
+    var el = document.getElementById(elId);
+    if(!el) return;
+    var totalPages = Math.max(1, Math.ceil(list.length / TEACHER_PAGE_SIZE));
+    if(list.length <= TEACHER_PAGE_SIZE){ el.innerHTML = ''; return; }
+    var page = teacherPage[pageKey];
+    el.innerHTML =
+      '<button type="button" '+(page<=1?'disabled':'')+' onclick="changeTeacherPage(\''+pageKey+'\',-1)">← 이전</button>' +
+      '<span class="pager-label">'+page+' / '+totalPages+' 페이지 (전체 '+list.length+'건)</span>' +
+      '<button type="button" '+(page>=totalPages?'disabled':'')+' onclick="changeTeacherPage(\''+pageKey+'\',1)">다음 →</button>';
+  }
+
+  function changeTeacherPage(pageKey, delta){
+    teacherPage[pageKey] += delta;
+    renderTeacherTables();
+  }
+
   function renderTeacherTables(){
     document.getElementById('teacher-q-count').textContent = teacherState.questions.length + '건';
+    var qPage = paginate(teacherState.questions, 'q');
     var qBody = document.getElementById('teacher-q-body');
-    qBody.innerHTML = teacherState.questions.map(function(q){
+    qBody.innerHTML = qPage.rows.map(function(q){
       return '<tr><td>'+q.team+'</td><td>'+q.author+'</td><td>'+CASE_TYPES[q.caseType].name+'</td>' +
         '<td>'+q.question+'</td><td class="mono">'+q.total+'점</td><td class="mono">'+(q.time||'')+'</td></tr>';
     }).join('') || '<tr><td colspan="6" class="hint" style="padding:14px 8px;">등록된 질문이 없습니다.</td></tr>';
+    renderPager('teacher-q-pager', 'q', teacherState.questions);
 
     document.getElementById('teacher-r-count').textContent = teacherState.rules.length + '개';
+    var rPage = paginate(teacherState.rules, 'r');
     var rBody = document.getElementById('teacher-r-body');
-    rBody.innerHTML = teacherState.rules.map(function(r){
+    rBody.innerHTML = rPage.rows.map(function(r){
       return '<tr><td>'+r.team+'</td><td>'+r.author+'</td><td>'+CASE_TYPES[r.caseType].name+'</td>' +
         '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(r.done?'✅':'-')+'</td><td class="mono">'+(r.checks||0)+'회</td></tr>';
     }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">등록된 점검 항목이 없습니다.</td></tr>';
+    renderPager('teacher-r-pager', 'r', teacherState.rules);
 
     document.getElementById('teacher-l-count').textContent = teacherState.logs.length + '건';
+    var lPage = paginate(teacherState.logs, 'l');
     var lBody = document.getElementById('teacher-l-body');
-    lBody.innerHTML = teacherState.logs.map(function(l){
+    lBody.innerHTML = lPage.rows.map(function(l){
       return '<tr><td class="mono">'+l.date+'</td><td>'+l.team+'</td><td>'+l.rule+'</td><td class="mono">'+l.result+'</td><td><span class="status-pill">'+l.status+'</span></td></tr>';
     }).join('') || '<tr><td colspan="5" class="hint" style="padding:14px 8px;">등록된 실천 로그가 없습니다.</td></tr>';
+    renderPager('teacher-l-pager', 'l', teacherState.logs);
+  }
+
+  function openStudentCountModal(){
+    var code = document.getElementById('teacher-code-input').value.trim();
+    if(!code){ showToast('먼저 조회할 반 코드를 입력하고 조회하세요.', 'error'); return; }
+    document.getElementById('student-count-class-label').textContent = code;
+
+    // 작성자별로 등록 횟수를 집계합니다. (같은 작성자가 다른 모둠으로 기록된 경우를 대비해 가장 최근 모둠을 함께 표시)
+    var counts = {};
+    teacherState.questions.forEach(function(q){
+      var author = (q.author || '이름 없음').trim() || '이름 없음';
+      if(!counts[author]) counts[author] = { count:0, team:q.team };
+      counts[author].count += 1;
+      counts[author].team = q.team;
+    });
+    var rows = Object.keys(counts).map(function(author){
+      return { author:author, team:counts[author].team, count:counts[author].count };
+    }).sort(function(a,b){ return b.count - a.count || a.author.localeCompare(b.author); });
+
+    var body = document.getElementById('student-count-body');
+    body.innerHTML = rows.map(function(r){
+      return '<tr><td>'+r.author+'</td><td>'+r.team+'</td><td class="mono">'+r.count+'회</td></tr>';
+    }).join('') || '<tr><td colspan="3" class="hint" style="padding:14px 8px;">등록된 질문이 없습니다.</td></tr>';
+
+    openModal('student-count-modal');
   }
 
   function exportTeacherCSV(){
@@ -1280,6 +1569,7 @@
   function docToQuestion(d){ var data = d.data(); data.id = d.id; data.time = tsToLabel(data.createdAt); return data; }
   function docToRule(d){ var data = d.data(); data.id = d.id; return data; }
   function docToLog(d){ var data = d.data(); data.id = d.id; return data; }
+  function docToBestQuestion(d){ var data = d.data(); data.team = d.id; return data; }
   function tsToLabel(ts){
     if(!ts || !ts.toDate) return '방금';
     var diffMs = Date.now() - ts.toDate().getTime();
@@ -1300,7 +1590,7 @@
       el.onclick = function(){ selectCase(key); };
       el.title = c.def + ' (' + c.example + ')';
       el.innerHTML =
-        '<div class="brief-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+c.icon+'</svg></div>' +
+        '<div class="brief-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+c.icon+'</svg></div>' +
         '<div class="brief-text"><span class="brief-name">'+c.name+'</span><span class="brief-def">'+c.def+'</span></div>';
       grid.appendChild(el);
     });
@@ -1322,10 +1612,19 @@
     });
   }
 
+  var TARGET_HINTS = {
+    species: "예: 학교 화단 둥지 상자 설치 구역, 딱새",
+    zone: "예: 생태숲 습지 보호구역, 곤충·양서류",
+    invasive: "예: 교내 텃밭 외곽 호박·환삼덩굴 경계 구역",
+    treaty: "예: 학교 텃밭 습지 웅덩이 조성 구역, 곤충·양서류"
+  };
+
   function selectCase(key){
     state.selectedCase = key;
     renderBriefGrid();
     renderTemplates();
+    var targetInput = document.getElementById('q-target');
+    if(targetInput) targetInput.placeholder = TARGET_HINTS[key] || '';
   }
 
   function renderTemplates(){
@@ -1352,9 +1651,8 @@
     document.getElementById('q-char-count').textContent = t.length + '자';
   }
 
-  function handlePhoto(e){
-    var file = e.target.files[0];
-    if(!file) return;
+  // 사진 파일을 읽어 축소·압축한 뒤 onDone(dataURL)로 돌려주는 공용 함수. 사진 등록 UI가 여러 곳(관찰 사진, 모둠 베스트 질문 사진)에서 재사용합니다.
+  function readAndCompressPhoto(file, onDone){
     var reader = new FileReader();
     reader.onload = function(evt){
       var img = new Image();
@@ -1366,8 +1664,7 @@
         canvas.height = Math.max(1, Math.round(img.height * scale));
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        state.photoData = canvas.toDataURL('image/jpeg', 0.6);
-        showToast('관찰 사진이 등록되었습니다. (자동 압축됨)');
+        onDone(canvas.toDataURL('image/jpeg', 0.6));
       };
       img.onerror = function(){ showToast('사진을 읽는 중 문제가 발생했습니다.', 'error'); };
       img.src = evt.target.result;
@@ -1375,13 +1672,32 @@
     reader.readAsDataURL(file);
   }
 
-  function loadSample(){
-    document.getElementById('q-text').value = "텃밭의 호박과 환삼덩굴 경계에서, 환삼덩굴이 계속 번지면 호박의 성장 면적은 어떻게 달라질까? 유전적 변이에 따른 적응력 차이 때문일까?";
-    document.getElementById('q-target').value = "교내 텃밭 외곽 호박·환삼덩굴 경계 구역";
-    document.getElementById('q-metric').value = "매주 1회 두 종의 피복 면적(㎡) 측정";
-    selectCase('invasive');
-    updateCharCount();
-    showToast('A등급 샘플 질문을 불러왔습니다.');
+  function markFilePicked(labelId, fileName){
+    var labelEl = document.getElementById(labelId);
+    if(!labelEl) return;
+    labelEl.textContent = fileName;
+    var pickerEl = labelEl.closest('.file-picker');
+    if(pickerEl) pickerEl.classList.add('has-file');
+  }
+
+  function handlePhoto(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    markFilePicked('q-photo-label', file.name);
+    readAndCompressPhoto(file, function(dataUrl){
+      state.photoData = dataUrl;
+      showToast('관찰 사진이 등록되었습니다. (자동 압축됨)');
+    });
+  }
+
+  function handleBestPhoto(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    markFilePicked('best-photo-label', file.name);
+    readAndCompressPhoto(file, function(dataUrl){
+      state.bestPhotoData = dataUrl;
+      showToast('사진이 등록되었습니다. (자동 압축됨)');
+    });
   }
 
   /* ---------------- Scoring ---------------- */
@@ -1436,7 +1752,15 @@
     pool.forEach(function(k){ if(info[k].ratio < info[lowestKey].ratio){ lowestKey = k; } });
     var bank = FEEDBACK[lowestKey];
     var chosen = bank[info[lowestKey].idx];
-    return { key:lowestKey, msg:chosen.msg, attention: info[lowestKey].ratio < 0.6, mastered: mastered };
+    return { key:lowestKey, msg:pickMsg(chosen), attention: info[lowestKey].ratio < 0.6, mastered: mastered };
+  }
+
+  // 축 하나의 현재 점수에 해당하는 등급 메시지를 돌려줍니다. (세부 점수 패널에서 축마다 개별 코칭을 보여줄 때 사용)
+  function axisTip(key, val){
+    var bank = FEEDBACK[key];
+    var chosen = bank[bank.length - 1];
+    for(var i=0;i<bank.length;i++){ if(val <= bank[i].max){ chosen = bank[i]; break; } }
+    return pickMsg(chosen);
   }
 
   function renderScorePanel(score, total){
@@ -1460,7 +1784,7 @@
     if(total >= 90 || fb.mastered){
       coachBox.className = 'coach-box';
       coachBox.textContent = '🎉 이 질문은 3단계 사례 조사로 바로 넘어갈 준비가 됐어요! ' + fb.msg;
-    } else if(fb.key === 'conservation' && score.conservation <= 5){
+    } else if(fb.key === 'conservation' && score.conservation <= 0){
       coachBox.className = 'coach-box attn';
       coachBox.textContent = '⚠️ ' + fb.msg;
     } else {
@@ -1470,17 +1794,18 @@
 
     var dg = document.getElementById('detail-grid');
     dg.innerHTML =
-      cell('인과성', score.causality, 30) + cell('교과개념', score.concept, 30) +
-      cell('현장검증', score.feasibility, 25) + cell('보전가치', score.conservation, 15);
+      cell('인과성', score.causality, 30, 'causality') + cell('교과개념', score.concept, 30, 'concept') +
+      cell('현장검증', score.feasibility, 25, 'feasibility') + cell('보전가치', score.conservation, 15, 'conservation');
   }
-  function cell(k, v, max){
-    return '<div class="detail-cell"><div class="k">'+k+'</div><div class="v">'+v+'/'+max+'</div></div>';
+  function cell(k, v, max, axisKey){
+    var tip = axisTip(axisKey, v);
+    return '<div class="detail-cell"><div class="row-between"><span class="k">'+k+'</span><span class="v">'+v+'/'+max+'</span></div><div class="tip">'+tip+'</div></div>';
   }
   function toggleDetail(){
     var dg = document.getElementById('detail-grid');
     var label = document.getElementById('detail-toggle-label');
     var show = dg.style.display === 'none';
-    dg.style.display = show ? 'grid' : 'none';
+    dg.style.display = show ? 'flex' : 'none';
     label.textContent = show ? '세부 점수 접기 ▴' : '세부 점수 자세히 보기 ▾';
   }
 
@@ -1577,6 +1902,44 @@
       document.getElementById('r-metric').value = '';
       document.getElementById('r-purpose').value = '';
       document.getElementById('r-content').value = '';
+    }catch(e){
+      console.error(e);
+      showToast('저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  async function submitBestQuestion(){
+    if(!requireClass()) return;
+    var team = document.getElementById('best-team').value;
+    var author = document.getElementById('best-author').value.trim();
+    var text = document.getElementById('best-text').value.trim();
+
+    if(!text){
+      showToast('모둠 베스트 질문 내용을 입력하세요.', 'error');
+      return;
+    }
+
+    var newBest = {
+      author:author, question:text, photo: state.bestPhotoData || null,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    var btn = document.getElementById('best-submit-btn');
+    btn.disabled = true;
+    try{
+      await authReadyPromise;
+      // 모둠 이름을 문서 ID로 사용해 모둠당 베스트 질문이 항상 하나만 유지되도록 합니다. (다시 등록하면 덮어씁니다)
+      await db.collection('classes').doc(currentClassCode).collection('bestQuestions').doc(team).set(newBest);
+      showToast('[' + team + ']의 베스트 질문이 등록되었습니다.');
+      document.getElementById('best-author').value = '';
+      document.getElementById('best-text').value = '';
+      state.bestPhotoData = null;
+      var bestPhotoLabel = document.getElementById('best-photo-label');
+      if(bestPhotoLabel){ bestPhotoLabel.textContent = '사진 선택하기'; var bpk = bestPhotoLabel.closest('.file-picker'); if(bpk) bpk.classList.remove('has-file'); }
+      var bestPhotoInput = document.getElementById('best-photo');
+      if(bestPhotoInput) bestPhotoInput.value = '';
     }catch(e){
       console.error(e);
       showToast('저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
@@ -1751,23 +2114,6 @@
     var pct = state.rules.length ? Math.round(doneCount/state.rules.length*100) : 0;
     document.getElementById('kpi-completion').textContent = pct + '%';
 
-    var bestGrid = document.getElementById('best-questions-grid');
-    bestGrid.innerHTML = '';
-    if(!state.questions.length){
-      bestGrid.innerHTML = '<p class="empty-note">아직 등록된 질문이 없어요.</p>';
-    } else {
-      state.questions.slice().sort(function(a,b){return b.total-a.total;}).slice(0,3).forEach(function(q){
-        var el = document.createElement('div');
-        el.className = 'q-mini-card';
-        el.onclick = function(){ switchView('matrix'); setTimeout(function(){ openQuestionModal(q.id); }, 50); };
-        el.innerHTML =
-          '<div class="row-between"><span class="team-badge">'+q.team+'</span><span class="score-badge mono">'+q.total+'점</span></div>' +
-          '<p class="q-mini-text">"'+q.question+'"</p>' +
-          '<div class="row-between"><span class="hint">'+q.author+'</span><span class="hint" style="color:var(--accent); font-weight:700;">'+CASE_TYPES[q.caseType].name+'</span></div>';
-        bestGrid.appendChild(el);
-      });
-    }
-
     updateCharts();
   }
 
@@ -1781,10 +2127,48 @@
     document.getElementById('m-target').textContent = q.target;
     document.getElementById('m-text').textContent = '"' + q.question + '"';
     document.getElementById('m-detail').innerHTML =
-      cell('인과성', q.score.causality, 30) + cell('교과개념', q.score.concept, 30) +
-      cell('현장검증', q.score.feasibility, 25) + cell('보전가치', q.score.conservation, 15);
+      cell('인과성', q.score.causality, 30, 'causality') + cell('교과개념', q.score.concept, 30, 'concept') +
+      cell('현장검증', q.score.feasibility, 25, 'feasibility') + cell('보전가치', q.score.conservation, 15, 'conservation');
     document.getElementById('m-coach').textContent = q.coach;
     openModal('question-modal');
+  }
+
+  var TEAM_ORDER = ['1모둠','2모둠','3모둠','4모둠','5모둠','6모둠'];
+
+  function renderBestGrid(){
+    var countEl = document.getElementById('best-questions-count');
+    if(countEl) countEl.textContent = state.bestQuestions.length + '개';
+    var bestGrid = document.getElementById('best-questions-grid');
+    if(!bestGrid) return;
+    bestGrid.innerHTML = '';
+    if(!state.bestQuestions.length){
+      bestGrid.innerHTML = '<p class="empty-note">아직 등록된 모둠 베스트 질문이 없어요. 위 입력란에서 모둠별로 등록해보세요.</p>';
+      return;
+    }
+    state.bestQuestions.slice().sort(function(a,b){
+      return TEAM_ORDER.indexOf(a.team) - TEAM_ORDER.indexOf(b.team);
+    }).forEach(function(bq){
+      var el = document.createElement('div');
+      el.className = 'q-mini-card';
+      el.onclick = function(){ openBestModal(bq.team); };
+      el.innerHTML =
+        '<div class="row-between"><span class="team-badge">'+bq.team+'</span><span class="hint">🏆 모둠 베스트'+(bq.photo ? ' · 📷' : '')+'</span></div>' +
+        '<p class="q-mini-text">"'+bq.question+'"</p>' +
+        (bq.author ? '<div class="row-between"><span class="hint">'+bq.author+'</span></div>' : '');
+      bestGrid.appendChild(el);
+    });
+  }
+
+  function openBestModal(team){
+    var bq = state.bestQuestions.find(function(item){ return item.team === team; });
+    if(!bq) return;
+    document.getElementById('bm-team').textContent = bq.team;
+    document.getElementById('bm-author').textContent = bq.author || '';
+    document.getElementById('bm-text').textContent = '"' + bq.question + '"';
+    var photoEl = document.getElementById('bm-photo');
+    if(bq.photo){ photoEl.src = bq.photo; photoEl.hidden = false; }
+    else { photoEl.src = ''; photoEl.hidden = true; }
+    openModal('best-modal');
   }
 
   function openModal(id){ document.getElementById(id).hidden = false; }
@@ -1864,23 +2248,40 @@
 
   /* ---------------- Nav ---------------- */
 
+  var ALL_VIEWS = ['dashboard','matrix','best','checker','records','teacher'];
+
   window.switchView = function(view){
     if(view === 'teacher' && !teacherAuthed){ openTeacherGate(); return; }
-    ['dashboard','matrix','checker','records','teacher'].forEach(function(v){
+    ALL_VIEWS.forEach(function(v){
       var sec = document.getElementById('view-'+v);
       if(sec) sec.classList.toggle('active', v===view);
       var btn = document.querySelector('#main-tabs button[data-view="'+v+'"]');
       if(btn) btn.classList.toggle('active', v===view);
     });
+    var headerBackBtn = document.getElementById('header-back-student-btn');
+    if(headerBackBtn) headerBackBtn.hidden = view !== 'teacher';
     if(view === 'checker') populateLinkQSelect();
+    if(view === 'teacher') showTeacherPanel('questions');
   };
+
+  // 교사용 페이지 안의 3개 목록(질문/점검표/로그) 중 하나만 보여주는 탭 전환
+  function showTeacherPanel(key){
+    ['questions','rules','logs'].forEach(function(k){
+      var panel = document.getElementById('teacher-panel-'+k);
+      if(panel) panel.hidden = (k !== key);
+      var tab = document.getElementById('teacher-tab-'+k);
+      if(tab) tab.classList.toggle('active', k === key);
+    });
+  }
+  window.showTeacherPanel = showTeacherPanel;
 
   window.selectCase = selectCase;
   window.updateCharCount = updateCharCount;
   window.handlePhoto = handlePhoto;
-  window.loadSample = loadSample;
+  window.handleBestPhoto = handleBestPhoto;
   window.submitQuestion = submitQuestion;
   window.submitRule = submitRule;
+  window.submitBestQuestion = submitBestQuestion;
   window.onLinkQuestionChange = onLinkQuestionChange;
   window.updatePurposeCaseName = updatePurposeCaseName;
   window.toggleRuleCheck = toggleRuleCheck;
@@ -1899,6 +2300,8 @@
   window.confirmTeacherGate = confirmTeacherGate;
   window.loadTeacherClass = loadTeacherClass;
   window.exportTeacherCSV = exportTeacherCSV;
+  window.openStudentCountModal = openStudentCountModal;
+  window.changeTeacherPage = changeTeacherPage;
 
   /* ---------------- Toast ---------------- */
 
@@ -1907,8 +2310,8 @@
     var t = document.createElement('div');
     t.className = 'toast' + (type==='error' ? ' error' : '');
     var icon = type==='error'
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg>';
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 13 4 4L19 7"/></svg>';
     t.innerHTML = icon + '<span>'+msg+'</span>';
     container.appendChild(t);
     setTimeout(function(){ t.remove(); }, 3000);
