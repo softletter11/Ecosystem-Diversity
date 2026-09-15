@@ -631,6 +631,19 @@
           </select>
         </div>
         <div>
+          <div class="row-between" style="margin-bottom:4px;">
+            <label class="field-label" style="margin:0;" for="best-case">보전사례 유형</label>
+            <span class="hint">위에서 원본 질문을 고르면 자동으로 채워져요. 직접 입력할 때는 꼭 골라주세요 — 안 고르면 '보전가치' 점수가 0점으로 나와요.</span>
+          </div>
+          <select id="best-case">
+            <option value="">선택 안 함</option>
+            <option value="species">멸종위기종 복원</option>
+            <option value="zone">생태우수지역 지정</option>
+            <option value="invasive">외래생물 관리</option>
+            <option value="treaty">국제협약</option>
+          </select>
+        </div>
+        <div>
           <label class="field-label" for="best-text">우리 모둠 베스트 질문</label>
           <textarea id="best-text" rows="2" placeholder="모둠 친구들이 등록한 질문 중 가장 잘 썼다고 생각하는 것을 그대로 옮겨 적어보세요."></textarea>
         </div>
@@ -2123,11 +2136,11 @@
       return;
     }
 
-    // 원본 질문을 골랐다면 사례유형·측정기준은 그 질문에서 가져오되, 점수는 지금 실제로
-    // 등록하는 문장(수정했다면 수정한 문장) 기준으로 다시 채점해서 저장합니다.
-    // 이렇게 해야 원본을 그대로 옮겼든, 더 다듬어서 수정했든 항상 "지금 등록한 질문"에 대한 피드백이 나옵니다.
+    // 사례유형은 이 폼의 '보전사례 유형' 선택을 우선 사용합니다(원본 질문을 고르면 자동으로 채워지지만
+    // 직접 골라서 바꿀 수도 있어요). 측정기준은 원본 질문이 있으면 거기서 가져옵니다.
+    // 점수는 지금 실제로 등록하는 문장(수정했다면 수정한 문장) 기준으로 다시 채점해서 저장합니다.
     var sourceQ = linkedQ ? state.questions.find(function(q){ return q.id === linkedQ; }) : null;
-    var caseType = sourceQ ? sourceQ.caseType : null;
+    var caseType = document.getElementById('best-case').value || null;
     var metric = sourceQ ? sourceQ.metric : '';
     var freshScore = scoreQuestion(text, metric, caseType);
     var freshTotal = freshScore.causality + freshScore.concept + freshScore.feasibility + freshScore.conservation;
@@ -2156,6 +2169,7 @@
       document.getElementById('best-author').value = '';
       document.getElementById('best-text').value = '';
       document.getElementById('best-link-q').value = '';
+      document.getElementById('best-case').value = '';
       state.bestPhotoData = null;
       var bestPhotoLabel = document.getElementById('best-photo-label');
       if(bestPhotoLabel){ bestPhotoLabel.textContent = '사진 선택하기'; var bpk = bestPhotoLabel.closest('.file-picker'); if(bpk) bpk.classList.remove('has-file'); }
@@ -2556,6 +2570,8 @@
     var q = state.questions.find(function(item){ return item.id === id; });
     if(!q) return;
     document.getElementById('best-text').value = q.question;
+    var caseSel = document.getElementById('best-case');
+    if(caseSel) caseSel.value = q.caseType || '';
     showToast(q.team + '의 질문을 불러왔습니다. Bio-Score 피드백도 함께 저장됩니다.');
   }
 
