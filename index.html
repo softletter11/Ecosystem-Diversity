@@ -303,12 +303,12 @@
   @media (max-width:420px){ .brief-grid{ grid-template-columns:minmax(0,1fr); } }
   .brief-card{
     text-align:left; cursor:pointer; border-radius:11px; padding:9px 10px;
-    border:1px solid var(--border); background:var(--surface);
+    border:1px solid var(--border); background:var(--surface-alt);
     display:flex; flex-direction:row; align-items:flex-start; gap:8px;
     transition:border-color .15s, background .15s;
     min-width:0; max-width:100%; overflow:hidden;
   }
-  .brief-card:hover{ border-color:var(--border-strong); }
+  .brief-card:hover{ border-color:var(--border-strong); background:var(--accent-soft-hover); }
   .brief-card.selected{ border-color:var(--accent); background:var(--accent-soft); }
   .brief-icon{ width:24px; height:24px; border-radius:7px; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
   .brief-card.selected .brief-icon{ background:var(--accent); color:var(--accent-ink); }
@@ -414,6 +414,10 @@
   .detail-cell .k{ font-size:11px; color:var(--ink-faint); font-weight:600; }
   .detail-cell .v{ font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:600; color:var(--ink); }
   .detail-cell .tip{ font-size:11.5px; color:var(--ink-muted); line-height:1.5; }
+
+  .best-comments-section{ margin-top:18px; border-top:1px solid var(--border); padding-top:14px; }
+  .best-comment-item{ background:var(--surface-alt); border:1px solid var(--border); border-radius:9px; padding:9px 11px; font-size:12.5px; }
+  .best-comment-item p{ margin:4px 0 0; line-height:1.5; }
 
   /* ---------- Archive / list cards ---------- */
   .archive-scroll{ max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:9px; padding-right:2px; }
@@ -619,6 +623,12 @@
             <label class="field-label" for="best-author">입력자</label>
             <input type="text" id="best-author" placeholder="예: 10412 김부광">
           </div>
+        </div>
+        <div>
+          <label class="field-label" for="best-link-q">베스트로 뽑을 원본 질문 선택 (선택하면 아래 내용이 자동으로 채워져요. 그대로 등록해도, 더 다듬어서 수정해서 등록해도 됩니다 — 실제로 등록한 문장 기준으로 Bio-Score 피드백이 계산돼요)</label>
+          <select id="best-link-q" onchange="onBestLinkQuestionChange()">
+            <option value="">— 아카이브에서 원본 질문을 선택하세요 —</option>
+          </select>
         </div>
         <div>
           <label class="field-label" for="best-text">우리 모둠 베스트 질문</label>
@@ -1117,6 +1127,7 @@
       <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
         <span class="team-badge" id="bm-team"></span>
         <span id="bm-author" style="font-size:12px; font-weight:600;"></span>
+        <span class="q-cat-badge" id="bm-cat"></span>
       </div>
       <button class="icon-btn" onclick="closeModal('best-modal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -1124,6 +1135,17 @@
     </div>
     <img id="bm-photo" class="modal-photo" src="" alt="모둠 베스트 질문 사진" hidden>
     <div class="modal-q-box" id="bm-text"></div>
+    <div class="detail-grid" id="bm-detail"></div>
+    <div class="coach-box" id="bm-coach" style="margin-top:12px;"></div>
+
+    <div class="best-comments-section">
+      <p class="field-label" style="margin-bottom:8px;">💬 이 질문 다듬어보기</p>
+      <p class="hint" style="margin-bottom:8px;">위 피드백을 참고해서, 이 질문을 더 좋은 문장으로 다듬은 버전을 댓글로 남겨보세요. 남긴 댓글은 아래에 계속 쌓입니다.</p>
+      <input type="text" id="bm-comment-author" placeholder="학번·이름 (예: 10412 김부광)">
+      <textarea id="bm-comment-text" rows="2" style="margin-top:8px;" placeholder="다듬은 질문을 적어보세요."></textarea>
+      <button type="button" class="btn-primary" id="bm-comment-submit-btn" style="width:auto; margin-top:8px; padding:8px 16px;" onclick="submitBestComment()">댓글로 등록</button>
+      <div id="bm-comments-list" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
   </div>
 </div>
 
@@ -1447,7 +1469,7 @@
 
     unsubQ = base.collection('questions').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.questions = snap.docs.map(docToQuestion);
-      renderQuestions(); renderDashboard(); populateLinkQSelect();
+      renderQuestions(); renderDashboard(); populateLinkQSelect(); populateBestLinkQSelect();
       setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('탐구질문'));
 
@@ -1498,6 +1520,7 @@
     renderDashboard();
     renderBestGrid();
     populateLinkQSelect();
+    populateBestLinkQSelect();
     populateLogRuleSelect();
     renderBriefGrid();
     renderTemplates();
@@ -2009,6 +2032,11 @@
       showToast('질문, 작성자, 관찰 위치를 모두 입력해주세요.', 'error');
       return;
     }
+    if(!isValidAuthorFormat(author)){
+      alert('작성자 학번과 이름을 정확한 형식으로 입력해주세요.\n예: 10412 김부광');
+      document.getElementById('q-author').focus();
+      return;
+    }
 
     // 점수 계산과 화면 표시는 Firebase 연결 상태와 무관하게 항상 즉시 이루어집니다.
     var score = scoreQuestion(text, metric, state.selectedCase);
@@ -2088,14 +2116,33 @@
     var team = document.getElementById('best-team').value;
     var author = document.getElementById('best-author').value.trim();
     var text = document.getElementById('best-text').value.trim();
+    var linkedQ = document.getElementById('best-link-q').value || null;
 
     if(!text){
       showToast('모둠 베스트 질문 내용을 입력하세요.', 'error');
       return;
     }
 
+    // 원본 질문을 골랐다면 사례유형·측정기준은 그 질문에서 가져오되, 점수는 지금 실제로
+    // 등록하는 문장(수정했다면 수정한 문장) 기준으로 다시 채점해서 저장합니다.
+    // 이렇게 해야 원본을 그대로 옮겼든, 더 다듬어서 수정했든 항상 "지금 등록한 질문"에 대한 피드백이 나옵니다.
+    var sourceQ = linkedQ ? state.questions.find(function(q){ return q.id === linkedQ; }) : null;
+    var caseType = sourceQ ? sourceQ.caseType : null;
+    var metric = sourceQ ? sourceQ.metric : '';
+    var freshScore = scoreQuestion(text, metric, caseType);
+    var freshTotal = freshScore.causality + freshScore.concept + freshScore.feasibility + freshScore.conservation;
+    var freshCoach = pickFeedback(freshScore).msg;
+
     var newBest = {
       author:author, question:text, photo: state.bestPhotoData || null,
+      linkedQuestionId: linkedQ,
+      caseType: caseType,
+      metric: sourceQ ? sourceQ.metric : null,
+      target: sourceQ ? sourceQ.target : null,
+      score: freshScore,
+      total: freshTotal,
+      coach: freshCoach,
+      comments: [],
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -2108,6 +2155,7 @@
       showToast('[' + team + ']의 베스트 질문이 등록되었습니다.');
       document.getElementById('best-author').value = '';
       document.getElementById('best-text').value = '';
+      document.getElementById('best-link-q').value = '';
       state.bestPhotoData = null;
       var bestPhotoLabel = document.getElementById('best-photo-label');
       if(bestPhotoLabel){ bestPhotoLabel.textContent = '사진 선택하기'; var bpk = bestPhotoLabel.closest('.file-picker'); if(bpk) bpk.classList.remove('has-file'); }
@@ -2267,15 +2315,30 @@
 
   /* ---------------- Rendering: lists ---------------- */
 
+  function latestQuestionsByAuthor(){
+    // state.questions는 createdAt 내림차순(최신순)으로 정렬되어 있으므로,
+    // 작성자별로 처음 만나는 항목이 곧 그 학생의 가장 최근 등록 글입니다.
+    var seen = {};
+    var result = [];
+    state.questions.forEach(function(q){
+      var key = (q.author || '').trim() || ('__no_author__' + q.id);
+      if(seen[key]) return;
+      seen[key] = true;
+      result.push(q);
+    });
+    return result;
+  }
+
   function renderQuestions(){
     var container = document.getElementById('questions-list');
     container.innerHTML = '';
-    document.getElementById('archive-count').textContent = state.questions.length + '건';
-    if(!state.questions.length){
+    var latest = latestQuestionsByAuthor();
+    document.getElementById('archive-count').textContent = latest.length + '건';
+    if(!latest.length){
       container.innerHTML = '<p class="empty-note">아직 등록된 질문이 없어요. 왼쪽에서 첫 질문을 등록해보세요!</p>';
       return;
     }
-    state.questions.forEach(function(q){
+    latest.forEach(function(q){
       var el = document.createElement('div');
       el.className = 'q-card';
       el.onclick = function(){ openQuestionModal(q.id); };
@@ -2395,13 +2458,119 @@
   function openBestModal(team){
     var bq = state.bestQuestions.find(function(item){ return item.team === team; });
     if(!bq) return;
+    state.currentBestModalTeam = team;
     document.getElementById('bm-team').textContent = bq.team;
     document.getElementById('bm-author').textContent = bq.author || '';
     document.getElementById('bm-text').textContent = '"' + bq.question + '"';
     var photoEl = document.getElementById('bm-photo');
     if(bq.photo){ photoEl.src = bq.photo; photoEl.hidden = false; }
     else { photoEl.src = ''; photoEl.hidden = true; }
+
+    // 원본 질문에서 그대로 가져온 채점 결과가 있으면 그것을 쓰고, 없으면 현재 텍스트로 즉석에서 채점해서 보여줍니다.
+    var score, coachText;
+    if(bq.score){
+      score = bq.score;
+      coachText = bq.coach || '';
+    }else{
+      score = scoreQuestion(bq.question, bq.metric || '', bq.caseType || null);
+      coachText = pickFeedback(score).msg;
+    }
+    var catEl = document.getElementById('bm-cat');
+    if(bq.caseType && CASE_TYPES[bq.caseType]){
+      catEl.textContent = CASE_TYPES[bq.caseType].name;
+      catEl.hidden = false;
+    }else{
+      catEl.textContent = '';
+      catEl.hidden = true;
+    }
+    document.getElementById('bm-detail').innerHTML =
+      cell('인과성', score.causality, 30, 'causality') + cell('교과개념', score.concept, 30, 'concept') +
+      cell('현장검증', score.feasibility, 25, 'feasibility') + cell('보전가치', score.conservation, 15, 'conservation');
+    document.getElementById('bm-coach').textContent = coachText;
+
+    document.getElementById('bm-comment-author').value = '';
+    document.getElementById('bm-comment-text').value = '';
+    renderBestComments(bq.comments || []);
+
     openModal('best-modal');
+  }
+
+  function renderBestComments(comments){
+    var container = document.getElementById('bm-comments-list');
+    if(!container) return;
+    if(!comments || !comments.length){
+      container.innerHTML = '<p class="empty-note">아직 댓글이 없어요. 첫 의견을 남겨보세요!</p>';
+      return;
+    }
+    var sorted = comments.slice().sort(function(a,b){ return (a.createdAt||0) - (b.createdAt||0); });
+    container.innerHTML = sorted.map(function(c){
+      var timeLabel = c.createdAt ? new Date(c.createdAt).toLocaleString('ko-KR', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+      return '<div class="best-comment-item"><div class="row-between"><span style="font-weight:700;">'+escapeHtml(c.author||'익명')+'</span><span class="hint mono">'+timeLabel+'</span></div><p>'+escapeHtml(c.text)+'</p></div>';
+    }).join('');
+  }
+
+  async function submitBestComment(){
+    var team = state.currentBestModalTeam;
+    if(!team) return;
+    if(!requireClass()) return;
+    var author = document.getElementById('bm-comment-author').value.trim();
+    var text = document.getElementById('bm-comment-text').value.trim();
+    if(!text){
+      alert('다듬은 질문 내용을 입력해주세요.');
+      return;
+    }
+    if(author && !isValidAuthorFormat(author)){
+      alert('학번과 이름을 정확한 형식으로 입력해주세요.\n예: 10412 김부광');
+      return;
+    }
+    var btn = document.getElementById('bm-comment-submit-btn');
+    btn.disabled = true;
+    try{
+      await authReadyPromise;
+      var docRef = db.collection('classes').doc(currentClassCode).collection('bestQuestions').doc(team);
+      await docRef.update({
+        comments: firebase.firestore.FieldValue.arrayUnion({ author: author || '익명', text: text, createdAt: Date.now() })
+      });
+      document.getElementById('bm-comment-text').value = '';
+      showToast('댓글로 등록되었습니다.');
+      var fresh = await docRef.get();
+      if(fresh.exists){
+        var data = fresh.data();
+        data.team = team;
+        var idx = state.bestQuestions.findIndex(function(b){ return b.team === team; });
+        if(idx >= 0) state.bestQuestions[idx] = data; else state.bestQuestions.push(data);
+        renderBestComments(data.comments || []);
+      }
+    }catch(e){
+      console.error(e);
+      showToast('댓글 저장에 실패했습니다. 반 코드와 인터넷 연결, Firestore 보안 규칙을 확인하세요.', 'error');
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  function onBestLinkQuestionChange(){
+    var sel = document.getElementById('best-link-q');
+    var id = sel.value;
+    if(!id) return;
+    var q = state.questions.find(function(item){ return item.id === id; });
+    if(!q) return;
+    document.getElementById('best-text').value = q.question;
+    showToast(q.team + '의 질문을 불러왔습니다. Bio-Score 피드백도 함께 저장됩니다.');
+  }
+
+  function populateBestLinkQSelect(){
+    var sel = document.getElementById('best-link-q');
+    if(!sel) return;
+    var current = sel.value;
+    sel.innerHTML = '<option value="">— 아카이브에서 원본 질문을 선택하세요 —</option>';
+    state.questions.forEach(function(q){
+      var opt = document.createElement('option');
+      opt.value = q.id;
+      opt.textContent = '[' + q.team + '] ' + q.question.slice(0,28) + '…';
+      sel.appendChild(opt);
+    });
+    sel.value = current;
   }
 
   function openModal(id){ document.getElementById(id).hidden = false; }
@@ -2411,6 +2580,11 @@
     return String(s==null?'':s).replace(/[&<>"']/g, function(c){
       return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
     });
+  }
+
+  // "10412 김부광"처럼 학번(숫자) + 공백 + 이름이 함께 있는지 검사합니다.
+  function isValidAuthorFormat(author){
+    return /^\d{3,10}\s+\S+/.test((author || '').trim());
   }
 
   function loadGrowthRecord(){
@@ -2593,6 +2767,7 @@
     var headerBackBtn = document.getElementById('header-back-student-btn');
     if(headerBackBtn) headerBackBtn.hidden = view !== 'teacher';
     if(view === 'checker') populateLinkQSelect();
+    if(view === 'best') populateBestLinkQSelect();
     if(view === 'records'){ populateLogRuleSelect(); setDefaultLogDate(); }
     if(view === 'teacher') showTeacherPanel('questions');
   };
@@ -2615,6 +2790,8 @@
   window.submitQuestion = submitQuestion;
   window.submitRule = submitRule;
   window.submitBestQuestion = submitBestQuestion;
+  window.onBestLinkQuestionChange = onBestLinkQuestionChange;
+  window.submitBestComment = submitBestComment;
   window.onLinkQuestionChange = onLinkQuestionChange;
   window.updatePurposeCaseName = updatePurposeCaseName;
   window.toggleRuleCheck = toggleRuleCheck;
@@ -2667,6 +2844,7 @@
     renderLogs();
     renderDashboard();
     populateLinkQSelect();
+    populateBestLinkQSelect();
     populateLogRuleSelect();
     setDefaultLogDate();
     updateCharCount();
