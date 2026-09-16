@@ -1199,9 +1199,9 @@
       </button>
     </div>
     <p class="hint" style="margin-bottom:12px; line-height:1.6; font-size:12px;">
-      선생님이 안내한 반 코드를 입력하세요. 같은 반 코드를 입력한 친구들의 질문·점검표·실천 기록이 실시간으로 함께 모이고, 나중에 다시 접속해도 그대로 이어서 볼 수 있어요. (예: 3-2, class2026b)
+      선생님이 안내한 반 코드를 입력하세요. 같은 반 코드를 입력한 친구들의 질문·점검표·실천 기록이 실시간으로 함께 모이고, 나중에 다시 접속해도 그대로 이어서 볼 수 있어요. (1반은 101, 2반은 102 ... 형식으로 입력하세요)
     </p>
-    <input type="text" id="gate-code-input" placeholder="반 코드 입력 (예: 3-2)" style="margin-bottom:12px;">
+    <input type="text" id="gate-code-input" placeholder="반 코드 입력 (예: 1반 → 101)" inputmode="numeric" style="margin-bottom:12px;">
     <button type="button" class="btn-primary" onclick="confirmClassGate()">시작하기</button>
     <p class="hint" id="gate-error" style="margin-top:10px; color:var(--critical); display:none;"></p>
   </div>
@@ -1471,15 +1471,22 @@
     if(!currentClassCode) return; // 최초 접속 시에는 반드시 코드를 입력해야 함
     closeModal('class-gate-modal');
   }
+  // 반 코드 형식: 1반→101, 2반→102 ... 처럼 "1" + 두 자리 반 번호(01~99)로만 입력하도록 강제합니다.
+  var CLASS_CODE_PATTERN = /^1\d{2}$/;
   function confirmClassGate(){
     var raw = document.getElementById('gate-code-input').value.trim();
-    var code = raw.replace(/[\/\.\#\$\[\]\s]+/g, '-').slice(0, 40);
-    if(!code){
-      var errEl = document.getElementById('gate-error');
+    var errEl = document.getElementById('gate-error');
+    if(!raw){
       errEl.textContent = '반 코드를 입력해주세요.';
       errEl.style.display = 'block';
       return;
     }
+    if(!CLASS_CODE_PATTERN.test(raw) || raw === '100'){
+      errEl.textContent = '반 코드 형식이 올바르지 않아요. 1반은 101, 2반은 102 ... 형식의 숫자 3자리로 입력해주세요.';
+      errEl.style.display = 'block';
+      return;
+    }
+    var code = raw;
     startClass(code);
     closeModal('class-gate-modal');
   }
