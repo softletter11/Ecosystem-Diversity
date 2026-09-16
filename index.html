@@ -1315,89 +1315,96 @@
   // 교과서 20~29쪽 핵심 개념어 (구체적 피드백에 인용)
   var CONCEPT_HINTS = ["변이","종다양성","유전적 다양성","생태계다양성","먹이그물","생산자","소비자","자연선택","적응","개체군","군집","서식지","개체수"];
 
+  // ---- 개인화 피드백용 헬퍼: 학생이 실제로 쓴 문장/단어를 인용해서 코칭 문구를 만듭니다. ----
+  function snippet(text, len){
+    text = (text || '').trim();
+    if(!text) return '';
+    if(text.length <= len) return text;
+    return text.slice(0, len) + '…';
+  }
+  function findFirstHit(text, words){
+    text = text || '';
+    for(var i=0;i<words.length;i++){ if(text.indexOf(words[i]) !== -1) return words[i]; }
+    return null;
+  }
+  function firstMissing(text, words){
+    text = text || '';
+    for(var i=0;i<words.length;i++){ if(text.indexOf(words[i]) === -1) return words[i]; }
+    return words[0];
+  }
+
   var FEEDBACK = {
     causality: [
-      { max:10, msgs:[
-        "아직 인과어가 없어요. '(조건)을 하면 (결과)는 어떻게 될까?'처럼 원인이 되는 조건을 문장 앞에 먼저 써보세요.",
-        "지금은 관찰 대상만 적혀 있어요. '만약 ~라면', '~때문에' 같은 표현으로 원인을 먼저 제시해보세요.",
-        "사실 확인형 질문에 머물러 있어요. '그 결과 ~은 얼마나 늘어날까(줄어들까)?'처럼 결과를 묻는 문장으로 바꿔보세요.",
-        "원인 없이 결과만 궁금해하고 있어요. 그 결과가 '무엇 때문에' 나타나는지부터 문장에 넣어보세요."
-      ]},
-      { max:20, msgs:[
-        "원인과 결과는 있지만 두 문장이 따로 놀아요. '그 결과', '그러면' 같은 연결어로 하나의 흐름으로 이어보세요.",
-        "인과관계가 드러나긴 하지만 다소 막연해요. 무엇이 늘어나거나 줄어드는지 대상을 구체적으로 짚어보세요.",
-        "조건과 결과는 있는데 결과 표현이 약해요. '늘어날까?', '줄어들까?', '달라질까?'처럼 변화의 방향을 분명히 드러내보세요.",
-        "인과 구조가 절반만 보여요. 조건절('~하면')과 결과절('~할까?')을 한 문장 안에 함께 넣어 완성해보세요."
-      ]},
-      { max:30, msgs:[
-        "원인→결과 흐름이 뚜렷해요! 이 인과관계를 확인하려면 무엇을 측정할지도 함께 생각해보세요.",
-        "인과관계가 명확하게 드러났어요! 이 변화가 '왜' 일어나는지 그 이유가 되는 개념까지 한 문장 덧붙이면 더 좋아요.",
-        "훌륭한 인과 구조예요! 이 결과가 다른 생물이나 먹이그물 전체에 미치는 영향까지 확장해보면 탐구가 더 깊어져요.",
-        "원인과 결과를 논리적으로 잘 연결했어요! 이제 이 결과를 어떤 수치로 확인할 수 있을지 구체화해보세요."
-      ]}
+      { max:10, build:function(ctx){
+        return '지금 질문 "' + snippet(ctx.text, 40) + '"에는 인과어가 아직 안 보여요. 문장 맨 앞에 "' + firstMissing(ctx.text, CAUSALITY_WORDS) + '"를 넣어서 \'(조건)을 하면 (결과)는 어떻게 될까?\' 형태로 바꿔보세요.';
+      }},
+      { max:20, build:function(ctx){
+        var hit = findFirstHit(ctx.text, CAUSALITY_WORDS);
+        var need = firstMissing(ctx.text, CAUSALITY_WORDS);
+        return '"' + hit + '"라는 인과어는 잘 넣었어요! 하지만 "' + snippet(ctx.text, 40) + '"만으로는 원인과 결과가 아직 느슨해요. "' + need + '" 같은 표현을 하나 더 이어붙여 조건절과 결과절을 한 문장으로 완성해보세요.';
+      }},
+      { max:30, build:function(ctx){
+        var hit = findFirstHit(ctx.text, CAUSALITY_WORDS);
+        return '"' + hit + '"로 원인→결과 흐름을 뚜렷하게 드러냈어요! 이제 "' + snippet(ctx.text, 30) + '"의 결과를 확인하려면 무엇을 측정할지(현장검증)까지 이어서 써보면 더 좋아요.';
+      }}
     ],
     concept: [
-      { max:10, msgs:[
-        "교과서 개념어가 아직 안 보여요. 20~29쪽의 '변이', '종다양성', '유전적 다양성', '생태계다양성' 중 하나를 질문에 넣어보세요.",
-        "일상어로만 쓰여 있어요. '개체수', '서식지', '생산자', '소비자' 같은 교과 개념어를 최소 한 개 이상 사용해보세요.",
-        "지금 문장에는 생물학 용어가 빠져 있어요. '먹이그물', '자연선택', '적응', '군집', '개체군' 중 관찰 내용에 맞는 것을 골라보세요.",
-        "개념어 없이 현상만 묘사하고 있어요. 이 현상을 교과서 용어로 바꾸면 어떤 개념이 될지 먼저 떠올려보세요."
-      ]},
-      { max:20, msgs:[
-        "개념어를 사용했지만 뜻이 정확한지 확인해보세요. '변이'는 같은 종 안에서 형질이 다르게 나타나는 것, '적응'은 환경에 맞게 살아남는 능력을 뜻해요.",
-        "개념어가 하나 있지만 조금 더 필요해요. '유전적 다양성'과 '종다양성'의 차이를 떠올리며 문장을 보완해보세요.",
-        "개념어는 있는데 관찰 대상과 연결이 약해요. '먹이그물 속에서 이 생물은 생산자일까, 소비자일까?'처럼 위치를 분명히 해보세요.",
-        "개념 사용은 좋지만 한 가지뿐이에요. '개체군'과 '군집'처럼 관련된 개념 하나를 더 연결해서 설명해보세요."
-      ]},
-      { max:30, msgs:[
-        "교과 개념어를 정확하게 사용했어요! 이 개념이 4대 보전 사례(멸종위기종 복원 등)와 어떻게 연결되는지도 생각해보세요.",
-        "개념 사용이 탄탄해요! 여기에 '먹이그물'이나 '생태계다양성' 같은 상위 개념까지 연결하면 탐구 수준이 한층 올라가요.",
-        "정확한 개념어예요! 이 개념을 학교 생태공간(텃밭·생태숲)의 실제 사례와 연결해서 설명해보면 더 좋아요.",
-        "개념어 사용이 훌륭해요! '변이'나 '자연선택'처럼 원인을 설명할 수 있는 개념까지 곁들이면 인과성 점수도 함께 오를 거예요."
-      ]}
+      { max:10, build:function(ctx){
+        return '"' + snippet(ctx.text, 40) + '"에는 교과서 개념어가 아직 안 보여요. 20~29쪽의 "' + firstMissing(ctx.text, CONCEPT_HINTS) + '"를 문장에 넣어 현상을 교과 용어로 표현해보세요.';
+      }},
+      { max:20, build:function(ctx){
+        var hit = findFirstHit(ctx.text, CONCEPT_WORDS);
+        var need = firstMissing(ctx.text, CONCEPT_HINTS);
+        return '"' + hit + '" 개념을 잘 사용했어요! 여기에 "' + need + '"처럼 관련된 개념을 하나 더 연결하면 "' + snippet(ctx.text, 30) + '"의 설명이 훨씬 탄탄해져요.';
+      }},
+      { max:30, build:function(ctx){
+        var hit = findFirstHit(ctx.text, CONCEPT_WORDS);
+        return '"' + hit + '" 같은 교과 개념어를 정확히 사용했어요! 이 개념을 4대 보전 사례(멸종위기종 복원 등)나 학교 생태공간의 실제 사례와 연결해서 "' + snippet(ctx.text, 30) + '"를 확장해보세요.';
+      }}
     ],
     feasibility: [
-      { max:8, msgs:[
-        "이 질문을 확인하려면 무엇을 세거나 측정해야 할지 아직 안 보여요. 아래 '측정' 칸에 '방문 횟수', '개체수', '면적' 중 하나를 적어보세요.",
-        "관찰 방법이 빠져 있어요. '주 1회 관찰', '2주간 비교'처럼 언제, 몇 번 확인할지 적어보세요.",
-        "무엇을 비교할지 정해지지 않았어요. '설치한 구역 vs 설치하지 않은 구역'처럼 비교 대상을 질문에 넣어보세요.",
-        "측정 계획이 전혀 없어요. 질문 속 대상을 '숫자로 셀 수 있는 것'으로 바꿔서 다시 표현해보세요."
-      ]},
-      { max:17, msgs:[
-        "측정할 대상은 좋아요! 여기에 단위(개, %, 마리, ㎡, 회)를 붙이면 체크리스트 항목으로 바로 쓸 수 있어요.",
-        "관찰 계획은 있지만 수치가 빠졌어요. '방문 횟수 3회 이상'처럼 구체적인 숫자를 더해보세요.",
-        "좋은 시작이에요! '측정' 칸에 '주 1회 10㎡ 조사'처럼 빈도·면적·단위를 함께 적어보세요.",
-        "관찰 대상은 명확해요. 이제 '얼마나 자주' 측정할지 주기(주 1회, 월 1회 등)를 정해보세요."
-      ]},
-      { max:25, msgs:[
-        "수치와 단위까지 갖춰서 현장에서 바로 확인할 수 있어요. 이대로 3단계 체크리스트 항목으로 옮겨보세요.",
-        "현장 검증 계획이 아주 구체적이에요! 이 측정 방법을 그대로 보전 점검표의 '점검 기준'란에 활용해보세요.",
-        "완벽해요! 이 수치 기준이면 누가 측정해도 같은 결과를 얻을 수 있어요.",
-        "측정 방법이 명확하고 재현 가능해요! 이 기준을 모둠 친구들과도 공유해 함께 점검해보세요."
-      ]}
+      { max:8, build:function(ctx){
+        var m = (ctx.metric || '').trim();
+        if(!m){
+          return '아래 "측정" 칸이 비어 있어요. "' + snippet(ctx.text, 30) + '"을 확인하려면 무엇을 세거나 측정할지, "방문 횟수", "개체수", "면적" 중 하나를 적어보세요.';
+        }
+        return '"측정" 칸에 적은 "' + snippet(m, 30) + '"만으로는 무엇을 비교·측정할지 아직 안 보여요. "주 1회 관찰"처럼 언제·몇 번 확인할지 구체화해보세요.';
+      }},
+      { max:17, build:function(ctx){
+        var m = snippet(ctx.metric, 30);
+        return '"측정" 칸의 "' + m + '"는 좋은 시작이에요! 여기에 단위(개, %, 마리, ㎡, 회)와 구체적인 숫자를 더해서 "' + m + ' · 3회 이상"처럼 체크리스트 항목으로 바로 쓸 수 있게 만들어보세요.';
+      }},
+      { max:25, build:function(ctx){
+        var m = snippet(ctx.metric, 30);
+        return '"' + m + '"처럼 수치와 단위까지 갖춰서 누가 측정해도 같은 결과를 얻을 수 있어요! 이대로 3단계 체크리스트의 "점검 기준"란에 옮겨보세요.';
+      }}
     ],
     conservation: [
-      { max:0, msgs:[
-        "이 질문이 4대 보전 사례(멸종위기종 복원 · 생태우수지역 지정 · 외래생물 관리 · 국제협약) 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요."
-      ]},
-      { max:7, msgs:[
-        "사례 유형은 골랐지만 그 사례를 나타내는 낱말이 질문에 없어요. 예) 멸종위기종 복원 → '서식지 보호·개체수 회복', 생태우수지역 지정 → '보호구역·지정', 외래생물 관리 → '외래·방제·교란', 국제협약 → '협약·람사르·기후변화' 중 내가 고른 사례에 맞는 단어를 넣어보세요.",
-        "사례 유형과 질문이 아직 따로예요. 골라둔 사례의 핵심 단어(서식지 보호, 보호구역, 방제, 협약 등)를 한두 개 문장에 포함해보세요.",
-        "사례는 선택했는데 관련성이 잘 안 보여요. 학교 텃밭·생태숲에서 이 사례와 가장 비슷한 장소나 생물을 구체적으로 짚어보세요."
-      ]},
-      { max:11, msgs:[
-        "사례 단어가 한두 개 들어갔어요. 학교 현장(텃밭·생태숲)의 구체적인 장소·생물 이름을 한 문장 더 붙이면 연결이 더 뚜렷해져요.",
-        "보전사례와의 연결이 절반쯤 보여요. 이 사례가 왜 학교 생태공간에도 필요한지 이유를 한 문장 더해보세요.",
-        "사례 관련 단어는 있지만 조금 더 필요해요. 교과서 4대 사례 표(p.30)의 핵심 단어를 하나 더 참고해보세요."
-      ]},
-      { max:15, msgs:[
-        "보전사례와 학교 현장이 잘 연결됐어요! 이 방향 그대로 3단계 매트릭스 분석에 활용할 수 있어요.",
-        "사례 연결이 탄탄해요! 이 질문을 그대로 보전 점검표의 '사례분석-목적/내용'으로 옮겨써도 좋아요.",
-        "보전 가치가 명확하게 드러났어요! 이 사례가 실제로 어떤 효과를 냈는지도 조사해보면 탐구가 더 풍부해질 거예요."
-      ]}
+      { max:0, build:function(ctx){
+        return '"' + snippet(ctx.text, 30) + '"가 4대 보전 사례(멸종위기종 복원 · 생태우수지역 지정 · 외래생물 관리 · 국제협약) 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요.';
+      }},
+      { max:7, build:function(ctx){
+        var kws = ctx.caseKey && CASE_TYPES[ctx.caseKey] ? CASE_TYPES[ctx.caseKey].keywords : [];
+        var caseName = ctx.caseKey && CASE_TYPES[ctx.caseKey] ? CASE_TYPES[ctx.caseKey].name : '선택한 사례';
+        var need = kws.length ? firstMissing(ctx.text, kws) : '핵심 단어';
+        return '"' + caseName + '"는 골랐지만 "' + snippet(ctx.text, 30) + '"에는 그 사례를 나타내는 낱말이 없어요. "' + need + '" 같은 단어를 문장에 넣어보세요.';
+      }},
+      { max:11, build:function(ctx){
+        var kws = ctx.caseKey && CASE_TYPES[ctx.caseKey] ? CASE_TYPES[ctx.caseKey].keywords : [];
+        var hit = kws.length ? findFirstHit(ctx.text, kws) : null;
+        var target = snippet(ctx.target, 20);
+        if(hit && target){
+          return '"' + hit + '"라는 사례 단어는 들어갔어요! 여기에 관찰 위치인 "' + target + '"처럼 학교 현장의 구체적인 장소·생물 이름을 한 문장 더 붙이면 연결이 더 뚜렷해져요.';
+        }
+        return '사례 관련 단어는 있지만 학교 텃밭·생태숲의 구체적인 장소나 생물 이름을 한 문장 더 붙이면 연결이 더 뚜렷해져요.';
+      }},
+      { max:15, build:function(ctx){
+        var target = snippet(ctx.target, 20);
+        return (target ? '"' + target + '"와 ' : '') + '보전사례가 잘 연결됐어요! 이 방향 그대로 보전 점검표의 "사례분석-목적/내용"으로 옮겨써도 좋아요.';
+      }}
     ]
   };
-  function pickMsg(bank){ return bank.msgs[Math.floor(Math.random()*bank.msgs.length)]; }
+  function pickMsg(bank, ctx){ return bank.build(ctx || {}); }
 
   var TEMPLATE_LABELS = { cause:"원인-결과", compare:"비교-추론", crisis:"위기-영향" };
 
@@ -1931,12 +1938,33 @@
     return n;
   }
 
+  // 서로 다른 표현이 몇 종류 등장했는지(hits)에 따라 "체감 점수"를 줍니다.
+  // 예: tiers=[14,22] → 1종류 등장 시 +14, 2종류 이상 등장해도 +22에서 멈춤(그 이상은 추가 점수 없음).
+  // 이렇게 하면 같은 표현을 반복하거나 문장을 길게 늘여 서로 다른 표현을 억지로 많이 넣어도
+  // 점수가 끝없이 오르지 않고, 처음 한두 번의 등장에서 대부분의 점수를 이미 얻게 됩니다.
+  function tieredBonus(hits, tiers){
+    if(hits <= 0) return 0;
+    var idx = Math.min(hits, tiers.length) - 1;
+    return tiers[idx];
+  }
+
+  // 질문이 지나치게 길어지면(여러 인과 표현을 이어붙여 점수를 늘리려는 경우가 많아요)
+  // 인과성 점수에 약한 감점을 적용해서, 문장을 늘리는 전략의 이득을 줄입니다.
+  var LENGTH_CAP = 250;
+  function lengthPenalty(text){
+    if(text.length <= LENGTH_CAP) return 0;
+    return Math.min(10, Math.floor((text.length - LENGTH_CAP) / 15));
+  }
+
   function scoreQuestion(text, metric, caseKey){
-    var causality = Math.min(30, 8 + countHits(text, CAUSALITY_WORDS) * 4);
-    var concept = Math.min(30, 6 + countHits(text, CONCEPT_WORDS) * 4);
+    var causality = Math.min(30, 8 + tieredBonus(countHits(text, CAUSALITY_WORDS), [10, 20, 22]));
+    var tooLong = text.length > LENGTH_CAP;
+    if(tooLong) causality = Math.max(8, causality - lengthPenalty(text));
+
+    var concept = Math.min(30, 6 + tieredBonus(countHits(text, CONCEPT_WORDS), [10, 18, 24]));
 
     var feasibility = 6;
-    feasibility += countHits(text, FEASIBILITY_WORDS) * 2;
+    feasibility += tieredBonus(countHits(text, FEASIBILITY_WORDS), [4, 6]);
     var metricText = metric || '';
     var hasUnit = METRIC_UNIT_WORDS.some(function(u){ return metricText.indexOf(u) !== -1; });
     var hasDigit = /\d/.test(metricText);
@@ -1947,15 +1975,14 @@
 
     var conservation = 0;
     if(caseKey){
-      conservation = 4;
-      conservation += countHits(text, CASE_TYPES[caseKey].keywords) * 3;
+      conservation = 4 + tieredBonus(countHits(text, CASE_TYPES[caseKey].keywords), [7, 11]);
     }
     conservation = Math.min(15, Math.round(conservation));
 
-    return { causality:causality, concept:concept, feasibility:feasibility, conservation:conservation };
+    return { causality:causality, concept:concept, feasibility:feasibility, conservation:conservation, tooLong:tooLong };
   }
 
-  function pickFeedback(score){
+  function pickFeedback(score, ctx){
     var axes = ['causality','concept','feasibility','conservation'];
     var maxes = {causality:30, concept:30, feasibility:25, conservation:15};
     // 각 축이 어떤 등급(구간)에 있는지, 그리고 이미 최고 등급(만점권)인지 먼저 파악합니다.
@@ -1975,18 +2002,18 @@
     pool.forEach(function(k){ if(info[k].ratio < info[lowestKey].ratio){ lowestKey = k; } });
     var bank = FEEDBACK[lowestKey];
     var chosen = bank[info[lowestKey].idx];
-    return { key:lowestKey, msg:pickMsg(chosen), attention: info[lowestKey].ratio < 0.6, mastered: mastered };
+    return { key:lowestKey, msg:pickMsg(chosen, ctx), attention: info[lowestKey].ratio < 0.6, mastered: mastered };
   }
 
   // 축 하나의 현재 점수에 해당하는 등급 메시지를 돌려줍니다. (세부 점수 패널에서 축마다 개별 코칭을 보여줄 때 사용)
-  function axisTip(key, val){
+  function axisTip(key, val, ctx){
     var bank = FEEDBACK[key];
     var chosen = bank[bank.length - 1];
     for(var i=0;i<bank.length;i++){ if(val <= bank[i].max){ chosen = bank[i]; break; } }
-    return pickMsg(chosen);
+    return pickMsg(chosen, ctx);
   }
 
-  function renderScorePanel(score, total){
+  function renderScorePanel(score, total, ctx){
     var logic = score.causality + score.concept;
     var bridge = score.feasibility + score.conservation;
     document.getElementById('score-panel').style.display = 'block';
@@ -2001,7 +2028,7 @@
     document.getElementById('meter-bridge-label').textContent = bridge + '/40';
     document.getElementById('meter-bridge').style.width = (bridge/40*100) + '%';
 
-    var fb = pickFeedback(score);
+    var fb = pickFeedback(score, ctx);
     var coachBox = document.getElementById('coach-box');
     var prefix = '👉 지금 가장 먼저 고칠 것: ';
     if(total >= 90 || fb.mastered){
@@ -2014,14 +2041,17 @@
       coachBox.className = 'coach-box' + (fb.attention ? ' attn' : '');
       coachBox.textContent = prefix + fb.msg;
     }
+    if(score.tooLong){
+      coachBox.textContent += ' ✂️ 질문이 다소 길어요. 표현을 여러 개 이어붙이기보다, 핵심 인과관계 하나를 짧고 분명하게 쓰는 게 더 높은 점수를 받아요.';
+    }
 
     var dg = document.getElementById('detail-grid');
     dg.innerHTML =
-      cell('인과성', score.causality, 30, 'causality') + cell('교과개념', score.concept, 30, 'concept') +
-      cell('현장검증', score.feasibility, 25, 'feasibility') + cell('보전가치', score.conservation, 15, 'conservation');
+      cell('인과성', score.causality, 30, 'causality', ctx) + cell('교과개념', score.concept, 30, 'concept', ctx) +
+      cell('현장검증', score.feasibility, 25, 'feasibility', ctx) + cell('보전가치', score.conservation, 15, 'conservation', ctx);
   }
-  function cell(k, v, max, axisKey){
-    var tip = axisTip(axisKey, v);
+  function cell(k, v, max, axisKey, ctx){
+    var tip = axisTip(axisKey, v, ctx);
     return '<div class="detail-cell"><div class="row-between"><span class="k">'+k+'</span><span class="v">'+v+'/'+max+'</span></div><div class="tip">'+tip+'</div></div>';
   }
   function toggleDetail(){
@@ -2068,8 +2098,9 @@
     // 점수 계산과 화면 표시는 Firebase 연결 상태와 무관하게 항상 즉시 이루어집니다.
     var score = scoreQuestion(text, metric, state.selectedCase);
     var total = score.causality + score.concept + score.feasibility + score.conservation;
-    var fb = pickFeedback(score);
-    renderScorePanel(score, total);
+    var ctx = { text:text, metric:metric, target:target, caseKey:state.selectedCase };
+    var fb = pickFeedback(score, ctx);
+    renderScorePanel(score, total, ctx);
 
     // 아카이브 저장(실시간 공유)만 반 코드·Firebase 연결이 필요합니다.
     if(!requireClass()) return;
@@ -2158,7 +2189,8 @@
     var metric = sourceQ ? sourceQ.metric : '';
     var freshScore = scoreQuestion(text, metric, caseType);
     var freshTotal = freshScore.causality + freshScore.concept + freshScore.feasibility + freshScore.conservation;
-    var freshCoach = pickFeedback(freshScore).msg;
+    var freshCtx = { text:text, metric:metric, target: sourceQ ? sourceQ.target : '', caseKey:caseType };
+    var freshCoach = pickFeedback(freshScore, freshCtx).msg;
 
     var newBest = {
       author:author, question:text, photo: state.bestPhotoData || null,
@@ -2450,9 +2482,10 @@
     document.getElementById('m-photo').src = q.photo;
     document.getElementById('m-target').textContent = q.target;
     document.getElementById('m-text').textContent = '"' + q.question + '"';
+    var mCtx = { text:q.question, metric:q.metric, target:q.target, caseKey:q.caseType };
     document.getElementById('m-detail').innerHTML =
-      cell('인과성', q.score.causality, 30, 'causality') + cell('교과개념', q.score.concept, 30, 'concept') +
-      cell('현장검증', q.score.feasibility, 25, 'feasibility') + cell('보전가치', q.score.conservation, 15, 'conservation');
+      cell('인과성', q.score.causality, 30, 'causality', mCtx) + cell('교과개념', q.score.concept, 30, 'concept', mCtx) +
+      cell('현장검증', q.score.feasibility, 25, 'feasibility', mCtx) + cell('보전가치', q.score.conservation, 15, 'conservation', mCtx);
     document.getElementById('m-coach').textContent = q.coach;
     openModal('question-modal');
   }
@@ -2495,13 +2528,14 @@
     else { photoEl.src = ''; photoEl.hidden = true; }
 
     // 원본 질문에서 그대로 가져온 채점 결과가 있으면 그것을 쓰고, 없으면 현재 텍스트로 즉석에서 채점해서 보여줍니다.
+    var bmCtx = { text:bq.question, metric:bq.metric || '', target:bq.target || '', caseKey:bq.caseType || null };
     var score, coachText;
     if(bq.score){
       score = bq.score;
       coachText = bq.coach || '';
     }else{
       score = scoreQuestion(bq.question, bq.metric || '', bq.caseType || null);
-      coachText = pickFeedback(score).msg;
+      coachText = pickFeedback(score, bmCtx).msg;
     }
     var catEl = document.getElementById('bm-cat');
     if(bq.caseType && CASE_TYPES[bq.caseType]){
@@ -2512,8 +2546,8 @@
       catEl.hidden = true;
     }
     document.getElementById('bm-detail').innerHTML =
-      cell('인과성', score.causality, 30, 'causality') + cell('교과개념', score.concept, 30, 'concept') +
-      cell('현장검증', score.feasibility, 25, 'feasibility') + cell('보전가치', score.conservation, 15, 'conservation');
+      cell('인과성', score.causality, 30, 'causality', bmCtx) + cell('교과개념', score.concept, 30, 'concept', bmCtx) +
+      cell('현장검증', score.feasibility, 25, 'feasibility', bmCtx) + cell('보전가치', score.conservation, 15, 'conservation', bmCtx);
     document.getElementById('bm-coach').textContent = coachText;
 
     document.getElementById('bm-comment-author').value = '';
