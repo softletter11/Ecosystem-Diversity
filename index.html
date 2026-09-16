@@ -1956,15 +1956,25 @@
     return Math.min(10, Math.floor((text.length - LENGTH_CAP) / 15));
   }
 
+  // 반대로 질문이 너무 짧으면(예: "왜 나팔꽃 변이"처럼 핵심 단어 한두 개만 툭 던진 경우)
+  // 완전한 문장 없이도 키워드 하나만으로 인과성·개념·보전가치 점수를 다 챙겨가는 일이 없도록,
+  // 최소 길이 미만일 때는 키워드 보너스를 아예 주지 않습니다.
+  var MIN_LEN = 15;
+  function isTooShort(text){
+    var t = (text || '').trim();
+    return t.length > 0 && t.length < MIN_LEN;
+  }
+
   function scoreQuestion(text, metric, caseKey){
-    var causality = Math.min(30, 8 + tieredBonus(countHits(text, CAUSALITY_WORDS), [10, 20, 22]));
+    var tooShort = isTooShort(text);
+    var causality = Math.min(30, 8 + (tooShort ? 0 : tieredBonus(countHits(text, CAUSALITY_WORDS), [10, 20, 22])));
     var tooLong = text.length > LENGTH_CAP;
     if(tooLong) causality = Math.max(8, causality - lengthPenalty(text));
 
-    var concept = Math.min(30, 6 + tieredBonus(countHits(text, CONCEPT_WORDS), [10, 18, 24]));
+    var concept = Math.min(30, 6 + (tooShort ? 0 : tieredBonus(countHits(text, CONCEPT_WORDS), [10, 18, 24])));
 
     var feasibility = 6;
-    feasibility += tieredBonus(countHits(text, FEASIBILITY_WORDS), [4, 6]);
+    feasibility += tooShort ? 0 : tieredBonus(countHits(text, FEASIBILITY_WORDS), [4, 6]);
     var metricText = metric || '';
     var hasUnit = METRIC_UNIT_WORDS.some(function(u){ return metricText.indexOf(u) !== -1; });
     var hasDigit = /\d/.test(metricText);
@@ -1975,11 +1985,11 @@
 
     var conservation = 0;
     if(caseKey){
-      conservation = 4 + tieredBonus(countHits(text, CASE_TYPES[caseKey].keywords), [7, 11]);
+      conservation = 4 + (tooShort ? 0 : tieredBonus(countHits(text, CASE_TYPES[caseKey].keywords), [7, 11]));
     }
     conservation = Math.min(15, Math.round(conservation));
 
-    return { causality:causality, concept:concept, feasibility:feasibility, conservation:conservation, tooLong:tooLong };
+    return { causality:causality, concept:concept, feasibility:feasibility, conservation:conservation, tooLong:tooLong, tooShort:tooShort };
   }
 
   function pickFeedback(score, ctx){
@@ -2043,6 +2053,9 @@
     }
     if(score.tooLong){
       coachBox.textContent += ' ✂️ 질문이 다소 길어요. 표현을 여러 개 이어붙이기보다, 핵심 인과관계 하나를 짧고 분명하게 쓰는 게 더 높은 점수를 받아요.';
+    }
+    if(score.tooShort){
+      coachBox.textContent += ' ✏️ 질문이 너무 짧아요. 단어만 나열하지 말고, 원인과 결과가 드러나는 완전한 문장으로 다시 써보세요.';
     }
 
     var dg = document.getElementById('detail-grid');
