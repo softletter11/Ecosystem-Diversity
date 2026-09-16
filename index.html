@@ -591,7 +591,7 @@
       <div class="card kpi">
         <span class="label">보전 수칙 실천 이행률</span>
         <span class="value mono" id="kpi-completion">0%</span>
-        <span class="sub">누적 인증 기준</span>
+        <span class="sub">실천로그 달성 기준</span>
       </div>
     </div>
 
@@ -1256,6 +1256,8 @@
       icon: '<path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/>',
       def: "사라질 위기에 처한 야생 생물을 국가 차원에서 보호하고 서식지로 되돌리는 것",
       example: "예: 반달가슴곰, 수원청개구리, 여우",
+      purposeExample: "예: 멸종위기 야생생물의 서식 기반 보호",
+      contentExample: "예: 둥지 상자·인공 서식지 설치로 개체수 회복 유도",
       keywords: ["멸종위기","복원","서식지 보호","야생생물","보호종","개체수 회복"],
       templates: {
         cause: "학교 화단에 둥지 상자를 설치하면 그 결과 멸종위기 야생생물인 딱새의 방문 횟수와 개체수는 얼마나 늘어날까? 서식지 보호가 개체수 회복에 주는 영향을 매주 관찰하고 조사해서 비교해 보자.",
@@ -1268,6 +1270,8 @@
       icon: '<path d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"/>',
       def: "생물다양성이 특히 높은 지역을 보호구역으로 지정해 관리하는 것",
       example: "예: 국립공원, 유네스코 생물권보전지역",
+      purposeExample: "예: 생물다양성이 높은 구역을 보호구역으로 지정해 서식지 보전",
+      contentExample: "예: 출입 제한 구역 설정 및 정기 모니터링",
       keywords: ["보호구역","지정","생태우수","서식지 보전","출입 제한"],
       templates: {
         cause: "생태숲의 낙엽층을 보호구역으로 지정해 출입 제한을 강화하면 그 결과 토양 생물의 종다양성과 개체수는 얼마나 늘어날까? 서식지 보전 효과가 주는 영향을 매주 조사하고 관찰해 보자.",
@@ -1280,6 +1284,8 @@
       icon: '<path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>',
       def: "원래 없던 지역에 들어와 토종 생태계를 위협하는 생물을 관리하는 것",
       example: "예: 환삼덩굴, 가시박, 뉴트리아",
+      purposeExample: "예: 토종 생물종의 서식 기반 보호",
+      contentExample: "예: 외래식물 제거 및 자생지 복원",
       keywords: ["외래","교란","제거","방제","환삼덩굴","가시박","토종"],
       templates: {
         cause: "텃밭에서 외래식물인 환삼덩굴을 방제하지 않고 방치하면 그 결과 토종 식물의 서식지와 개체수, 종다양성은 얼마나 줄어들까? 교란이 서식 환경에 주는 영향을 매주 조사하고 관찰하며 비교해 보자.",
@@ -1292,6 +1298,8 @@
       icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18Z"/>',
       def: "여러 나라가 함께 생물다양성을 지키기로 약속한 국제적 약속",
       example: "예: 생물다양성협약, 람사르협약, 기후변화협약",
+      purposeExample: "예: 국제협약이 정한 생물다양성 보전 목표 이행",
+      contentExample: "예: 습지 조성 및 온실가스 감축 활동 실천",
       keywords: ["협약","람사르","기후변화","국제","습지","온실가스"],
       templates: {
         cause: "학교 텃밭에 작은 습지 웅덩이를 조성하면 그 결과 국제협약이 강조하는 습지 서식지의 곤충과 양서류 종다양성, 개체수는 얼마나 늘어날까? 람사르협약의 취지가 주는 영향을 매주 조사하고 관찰하며 비교해 보자.",
@@ -1522,7 +1530,7 @@
 
     unsubL = base.collection('logs').orderBy('createdAt','desc').onSnapshot(function(snap){
       state.logs = snap.docs.map(docToLog);
-      renderLogs();
+      renderLogs(); renderRules(); renderDashboard();
       setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('실천로그'));
 
@@ -1685,8 +1693,9 @@
     var rPage = paginate(teacherState.rules, 'r');
     var rBody = document.getElementById('teacher-r-body');
     rBody.innerHTML = rPage.rows.map(function(r){
+      var achieved = ruleAchievedCount(r.id, teacherState.logs);
       return '<tr><td>'+r.team+'</td><td>'+r.author+'</td><td>'+CASE_TYPES[r.caseType].name+'</td>' +
-        '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(r.done?'✅':'-')+'</td><td class="mono">'+(r.checks||0)+'회</td></tr>';
+        '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(achieved>0?'✅':'-')+'</td><td class="mono">'+achieved+'회</td></tr>';
     }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">등록된 점검 항목이 없습니다.</td></tr>';
     renderPager('teacher-r-pager', 'r', teacherState.rules);
 
@@ -1778,7 +1787,8 @@
       csv += '질문,' + q.team + ',' + q.author + ',' + CASE_TYPES[q.caseType].name + ',"' + q.question.replace(/"/g,'""') + '",' + q.total + ',' + (q.time||'') + '\n';
     });
     teacherState.rules.forEach(function(r){
-      csv += '점검항목,' + r.team + ',' + r.author + ',' + CASE_TYPES[r.caseType].name + ',"' + r.title.replace(/"/g,'""') + '","' + r.metric.replace(/"/g,'""') + '",' + (r.done?'완료':'미완료') + '\n';
+      var achieved = ruleAchievedCount(r.id, teacherState.logs);
+      csv += '점검항목,' + r.team + ',' + r.author + ',' + CASE_TYPES[r.caseType].name + ',"' + r.title.replace(/"/g,'""') + '","' + r.metric.replace(/"/g,'""') + '",' + (achieved>0?'달성 이력 있음':'달성 이력 없음') + '\n';
     });
     teacherState.logs.forEach(function(l){
       csv += '실천로그,' + l.team + ',,,"' + l.rule.replace(/"/g,'""') + ' / ' + l.result.replace(/"/g,'""') + '",' + l.status + ',' + l.date + '\n';
@@ -2167,7 +2177,7 @@
     }
     var newRule = {
       team:team, author:author, caseType:caseType, purpose:purpose, content:content,
-      title:title, metric:metric, done:true, checks:1, linkedQ:linkedQ,
+      title:title, metric:metric, linkedQ:linkedQ,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -2264,6 +2274,12 @@
     var val = document.getElementById('r-policy').value;
     var el = document.getElementById('purpose-case-name');
     if(el && CASE_TYPES[val]) el.textContent = CASE_TYPES[val].name;
+    var purposeEl = document.getElementById('r-purpose');
+    var contentEl = document.getElementById('r-content');
+    if(CASE_TYPES[val]){
+      if(purposeEl) purposeEl.placeholder = CASE_TYPES[val].purposeExample || '';
+      if(contentEl) contentEl.placeholder = CASE_TYPES[val].contentExample || '';
+    }
   }
 
   function populateLinkQSelect(){
@@ -2277,23 +2293,6 @@
       sel.appendChild(opt);
     });
     sel.value = current;
-  }
-
-  async function toggleRuleCheck(id){
-    if(!requireClass()) return;
-    var r = state.rules.find(function(item){ return item.id === id; });
-    if(!r) return;
-    var newDone = !r.done;
-    try{
-      await db.collection('classes').doc(currentClassCode).collection('rules').doc(id).update({
-        done: newDone,
-        checks: newDone ? (r.checks||0) + 1 : (r.checks||0)
-      });
-      showToast(newDone ? '실천 인증이 기록되었습니다.' : '미완료로 전환되었습니다.');
-    }catch(e){
-      console.error(e);
-      showToast('업데이트에 실패했습니다.', 'error');
-    }
   }
 
   function setDefaultLogDate(){
@@ -2441,6 +2440,18 @@
     });
   }
 
+  // 점검 항목의 "완료 여부"는 더 이상 별도 체크박스로 관리하지 않고,
+  // 실천로그에 실제로 쌓인 기록(달성/미달성)을 근거로 계산합니다.
+  function ruleLogsFor(ruleId, logs){
+    return logs.filter(function(l){ return l.ruleId === ruleId; });
+  }
+  function ruleAchievedCount(ruleId, logs){
+    return ruleLogsFor(ruleId, logs).filter(function(l){ return l.status === '달성'; }).length;
+  }
+  function isRuleAchieved(ruleId, logs){
+    return ruleAchievedCount(ruleId, logs) > 0;
+  }
+
   function renderRules(){
     var container = document.getElementById('rules-list');
     container.innerHTML = '';
@@ -2451,7 +2462,9 @@
     }
     state.rules.forEach(function(r){
       var el = document.createElement('div');
-      el.className = 'rule-card' + (r.done ? ' done' : '');
+      var logCount = ruleLogsFor(r.id, state.logs).length;
+      var achieved = ruleAchievedCount(r.id, state.logs);
+      el.className = 'rule-card' + (achieved > 0 ? ' done' : '');
       var linkChip = r.linkedQ ? '<button type="button" class="linked-chip" style="border:none;cursor:pointer;" onclick="openQuestionModal(\''+r.linkedQ+'\')">🔗 연결된 질문 보기</button>' : '';
       el.innerHTML =
         '<div class="rule-meta">' +
@@ -2463,8 +2476,8 @@
         (r.purpose ? '<p class="hint" style="margin-bottom:6px;"><b>목적:</b> '+r.purpose+' &nbsp; <b>내용:</b> '+(r.content||'-')+'</p>' : '') +
         '<div class="metric-box">📏 '+r.metric+'</div>' +
         '<div class="rule-foot">' +
-          '<label class="check-label"><input type="checkbox" '+(r.done?'checked':'')+' onchange="toggleRuleCheck(\''+r.id+'\')"><span>'+(r.done?'오늘 실천 인증 완료':'미완료')+'</span></label>' +
-          '<span class="mono">누적 '+(r.checks||0)+'회</span>' +
+          '<span class="hint">'+(logCount ? '🧾 실천로그 '+logCount+'건' : '아직 실천로그 없음')+'</span>' +
+          '<span class="mono">달성 '+achieved+'회</span>' +
         '</div>';
       container.appendChild(el);
     });
@@ -2486,7 +2499,7 @@
     var avg = state.questions.length ? Math.round(state.questions.reduce(function(s,q){return s+q.total;},0)/state.questions.length) : 0;
     document.getElementById('kpi-avg-score').textContent = avg;
     document.getElementById('kpi-total-rules').textContent = state.rules.length;
-    var doneCount = state.rules.filter(function(r){return r.done;}).length;
+    var doneCount = state.rules.filter(function(r){ return isRuleAchieved(r.id, state.logs); }).length;
     var pct = state.rules.length ? Math.round(doneCount/state.rules.length*100) : 0;
     document.getElementById('kpi-completion').textContent = pct + '%';
 
@@ -2825,7 +2838,7 @@
     state.rules.forEach(function(r){
       if(!teamMap[r.team]) teamMap[r.team] = { done:0, total:0 };
       teamMap[r.team].total++;
-      if(r.done) teamMap[r.team].done++;
+      if(isRuleAchieved(r.id, state.logs)) teamMap[r.team].done++;
     });
     var labelsT = Object.keys(teamMap);
     var data = labelsT.map(function(t){ var m=teamMap[t]; return m.total? Math.round(m.done/m.total*100) : 0; });
@@ -2879,7 +2892,6 @@
   window.submitBestComment = submitBestComment;
   window.onLinkQuestionChange = onLinkQuestionChange;
   window.updatePurposeCaseName = updatePurposeCaseName;
-  window.toggleRuleCheck = toggleRuleCheck;
   window.addLog = addLog;
   window.loadGrowthRecord = loadGrowthRecord;
   window.downloadGrowthPDF = downloadGrowthPDF;
