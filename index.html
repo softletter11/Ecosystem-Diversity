@@ -461,7 +461,7 @@
   table.table-questions{ table-layout:fixed; }
   table.table-questions td:nth-child(5), table.table-questions td:nth-child(6){ white-space:nowrap; }
   .teacher-controls{ display:flex; gap:14px; flex-wrap:wrap; align-items:end; }
-  .teacher-controls-code{ flex:0 1 40%; min-width:180px; }
+  .teacher-controls-code{ flex:0 1 26%; min-width:170px; }
   .teacher-controls-actions{ flex:1 1 auto; display:flex; gap:8px; flex-wrap:wrap; }
   @media (max-width:640px){ .teacher-controls-code{ flex:1 1 100%; } }
   .teacher-tabs{ display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:14px; margin-top:14px; }
@@ -1000,7 +1000,11 @@
       <div class="teacher-controls">
         <div class="teacher-controls-code">
           <label class="field-label" for="teacher-code-input">조회할 반 코드</label>
-          <input type="text" id="teacher-code-input" placeholder="예: 3-2">
+          <input type="text" id="teacher-code-input" placeholder="예: 1-6 (비우면 전체 반)" onkeydown="if(event.key==='Enter')loadTeacherClass()">
+        </div>
+        <div class="teacher-controls-code">
+          <label class="field-label" for="teacher-name-input">학생 이름·학번 검색</label>
+          <input type="text" id="teacher-name-input" placeholder="예: 홍길동 또는 10612" oninput="onTeacherNameInput()" onkeydown="if(event.key==='Enter')loadTeacherClass()">
         </div>
         <div class="teacher-controls-actions">
           <button type="button" class="btn-primary" style="width:auto; padding:9px 18px;" onclick="loadTeacherClass()">조회하기</button>
@@ -1014,7 +1018,8 @@
           </button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px;">현재 조회 중인 반: <span class="mono" id="teacher-current-label">-</span> · 데이터는 실시간으로 갱신됩니다.</p>
+      <p class="hint" style="margin-top:10px;">현재 조회 중인 반: <span class="mono" id="teacher-current-label">-</span> · <span id="teacher-mode-note">데이터는 실시간으로 갱신됩니다.</span></p>
+      <p class="hint" style="margin-top:4px;">이름 검색: 반 코드를 넣으면 그 반 안에서, 반 코드를 비우고 이름만 넣으면 <strong>모든 반</strong>에서 찾습니다. 실천로그는 그 학생이 등록한 점검 항목의 기록만 보여줍니다.</p>
 
       <div class="teacher-tabs">
         <button type="button" class="teacher-tab active" id="teacher-tab-questions" onclick="showTeacherPanel('questions')">
@@ -1199,9 +1204,9 @@
       </button>
     </div>
     <p class="hint" style="margin-bottom:12px; line-height:1.6; font-size:12px;">
-      선생님이 안내한 반 코드를 입력하세요. 같은 반 코드를 입력한 친구들의 질문·점검표·실천 기록이 실시간으로 함께 모이고, 나중에 다시 접속해도 그대로 이어서 볼 수 있어요. (1반은 101, 2반은 102 ... 형식으로 입력하세요)
+      선생님이 안내한 반 코드를 입력하세요. 같은 반 코드를 입력한 친구들의 질문·점검표·실천 기록이 실시간으로 함께 모이고, 나중에 다시 접속해도 그대로 이어서 볼 수 있어요. (예: 1-6, 101, class2026b 등 자유롭게 입력할 수 있어요)
     </p>
-    <input type="text" id="gate-code-input" placeholder="반 코드 입력 (예: 1반 → 101)" inputmode="numeric" style="margin-bottom:12px;">
+    <input type="text" id="gate-code-input" placeholder="반 코드 입력 (예: 1-6)" style="margin-bottom:12px;">
     <button type="button" class="btn-primary" onclick="confirmClassGate()">시작하기</button>
     <p class="hint" id="gate-error" style="margin-top:10px; color:var(--critical); display:none;"></p>
   </div>
@@ -1479,8 +1484,11 @@
     if(!currentClassCode) return; // 최초 접속 시에는 반드시 코드를 입력해야 함
     closeModal('class-gate-modal');
   }
-  // 반 코드 형식: 1반→101, 2반→102 ... 처럼 "1" + 두 자리 반 번호(01~99)로만 입력하도록 강제합니다.
-  var CLASS_CODE_PATTERN = /^1\d{2}$/;
+  // 반 코드는 자유롭게 입력할 수 있습니다. 단, Firestore 문서 ID에 쓸 수 없는 문자(/ . # $ [ ] 공백)는 '-'로 바꿉니다.
+  // (예: "1-6"은 그대로 "1-6", "1/6"은 "1-6") — 예전에 입력한 반 코드와 같은 방식이라 기존 데이터가 그대로 이어집니다.
+  function normalizeClassCode(raw){
+    return (raw || '').trim().replace(/[\/\.\#\$\[\]\s]+/g, '-').slice(0, 40);
+  }
   function confirmClassGate(){
     var raw = document.getElementById('gate-code-input').value.trim();
     var errEl = document.getElementById('gate-error');
@@ -1489,12 +1497,12 @@
       errEl.style.display = 'block';
       return;
     }
-    if(!CLASS_CODE_PATTERN.test(raw) || raw === '100'){
-      errEl.textContent = '반 코드 형식이 올바르지 않아요. 1반은 101, 2반은 102 ... 형식의 숫자 3자리로 입력해주세요.';
+    var code = normalizeClassCode(raw);
+    if(!code){
+      errEl.textContent = '사용할 수 있는 반 코드를 입력해주세요.';
       errEl.style.display = 'block';
       return;
     }
-    var code = raw;
     startClass(code);
     closeModal('class-gate-modal');
   }
@@ -1622,21 +1630,99 @@
     }
   }
 
+  var teacherAllMode = false; // true: 반 코드 없이 이름으로 모든 반을 검색한 상태
+
+  function normalizeNameKey(s){ return (s || '').toString().replace(/\s+/g, '').toLowerCase(); }
+
+  // 이름 입력이 바뀌면 (같은 반 조회 중일 때) 바로 목록을 걸러 보여줍니다.
+  function onTeacherNameInput(){
+    teacherPage = { q:1, r:1, l:1 };
+    if(!teacherAllMode) renderTeacherTables();
+  }
+
+  // 현재 이름 검색어로 걸러낸 목록을 돌려줍니다.
+  function getTeacherFiltered(){
+    var key = normalizeNameKey(document.getElementById('teacher-name-input').value);
+    if(!key) return { questions: teacherState.questions, rules: teacherState.rules, logs: teacherState.logs, key:'' };
+    var match = function(item){ return normalizeNameKey(item.author).indexOf(key) !== -1; };
+    var questions = teacherState.questions.filter(match);
+    var rules = teacherState.rules.filter(match);
+    var ruleIds = {};
+    rules.forEach(function(r){ ruleIds[(r.classCode||'') + '|' + r.id] = true; });
+    var logs = teacherState.logs.filter(function(l){ return ruleIds[(l.classCode||'') + '|' + l.ruleId]; });
+    return { questions: questions, rules: rules, logs: logs, key:key };
+  }
+
+  function teamLabel(item){
+    return escapeHtml((teacherAllMode && item.classCode ? '[' + item.classCode + '] ' : '') + (item.team || ''));
+  }
+
+  function withClassCode(mapper){
+    return function(d){
+      var data = mapper(d);
+      var parent = d.ref.parent.parent;
+      data.classCode = parent ? parent.id : '';
+      return data;
+    };
+  }
+
+  function sortByCreatedDesc(list){
+    return list.sort(function(a,b){
+      var ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+      var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+  }
+
   async function loadTeacherClass(){
-    var code = document.getElementById('teacher-code-input').value.trim();
-    if(!code){ showToast('조회할 반 코드를 입력하세요.', 'error'); return; }
+    var codeInput = document.getElementById('teacher-code-input');
+    var code = normalizeClassCode(codeInput.value);
+    codeInput.value = code;
+    var nameKey = normalizeNameKey(document.getElementById('teacher-name-input').value);
+    if(!code && !nameKey){ showToast('조회할 반 코드나 학생 이름을 입력하세요.', 'error'); return; }
     if(!isConfigured){ showToast('먼저 Firebase 설정을 완료하세요.', 'error'); return; }
     if(!initFirebaseIfNeeded()) return;
 
-    document.getElementById('teacher-current-label').textContent = code;
     teacherPage = { q:1, r:1, l:1 };
-    if(unsubTQ) unsubTQ();
-    if(unsubTR) unsubTR();
-    if(unsubTL) unsubTL();
+    if(unsubTQ){ unsubTQ(); unsubTQ = null; }
+    if(unsubTR){ unsubTR(); unsubTR = null; }
+    if(unsubTL){ unsubTL(); unsubTL = null; }
 
     try{
       await authReadyPromise;
     }catch(e){ /* fall through — 오류는 아래 리스너의 에러 핸들러가 처리 */ }
+
+    if(!code){
+      // 반 코드 없이 이름만 입력 → 모든 반에서 검색 (한 번 불러오기)
+      teacherAllMode = true;
+      document.getElementById('teacher-current-label').textContent = '전체 반';
+      document.getElementById('teacher-mode-note').textContent = '모든 반에서 이름으로 검색한 결과입니다. 모둠 앞의 [ ]는 반 코드입니다. (새 기록을 보려면 다시 조회하세요)';
+      try{
+        var results = await Promise.all([
+          db.collectionGroup('questions').get(),
+          db.collectionGroup('rules').get(),
+          db.collectionGroup('logs').get()
+        ]);
+        teacherState.questions = sortByCreatedDesc(results[0].docs.map(withClassCode(docToQuestion)));
+        teacherState.rules = sortByCreatedDesc(results[1].docs.map(withClassCode(docToRule)));
+        teacherState.logs = sortByCreatedDesc(results[2].docs.map(withClassCode(docToLog)));
+        renderTeacherTables();
+        var f = getTeacherFiltered();
+        var classes = {};
+        f.questions.concat(f.rules).forEach(function(x){ if(x.classCode) classes[x.classCode] = true; });
+        var cl = Object.keys(classes);
+        showToast(f.questions.length + f.rules.length === 0 ? '일치하는 학생 기록이 없습니다.' :
+          '검색 결과: 질문 ' + f.questions.length + '건, 점검 항목 ' + f.rules.length + '개' + (cl.length ? ' (반 코드: ' + cl.join(', ') + ')' : ''));
+      }catch(e){
+        console.error('전체 반 검색', e);
+        showToast('전체 반 검색에 실패했습니다. Firestore 보안 규칙에서 컬렉션 그룹 읽기(match /{path=**}/questions/{id} 등)를 허용해야 합니다. 반 코드를 함께 입력하면 그 반 안에서 검색할 수 있어요.', 'error');
+      }
+      return;
+    }
+
+    teacherAllMode = false;
+    document.getElementById('teacher-current-label').textContent = code;
+    document.getElementById('teacher-mode-note').textContent = '데이터는 실시간으로 갱신됩니다.';
 
     var base = db.collection('classes').doc(code);
     unsubTQ = base.collection('questions').orderBy('createdAt','desc').onSnapshot(function(snap){
@@ -1680,32 +1766,34 @@
   }
 
   function renderTeacherTables(){
-    document.getElementById('teacher-q-count').textContent = teacherState.questions.length + '건';
-    var qPage = paginate(teacherState.questions, 'q');
+    var F = getTeacherFiltered();
+    var emptyNote = F.key ? '검색한 이름과 일치하는 ' : '등록된 ';
+    document.getElementById('teacher-q-count').textContent = F.questions.length + '건';
+    var qPage = paginate(F.questions, 'q');
     var qBody = document.getElementById('teacher-q-body');
     qBody.innerHTML = qPage.rows.map(function(q){
-      return '<tr><td>'+q.team+'</td><td>'+q.author+'</td><td>'+CASE_TYPES[q.caseType].name+'</td>' +
+      return '<tr><td>'+teamLabel(q)+'</td><td>'+q.author+'</td><td>'+CASE_TYPES[q.caseType].name+'</td>' +
         '<td>'+q.question+'</td><td class="mono">'+q.total+'점</td><td class="mono">'+(q.time||'')+'</td></tr>';
-    }).join('') || '<tr><td colspan="6" class="hint" style="padding:14px 8px;">등록된 질문이 없습니다.</td></tr>';
-    renderPager('teacher-q-pager', 'q', teacherState.questions);
+    }).join('') || '<tr><td colspan="6" class="hint" style="padding:14px 8px;">'+emptyNote+'질문이 없습니다.</td></tr>';
+    renderPager('teacher-q-pager', 'q', F.questions);
 
-    document.getElementById('teacher-r-count').textContent = teacherState.rules.length + '개';
-    var rPage = paginate(teacherState.rules, 'r');
+    document.getElementById('teacher-r-count').textContent = F.rules.length + '개';
+    var rPage = paginate(F.rules, 'r');
     var rBody = document.getElementById('teacher-r-body');
     rBody.innerHTML = rPage.rows.map(function(r){
       var achieved = ruleAchievedCount(r.id, teacherState.logs);
-      return '<tr><td>'+r.team+'</td><td>'+r.author+'</td><td>'+CASE_TYPES[r.caseType].name+'</td>' +
+      return '<tr><td>'+teamLabel(r)+'</td><td>'+r.author+'</td><td>'+CASE_TYPES[r.caseType].name+'</td>' +
         '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(achieved>0?'✅':'-')+'</td><td class="mono">'+achieved+'회</td></tr>';
-    }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">등록된 점검 항목이 없습니다.</td></tr>';
-    renderPager('teacher-r-pager', 'r', teacherState.rules);
+    }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">'+emptyNote+'점검 항목이 없습니다.</td></tr>';
+    renderPager('teacher-r-pager', 'r', F.rules);
 
-    document.getElementById('teacher-l-count').textContent = teacherState.logs.length + '건';
-    var lPage = paginate(teacherState.logs, 'l');
+    document.getElementById('teacher-l-count').textContent = F.logs.length + '건';
+    var lPage = paginate(F.logs, 'l');
     var lBody = document.getElementById('teacher-l-body');
     lBody.innerHTML = lPage.rows.map(function(l){
-      return '<tr><td class="mono">'+l.date+'</td><td>'+l.team+'</td><td>'+l.rule+'</td><td class="mono">'+l.result+'</td><td><span class="status-pill">'+l.status+'</span></td></tr>';
-    }).join('') || '<tr><td colspan="5" class="hint" style="padding:14px 8px;">등록된 실천 로그가 없습니다.</td></tr>';
-    renderPager('teacher-l-pager', 'l', teacherState.logs);
+      return '<tr><td class="mono">'+l.date+'</td><td>'+teamLabel(l)+'</td><td>'+l.rule+'</td><td class="mono">'+l.result+'</td><td><span class="status-pill">'+l.status+'</span></td></tr>';
+    }).join('') || '<tr><td colspan="5" class="hint" style="padding:14px 8px;">'+emptyNote+'실천 로그가 없습니다.</td></tr>';
+    renderPager('teacher-l-pager', 'l', F.logs);
   }
 
   var ROSTER_KEY_PREFIX = 'bioMatrixRoster_';
@@ -1781,17 +1869,21 @@
   }
 
   function exportTeacherCSV(){
-    var code = document.getElementById('teacher-code-input').value.trim() || 'class';
+    var code = document.getElementById('teacher-code-input').value.trim() || (teacherAllMode ? '전체반' : 'class');
+    var nameQ = document.getElementById('teacher-name-input').value.trim();
+    if(nameQ) code += '_' + nameQ.replace(/[\\\/:*?"<>|\s]+/g, '');
+    var F = getTeacherFiltered();
     var csv = "﻿유형,모둠,작성자,사례유형,내용,점수/측정,시간\n";
-    teacherState.questions.forEach(function(q){
-      csv += '질문,' + q.team + ',' + q.author + ',' + CASE_TYPES[q.caseType].name + ',"' + q.question.replace(/"/g,'""') + '",' + q.total + ',' + (q.time||'') + '\n';
+    var csvTeam = function(x){ return (teacherAllMode && x.classCode ? '[' + x.classCode + '] ' : '') + x.team; };
+    F.questions.forEach(function(q){
+      csv += '질문,' + csvTeam(q) + ',' + q.author + ',' + CASE_TYPES[q.caseType].name + ',"' + q.question.replace(/"/g,'""') + '",' + q.total + ',' + (q.time||'') + '\n';
     });
-    teacherState.rules.forEach(function(r){
+    F.rules.forEach(function(r){
       var achieved = ruleAchievedCount(r.id, teacherState.logs);
-      csv += '점검항목,' + r.team + ',' + r.author + ',' + CASE_TYPES[r.caseType].name + ',"' + r.title.replace(/"/g,'""') + '","' + r.metric.replace(/"/g,'""') + '",' + (achieved>0?'달성 이력 있음':'달성 이력 없음') + '\n';
+      csv += '점검항목,' + csvTeam(r) + ',' + r.author + ',' + CASE_TYPES[r.caseType].name + ',"' + r.title.replace(/"/g,'""') + '","' + r.metric.replace(/"/g,'""') + '",' + (achieved>0?'달성 이력 있음':'달성 이력 없음') + '\n';
     });
-    teacherState.logs.forEach(function(l){
-      csv += '실천로그,' + l.team + ',,,"' + l.rule.replace(/"/g,'""') + ' / ' + l.result.replace(/"/g,'""') + '",' + l.status + ',' + l.date + '\n';
+    F.logs.forEach(function(l){
+      csv += '실천로그,' + csvTeam(l) + ',,,"' + l.rule.replace(/"/g,'""') + ' / ' + l.result.replace(/"/g,'""') + '",' + l.status + ',' + l.date + '\n';
     });
     var blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
@@ -2914,6 +3006,7 @@
   window.saveStudentRoster = saveStudentRoster;
   window.renderStudentCountTable = renderStudentCountTable;
   window.changeTeacherPage = changeTeacherPage;
+  window.onTeacherNameInput = onTeacherNameInput;
 
   /* ---------------- Toast ---------------- */
 
