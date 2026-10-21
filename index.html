@@ -2414,16 +2414,19 @@
       score: freshScore,
       total: freshTotal,
       coach: freshCoach,
-      comments: [],
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
+
+    var existing = state.bestQuestions.find(function(b){ return b.team === team; });
+    if(existing && !confirm('[' + team + ']에는 이미 베스트 질문이 등록되어 있어요.\n새 질문으로 바꿀까요? (지금까지 달린 댓글은 그대로 유지됩니다)')) return;
 
     var btn = document.getElementById('best-submit-btn');
     btn.disabled = true;
     try{
       await authReadyPromise;
-      // 모둠 이름을 문서 ID로 사용해 모둠당 베스트 질문이 항상 하나만 유지되도록 합니다. (다시 등록하면 덮어씁니다)
-      await db.collection('classes').doc(currentClassCode).collection('bestQuestions').doc(team).set(newBest);
+      // 모둠 이름을 문서 ID로 사용해 모둠당 베스트 질문이 항상 하나만 유지되도록 합니다.
+      // 다시 등록하면 질문 내용만 바뀌고, 댓글(comments)은 merge 옵션으로 그대로 보존합니다.
+      await db.collection('classes').doc(currentClassCode).collection('bestQuestions').doc(team).set(newBest, { merge: true });
       showToast('[' + team + ']의 베스트 질문이 등록되었습니다.');
       document.getElementById('best-author').value = '';
       document.getElementById('best-text').value = '';
