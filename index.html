@@ -471,6 +471,9 @@
     cursor:pointer; font-family:inherit; transition:border-color .15s, background .15s, color .15s;
   }
   .teacher-tab:hover:not(.active){ border-color:var(--border-strong); color:var(--ink); }
+  .btn-del{ border:1px solid var(--critical); color:var(--critical); background:transparent; border-radius:6px; padding:3px 8px; font-size:11px; cursor:pointer; white-space:nowrap; }
+  .btn-del:hover{ background:var(--critical); color:#fff; }
+  .btn-del:disabled{ opacity:.5; cursor:default; }
   .teacher-tab.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
   .teacher-panel + .teacher-panel{ margin-top:18px; }
   .pager{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:14px; }
@@ -854,7 +857,7 @@
           <div>
             <label class="field-label" for="r-link-q">이어서 조사할 탐구 질문 선택</label>
             <select id="r-link-q" onchange="onLinkQuestionChange()">
-              <option value="">— 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>
+              <option value="">— 모둠 베스트 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>
             </select>
           </div>
 
@@ -1025,6 +1028,9 @@
         <button type="button" class="teacher-tab active" id="teacher-tab-questions" onclick="showTeacherPanel('questions')">
           탐구질문 전체 목록 <span class="tag-note mono" id="teacher-q-count">0건</span>
         </button>
+        <button type="button" class="teacher-tab" id="teacher-tab-best" onclick="showTeacherPanel('best')">
+          모둠별 베스트 질문 <span class="tag-note mono" id="teacher-b-count">0개</span>
+        </button>
         <button type="button" class="teacher-tab" id="teacher-tab-rules" onclick="showTeacherPanel('rules')">
           보전점검표 전체 목록 <span class="tag-note mono" id="teacher-r-count">0개</span>
         </button>
@@ -1044,6 +1050,7 @@
             <th>질문</th>
             <th style="width:80px;">점수</th>
             <th style="width:170px;">시간</th>
+            <th style="width:64px;">삭제</th>
           </tr></thead>
           <tbody id="teacher-q-body"></tbody>
         </table>
@@ -1051,10 +1058,20 @@
       <div class="pager" id="teacher-q-pager"></div>
     </div>
 
+    <div class="card pad teacher-panel" id="teacher-panel-best" hidden>
+      <div class="table-scroll">
+        <table class="log-table">
+          <thead><tr><th style="width:90px;">모둠</th><th style="width:140px;">작성자</th><th style="width:150px;">사례유형</th><th>베스트 질문</th><th style="width:80px;">점수</th><th style="width:64px;">삭제</th></tr></thead>
+          <tbody id="teacher-b-body"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="teacher-b-pager"></div>
+    </div>
+
     <div class="card pad teacher-panel" id="teacher-panel-rules" hidden>
       <div class="table-scroll">
         <table class="log-table">
-          <thead><tr><th>모둠</th><th>기록자</th><th>사례유형</th><th>항목명</th><th>정량 기준</th><th>완료</th><th>누적</th></tr></thead>
+          <thead><tr><th>모둠</th><th>기록자</th><th>사례유형</th><th>항목명</th><th>정량 기준</th><th>완료</th><th>누적</th><th style="width:64px;">삭제</th></tr></thead>
           <tbody id="teacher-r-body"></tbody>
         </table>
       </div>
@@ -1248,10 +1265,10 @@
      완벽한 보안이라기보다는 학생들이 우연히 들어오는 것을 막는 가벼운 잠금 장치입니다.) */
   var TEACHER_PASSWORD = '2601';
   var teacherAuthed = false;
-  var unsubTQ = null, unsubTR = null, unsubTL = null;
-  var teacherState = { questions:[], rules:[], logs:[] };
+  var unsubTQ = null, unsubTR = null, unsubTL = null, unsubTB = null;
+  var teacherState = { questions:[], rules:[], logs:[], best:[] };
   var TEACHER_PAGE_SIZE = 20;
-  var teacherPage = { q:1, r:1, l:1 };
+  var teacherPage = { q:1, r:1, l:1, b:1 };
 
   /* ---------------- Reference data ---------------- */
 
@@ -1544,7 +1561,7 @@
 
     unsubB = base.collection('bestQuestions').onSnapshot(function(snap){
       state.bestQuestions = snap.docs.map(docToBestQuestion);
-      renderBestGrid();
+      renderBestGrid(); populateLinkQSelect();
       setConnStatus('🟢 실시간 연결됨', 'ok');
     }, firestoreErrorHandler('모둠 베스트 질문'));
   }
@@ -1636,21 +1653,22 @@
 
   // 이름 입력이 바뀌면 (같은 반 조회 중일 때) 바로 목록을 걸러 보여줍니다.
   function onTeacherNameInput(){
-    teacherPage = { q:1, r:1, l:1 };
+    teacherPage = { q:1, r:1, l:1, b:1 };
     if(!teacherAllMode) renderTeacherTables();
   }
 
   // 현재 이름 검색어로 걸러낸 목록을 돌려줍니다.
   function getTeacherFiltered(){
     var key = normalizeNameKey(document.getElementById('teacher-name-input').value);
-    if(!key) return { questions: teacherState.questions, rules: teacherState.rules, logs: teacherState.logs, key:'' };
+    if(!key) return { questions: teacherState.questions, rules: teacherState.rules, logs: teacherState.logs, best: teacherState.best, key:'' };
     var match = function(item){ return normalizeNameKey(item.author).indexOf(key) !== -1; };
     var questions = teacherState.questions.filter(match);
     var rules = teacherState.rules.filter(match);
     var ruleIds = {};
     rules.forEach(function(r){ ruleIds[(r.classCode||'') + '|' + r.id] = true; });
     var logs = teacherState.logs.filter(function(l){ return ruleIds[(l.classCode||'') + '|' + l.ruleId]; });
-    return { questions: questions, rules: rules, logs: logs, key:key };
+    var best = teacherState.best.filter(match);
+    return { questions: questions, rules: rules, logs: logs, best: best, key:key };
   }
 
   function teamLabel(item){
@@ -1683,10 +1701,11 @@
     if(!isConfigured){ showToast('먼저 Firebase 설정을 완료하세요.', 'error'); return; }
     if(!initFirebaseIfNeeded()) return;
 
-    teacherPage = { q:1, r:1, l:1 };
+    teacherPage = { q:1, r:1, l:1, b:1 };
     if(unsubTQ){ unsubTQ(); unsubTQ = null; }
     if(unsubTR){ unsubTR(); unsubTR = null; }
     if(unsubTL){ unsubTL(); unsubTL = null; }
+    if(unsubTB){ unsubTB(); unsubTB = null; }
 
     try{
       await authReadyPromise;
@@ -1701,11 +1720,13 @@
         var results = await Promise.all([
           db.collectionGroup('questions').get(),
           db.collectionGroup('rules').get(),
-          db.collectionGroup('logs').get()
+          db.collectionGroup('logs').get(),
+          db.collectionGroup('bestQuestions').get()
         ]);
         teacherState.questions = sortByCreatedDesc(results[0].docs.map(withClassCode(docToQuestion)));
         teacherState.rules = sortByCreatedDesc(results[1].docs.map(withClassCode(docToRule)));
         teacherState.logs = sortByCreatedDesc(results[2].docs.map(withClassCode(docToLog)));
+        teacherState.best = results[3].docs.map(withClassCode(docToBestQuestion));
         renderTeacherTables();
         var f = getTeacherFiltered();
         var classes = {};
@@ -1737,6 +1758,60 @@
       teacherState.logs = snap.docs.map(docToLog);
       renderTeacherTables();
     }, firestoreErrorHandler('교사용 실천로그'));
+    unsubTB = base.collection('bestQuestions').onSnapshot(function(snap){
+      teacherState.best = snap.docs.map(docToBestQuestion);
+      renderTeacherTables();
+    }, firestoreErrorHandler('교사용 베스트 질문'));
+  }
+
+  // ---------- 교사용 삭제 ----------
+  function findTeacherItem(kind, path){
+    var list = kind === 'question' ? teacherState.questions : kind === 'rule' ? teacherState.rules : teacherState.best;
+    return list.find(function(x){ return x._path === path; });
+  }
+
+  async function teacherDelete(kind, path){
+    if(!teacherAuthed || !db) return;
+    var item = findTeacherItem(kind, path);
+    if(!item){ showToast('삭제할 항목을 찾지 못했습니다. 다시 조회해 주세요.', 'error'); return; }
+    var where = (item.classCode ? '[' + item.classCode + '] ' : '') + (item.team || '');
+    var msg, relatedLogs = [];
+    if(kind === 'question'){
+      msg = '이 탐구질문을 삭제할까요?\n\n' + where + ' · ' + (item.author||'') + '\n"' + (item.question||'').slice(0,80) + '"';
+    }else if(kind === 'best'){
+      msg = '이 모둠 베스트 질문을 삭제할까요?\n(달린 댓글도 함께 지워집니다)\n\n' + where + ' · ' + (item.author||'') + '\n"' + (item.question||'').slice(0,80) + '"';
+    }else{
+      relatedLogs = teacherState.logs.filter(function(l){ return l.ruleId === item.id && (l.classCode||'') === (item.classCode||''); });
+      msg = '이 점검 항목을 삭제할까요?\n\n' + where + ' · ' + (item.title||'') + '\n기준: ' + (item.metric||'') +
+        (relatedLogs.length ? '\n\n이 항목에 기록된 실천로그 ' + relatedLogs.length + '건도 함께 삭제됩니다.' : '');
+    }
+    msg += '\n\n삭제하면 되돌릴 수 없습니다.';
+    if(!confirm(msg)) return;
+    try{
+      await authReadyPromise;
+      var batch = db.batch();
+      batch.delete(db.doc(path));
+      relatedLogs.forEach(function(l){ if(l._path) batch.delete(db.doc(l._path)); });
+      await batch.commit();
+      if(teacherAllMode){
+        // 전체 반 검색 결과는 실시간이 아니므로 화면에서 직접 빼 줍니다.
+        var rm = function(list){ return list.filter(function(x){ return x._path !== path && !relatedLogs.some(function(l){ return l._path === x._path; }); }); };
+        teacherState.questions = rm(teacherState.questions);
+        teacherState.rules = rm(teacherState.rules);
+        teacherState.best = rm(teacherState.best);
+        teacherState.logs = rm(teacherState.logs);
+        renderTeacherTables();
+      }
+      showToast('삭제했습니다.');
+    }catch(e){
+      console.error('교사용 삭제', e);
+      showToast('삭제에 실패했습니다. Firestore 보안 규칙에서 삭제(delete)가 허용되어 있는지 확인하세요.', 'error');
+    }
+  }
+
+  function delBtn(kind, item){
+    if(!item._path) return '';
+    return '<button type="button" class="btn-del" data-kind="'+kind+'" data-path="'+escapeHtml(item._path)+'" onclick="teacherDelete(this.dataset.kind, this.dataset.path)">삭제</button>';
   }
 
   // 목록을 페이지 단위로 잘라내고, 페이지 번호가 범위를 벗어나면 마지막 페이지로 보정합니다.
@@ -1773,9 +1848,21 @@
     var qBody = document.getElementById('teacher-q-body');
     qBody.innerHTML = qPage.rows.map(function(q){
       return '<tr><td>'+teamLabel(q)+'</td><td>'+q.author+'</td><td>'+CASE_TYPES[q.caseType].name+'</td>' +
-        '<td>'+q.question+'</td><td class="mono">'+q.total+'점</td><td class="mono">'+(q.time||'')+'</td></tr>';
-    }).join('') || '<tr><td colspan="6" class="hint" style="padding:14px 8px;">'+emptyNote+'질문이 없습니다.</td></tr>';
+        '<td>'+q.question+'</td><td class="mono">'+q.total+'점</td><td class="mono">'+(q.time||'')+'</td><td>'+delBtn('question', q)+'</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">'+emptyNote+'질문이 없습니다.</td></tr>';
     renderPager('teacher-q-pager', 'q', F.questions);
+
+    document.getElementById('teacher-b-count').textContent = F.best.length + '개';
+    var bSorted = F.best.slice().sort(function(a,b){
+      return (a.classCode||'').localeCompare(b.classCode||'', undefined, {numeric:true}) || TEAM_ORDER.indexOf(a.team) - TEAM_ORDER.indexOf(b.team);
+    });
+    var bPage = paginate(bSorted, 'b');
+    document.getElementById('teacher-b-body').innerHTML = bPage.rows.map(function(b){
+      var caseName = b.caseType && CASE_TYPES[b.caseType] ? CASE_TYPES[b.caseType].name : '-';
+      return '<tr><td>'+teamLabel(b)+'</td><td>'+escapeHtml(b.author||'')+'</td><td>'+caseName+'</td>' +
+        '<td>'+escapeHtml(b.question||'')+'</td><td class="mono">'+(b.total!=null ? b.total+'점' : '-')+'</td><td>'+delBtn('best', b)+'</td></tr>';
+    }).join('') || '<tr><td colspan="6" class="hint" style="padding:14px 8px;">'+emptyNote+'모둠 베스트 질문이 없습니다.</td></tr>';
+    renderPager('teacher-b-pager', 'b', bSorted);
 
     document.getElementById('teacher-r-count').textContent = F.rules.length + '개';
     var rPage = paginate(F.rules, 'r');
@@ -1783,8 +1870,8 @@
     rBody.innerHTML = rPage.rows.map(function(r){
       var achieved = ruleAchievedCount(r.id, teacherState.logs);
       return '<tr><td>'+teamLabel(r)+'</td><td>'+r.author+'</td><td>'+CASE_TYPES[r.caseType].name+'</td>' +
-        '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(achieved>0?'✅':'-')+'</td><td class="mono">'+achieved+'회</td></tr>';
-    }).join('') || '<tr><td colspan="7" class="hint" style="padding:14px 8px;">'+emptyNote+'점검 항목이 없습니다.</td></tr>';
+        '<td>'+r.title+'</td><td>'+r.metric+'</td><td>'+(achieved>0?'✅':'-')+'</td><td class="mono">'+achieved+'회</td><td>'+delBtn('rule', r)+'</td></tr>';
+    }).join('') || '<tr><td colspan="8" class="hint" style="padding:14px 8px;">'+emptyNote+'점검 항목이 없습니다.</td></tr>';
     renderPager('teacher-r-pager', 'r', F.rules);
 
     document.getElementById('teacher-l-count').textContent = F.logs.length + '건';
@@ -1905,10 +1992,10 @@
     };
   }
 
-  function docToQuestion(d){ var data = d.data(); data.id = d.id; data.time = tsToLabel(data.createdAt); return data; }
-  function docToRule(d){ var data = d.data(); data.id = d.id; return data; }
-  function docToLog(d){ var data = d.data(); data.id = d.id; return data; }
-  function docToBestQuestion(d){ var data = d.data(); data.team = d.id; return data; }
+  function docToQuestion(d){ var data = d.data(); data.id = d.id; data._path = d.ref.path; data.time = tsToLabel(data.createdAt); return data; }
+  function docToRule(d){ var data = d.data(); data.id = d.id; data._path = d.ref.path; return data; }
+  function docToLog(d){ var data = d.data(); data.id = d.id; data._path = d.ref.path; return data; }
+  function docToBestQuestion(d){ var data = d.data(); data.team = d.id; data.id = d.id; data._path = d.ref.path; return data; }
   function tsToLabel(ts){
     if(!ts || !ts.toDate) return '방금';
     var diffMs = Date.now() - ts.toDate().getTime();
@@ -2257,7 +2344,9 @@
     var content = document.getElementById('r-content').value.trim();
     var title = document.getElementById('r-title').value.trim();
     var metric = document.getElementById('r-metric').value.trim();
-    var linkedQ = document.getElementById('r-link-q').value || null;
+    var linkedBestTeam = document.getElementById('r-link-q').value || null;
+    var linkedBest = linkedBestTeam ? state.bestQuestions.find(function(b){ return b.team === linkedBestTeam; }) : null;
+    var linkedQ = linkedBest ? (linkedBest.linkedQuestionId || null) : null;
 
     if(!title || !metric){
       showToast('점검 항목 명칭과 정량 기준을 모두 입력하세요.', 'error');
@@ -2270,6 +2359,8 @@
     var newRule = {
       team:team, author:author, caseType:caseType, purpose:purpose, content:content,
       title:title, metric:metric, linkedQ:linkedQ,
+      linkedBestTeam: linkedBest ? linkedBest.team : null,
+      linkedBestQuestion: linkedBest ? (linkedBest.question || '') : null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -2351,15 +2442,22 @@
     }
   }
 
+  // 점검표의 '이어서 조사할 탐구 질문'은 모둠별 베스트 질문 중에서 고릅니다. (option 값 = 모둠 이름)
   function onLinkQuestionChange(){
     var sel = document.getElementById('r-link-q');
-    var id = sel.value;
-    if(!id) return;
-    var q = state.questions.find(function(item){ return item.id === id; });
-    if(!q) return;
-    document.getElementById('r-policy').value = q.caseType;
-    updatePurposeCaseName();
-    showToast(q.team + '의 질문에서 [' + CASE_TYPES[q.caseType].name + '] 유형을 불러왔습니다.');
+    var team = sel.value;
+    if(!team) return;
+    var bq = state.bestQuestions.find(function(item){ return item.team === team; });
+    if(!bq) return;
+    var teamSel = document.getElementById('r-team');
+    if(teamSel) teamSel.value = bq.team;
+    if(bq.caseType && CASE_TYPES[bq.caseType]){
+      document.getElementById('r-policy').value = bq.caseType;
+      updatePurposeCaseName();
+      showToast(bq.team + ' 베스트 질문에서 [' + CASE_TYPES[bq.caseType].name + '] 유형을 불러왔습니다.');
+    }else{
+      showToast(bq.team + ' 베스트 질문을 선택했습니다. 보전사례 유형은 직접 골라주세요.');
+    }
   }
 
   function updatePurposeCaseName(){
@@ -2376,15 +2474,23 @@
 
   function populateLinkQSelect(){
     var sel = document.getElementById('r-link-q');
+    if(!sel) return;
     var current = sel.value;
-    sel.innerHTML = '<option value="">— 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>';
-    state.questions.forEach(function(q){
+    if(!state.bestQuestions.length){
+      sel.innerHTML = '<option value="">— 아직 등록된 모둠 베스트 질문이 없습니다. 모둠별 베스트 질문을 먼저 등록하세요 —</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— 모둠 베스트 질문을 선택하면 사례유형이 자동으로 채워집니다 —</option>';
+    state.bestQuestions.slice().sort(function(a,b){
+      return TEAM_ORDER.indexOf(a.team) - TEAM_ORDER.indexOf(b.team);
+    }).forEach(function(bq){
       var opt = document.createElement('option');
-      opt.value = q.id;
-      opt.textContent = '[' + q.team + '] ' + q.question.slice(0,28) + '…';
+      opt.value = bq.team;
+      var text = bq.question || '';
+      opt.textContent = '🏆 [' + bq.team + '] ' + text.slice(0,36) + (text.length > 36 ? '…' : '');
       sel.appendChild(opt);
     });
-    sel.value = current;
+    if(state.bestQuestions.some(function(b){ return b.team === current; })) sel.value = current;
   }
 
   function setDefaultLogDate(){
@@ -2557,7 +2663,9 @@
       var logCount = ruleLogsFor(r.id, state.logs).length;
       var achieved = ruleAchievedCount(r.id, state.logs);
       el.className = 'rule-card' + (achieved > 0 ? ' done' : '');
-      var linkChip = r.linkedQ ? '<button type="button" class="linked-chip" style="border:none;cursor:pointer;" onclick="openQuestionModal(\''+r.linkedQ+'\')">🔗 연결된 질문 보기</button>' : '';
+      var linkChip = r.linkedBestTeam ?
+        '<button type="button" class="linked-chip" style="border:none;cursor:pointer;" onclick="openBestModal(\''+r.linkedBestTeam+'\')">🏆 연결된 베스트 질문 보기</button>' :
+        r.linkedQ ? '<button type="button" class="linked-chip" style="border:none;cursor:pointer;" onclick="openQuestionModal(\''+r.linkedQ+'\')">🔗 연결된 질문 보기</button>' : '';
       el.innerHTML =
         '<div class="rule-meta">' +
           '<span class="team-badge">'+r.team+'</span>' +
@@ -2964,7 +3072,7 @@
 
   // 교사용 페이지 안의 3개 목록(질문/점검표/로그) 중 하나만 보여주는 탭 전환
   function showTeacherPanel(key){
-    ['questions','rules','logs'].forEach(function(k){
+    ['questions','best','rules','logs'].forEach(function(k){
       var panel = document.getElementById('teacher-panel-'+k);
       if(panel) panel.hidden = (k !== key);
       var tab = document.getElementById('teacher-tab-'+k);
@@ -3007,6 +3115,8 @@
   window.renderStudentCountTable = renderStudentCountTable;
   window.changeTeacherPage = changeTeacherPage;
   window.onTeacherNameInput = onTeacherNameInput;
+  window.teacherDelete = teacherDelete;
+  window.openBestModal = openBestModal;
 
   /* ---------------- Toast ---------------- */
 
