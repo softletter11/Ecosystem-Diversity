@@ -312,6 +312,8 @@
   .brief-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
   @media (max-width:760px){ .brief-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
   @media (max-width:420px){ .brief-grid{ grid-template-columns:minmax(0,1fr); } }
+  .brief-grid.in-form{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  @media (max-width:420px){ .brief-grid.in-form{ grid-template-columns:minmax(0,1fr); } }
   .brief-card{
     text-align:left; cursor:pointer; border-radius:11px; padding:9px 10px;
     border:1px solid var(--border); background:var(--surface-alt);
@@ -719,15 +721,6 @@
   <!-- ================= Q-STAGE : 질문 분석기 ================= -->
   <section id="view-matrix" class="view">
 
-    <div class="card pad" style="margin-bottom:18px;">
-      <div class="section-title">
-        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>브리핑 · 4대 보전사례 유형</h2>
-        <span class="tag-note">교과서 p.30</span>
-      </div>
-      <p class="hint" style="margin-bottom:10px;">질문을 쓰기 전에, 지금 관찰한 내용이 아래 4가지 중 어디에 가장 가까운지 먼저 골라보세요. 고른 유형에 따라 아래 질문 템플릿과 채점 기준(보전가치)이 달라집니다.</p>
-      <div class="brief-grid" id="brief-grid"></div>
-    </div>
-
     <div class="grid-primary" id="matrix-grid">
       <!-- 좌: 등록 폼 -->
       <div class="card pad">
@@ -746,12 +739,8 @@
             <div>
               <label class="field-label" for="q-author">작성자 학번·이름</label>
               <input type="text" id="q-author" placeholder="예: 10412 김부광">
+              <p class="hint" style="margin-top:4px;">한 번 쓰면 이 기기에 기억돼요. <a href="#" onclick="event.preventDefault(); clearSavedStudent();">다른 학생이면 지우기</a></p>
             </div>
-          </div>
-
-          <div>
-            <label class="field-label">관찰 대상 생물다양성 영역 <span class="hint">— 내가 관찰한 것이 어느 수준의 다양성인지 직접 골라보세요</span></label>
-            <div class="radio-grid" id="diversity-radio"></div>
           </div>
 
           <div class="field-grid2">
@@ -767,6 +756,20 @@
               </label>
               <input type="file" id="q-photo" accept="image/*" onchange="handlePhoto(event)" class="file-input-visually-hidden">
             </div>
+          </div>
+
+          <div>
+            <label class="field-label">관찰 대상 생물다양성 영역 <span class="hint">— 내가 관찰한 것이 어느 수준의 다양성인지 직접 골라보세요</span></label>
+            <div class="radio-grid" id="diversity-radio"></div>
+          </div>
+
+          <div class="case-block">
+            <div class="row-between" style="margin-bottom:6px;">
+              <label class="field-label" style="margin:0;">4대 보전사례 유형</label>
+              <span class="tag-note">교과서 p.30</span>
+            </div>
+            <p class="hint" style="margin:0 0 8px;">내가 관찰한 내용이 아래 4가지 중 어디에 가장 가까운지 골라보세요. 고른 유형에 맞는 질문 예시가 바로 아래에 나타나요.</p>
+            <div class="brief-grid in-form" id="brief-grid"></div>
           </div>
 
           <div>
@@ -1484,7 +1487,7 @@
     ],
     conservation: [
       { max:0, build:function(ctx){
-        return '"' + snippet(ctx.text, 30) + '"가 4대 보전 사례(멸종위기종 복원 · 생태우수지역 지정 · 외래생물 관리 · 국제협약) 중 어디에 해당하는지 위 브리핑 카드에서 먼저 골라보세요.';
+        return '"' + snippet(ctx.text, 30) + '"가 4대 보전 사례(멸종위기종 복원 · 생태우수지역 지정 · 외래생물 관리 · 국제협약) 중 어디에 해당하는지 「4대 보전사례 유형」에서 먼저 골라보세요.';
       }},
       { max:7, build:function(ctx){
         var kws = ctx.caseKey && CASE_TYPES[ctx.caseKey] ? CASE_TYPES[ctx.caseKey].keywords : [];
@@ -1652,6 +1655,8 @@
 
     currentClassCode = null;
     localStorage.removeItem(CLASS_CODE_KEY);
+    try{ localStorage.removeItem(STUDENT_AUTHOR_KEY); localStorage.removeItem(STUDENT_TEAM_KEY); }catch(e){}
+    var qa = document.getElementById('q-author'); if(qa) qa.value = '';
     document.getElementById('current-class-code').textContent = '-';
 
     state.questions = [];
@@ -2234,6 +2239,38 @@
     });
   }
 
+  // ---------- 학번·이름, 모둠 기억하기 (이 기기에만 저장) ----------
+  var STUDENT_AUTHOR_KEY = 'bioMatrixStudentAuthor';
+  var STUDENT_TEAM_KEY = 'bioMatrixStudentTeam';
+
+  function loadSavedStudent(){
+    try{
+      var a = localStorage.getItem(STUDENT_AUTHOR_KEY);
+      var t = localStorage.getItem(STUDENT_TEAM_KEY);
+      var authorEl = document.getElementById('q-author');
+      var teamEl = document.getElementById('q-team');
+      if(a && authorEl && !authorEl.value) authorEl.value = a;
+      if(t && teamEl && Array.prototype.some.call(teamEl.options, function(o){ return o.value === t; })) teamEl.value = t;
+    }catch(e){}
+  }
+
+  function saveStudent(author, team){
+    try{
+      localStorage.setItem(STUDENT_AUTHOR_KEY, author);
+      localStorage.setItem(STUDENT_TEAM_KEY, team);
+    }catch(e){}
+  }
+
+  function clearSavedStudent(){
+    try{
+      localStorage.removeItem(STUDENT_AUTHOR_KEY);
+      localStorage.removeItem(STUDENT_TEAM_KEY);
+    }catch(e){}
+    var authorEl = document.getElementById('q-author');
+    if(authorEl){ authorEl.value = ''; authorEl.focus(); }
+    showToast('기억된 학번·이름을 지웠어요. 내 학번·이름을 새로 입력하세요.');
+  }
+
   function renderDiversityRadio(){
     var wrap = document.getElementById('diversity-radio');
     wrap.innerHTML = '';
@@ -2507,7 +2544,9 @@
     var diversity = diversityEl ? diversityEl.value : '';
 
     if(!state.selectedCase){
-      showToast('먼저 위 브리핑 카드에서 보전사례 유형을 선택해주세요.', 'error');
+      showToast("먼저 '4대 보전사례 유형'에서 하나를 선택해주세요.", 'error');
+      var bg = document.getElementById('brief-grid');
+      if(bg) bg.scrollIntoView({ behavior:'smooth', block:'center' });
       return;
     }
     if(!diversity){
@@ -2525,6 +2564,7 @@
       document.getElementById('q-author').focus();
       return;
     }
+    saveStudent(author, team);
 
     // 점수 계산과 화면 표시는 Firebase 연결 상태와 무관하게 항상 즉시 이루어집니다.
     var score = scoreQuestion(text, metric, state.selectedCase);
@@ -3360,6 +3400,7 @@
   window.setTeacherQKind = setTeacherQKind;
   window.teacherSearchSubmit = teacherSearchSubmit;
   window.openTeacherQuestion = openTeacherQuestion;
+  window.clearSavedStudent = clearSavedStudent;
   window.toggleClassFilter = toggleClassFilter;
   window.populateBestLinkQSelect = populateBestLinkQSelect;
   window.teacherDelete = teacherDelete;
@@ -3426,6 +3467,7 @@
   }
 
   function start(){
+    loadSavedStudent();
     renderBriefGrid();
     renderDiversityRadio();
     renderTemplates();
