@@ -434,6 +434,12 @@
 
   /* ---------- Archive / list cards ---------- */
   .archive-scroll{ max-height:560px; overflow-y:auto; display:flex; flex-direction:column; gap:9px; padding-right:2px; }
+  /* 넓은 화면: 아카이브 카드가 왼쪽 폼과 같은 높이가 되고, 목록은 그 안에서 스크롤됩니다.
+     contain:size 덕분에 목록 길이가 카드 높이를 늘리지 않고, 왼쪽 폼 높이를 그대로 따라갑니다. */
+  @media (min-width:901px){
+    #matrix-grid > .archive-card{ display:flex; flex-direction:column; }
+    #matrix-grid > .archive-card .archive-scroll{ flex:1 1 auto; max-height:none; min-height:320px; contain:size; }
+  }
   .q-card{
     border:1px solid var(--border); border-radius:12px; padding:12px; cursor:pointer; background:var(--surface);
     transition:border-color .15s;
@@ -830,8 +836,8 @@
       <!-- 가운데: 폭 조절 핸들 -->
       <div class="col-resizer" id="matrix-col-resizer" title="드래그해서 좌우 영역 폭을 조절하세요"></div>
 
-      <!-- 우: 아카이브 -->
-      <div class="card pad">
+      <!-- 우: 아카이브 (왼쪽 등록 폼 높이에 맞춰 늘어남) -->
+      <div class="card pad archive-card">
         <div class="section-title">
           <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg>실시간 질문 아카이브</h2>
           <span class="tag-note mono" id="archive-count">0건</span>
