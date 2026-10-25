@@ -1019,9 +1019,10 @@
       <div class="teacher-controls">
         <div class="teacher-controls-code" style="flex:1 1 320px;">
           <label class="field-label" for="teacher-search-input">반 코드 · 학번 · 이름 검색 (일부만 입력해도 돼요)</label>
-          <input type="text" id="teacher-search-input" placeholder="예: 1-6, 10, 104, 김" oninput="onTeacherSearchInput()">
+          <input type="text" id="teacher-search-input" placeholder="예: 1-6, 10, 104, 김" oninput="onTeacherSearchInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();teacherSearchSubmit();}">
         </div>
         <div class="teacher-controls-actions">
+          <button type="button" class="btn-primary" style="width:auto; padding:9px 18px;" onclick="teacherSearchSubmit()">조회하기</button>
           <button type="button" class="btn-ghost" onclick="openStudentCountModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
             학생별 등록 횟수
@@ -1673,6 +1674,19 @@
     renderTeacherTables();
   }
 
+  // '조회하기' 버튼 / Enter: 검색 결과를 다시 그리고 결과 개수를 알려준 뒤 목록으로 이동합니다.
+  function teacherSearchSubmit(){
+    if(!unsubTQ) loadTeacherAll(); // 연결이 끊겼으면 다시 불러오기
+    teacherPage = { q:1, r:1, l:1 };
+    renderTeacherTables();
+    var F = getTeacherFiltered();
+    var searchText = (document.getElementById('teacher-search-input').value || '').trim();
+    var scope = (teacherClassFilter ? '[' + teacherClassFilter + '] 반' : '') + (searchText ? (teacherClassFilter ? ' · ' : '') + '"' + searchText + '"' : '');
+    showToast((scope ? scope + ' 조회 결과: ' : '전체 조회: ') + '탐구질문 ' + F.questions.length + '건, 베스트 질문 ' + F.best.length + '건, 점검표 ' + F.rules.length + '개, 실천로그 ' + F.logs.length + '건');
+    var tabs = document.querySelector('#view-teacher .teacher-tabs');
+    if(tabs) tabs.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
   function setTeacherQKind(kind){
     teacherQKind = kind;
     teacherPage.q = 1;
@@ -1828,6 +1842,9 @@
 
   function toggleClassFilter(code){
     teacherClassFilter = (teacherClassFilter === code) ? '' : code;
+    // 카드를 고르면 검색창은 비웁니다. (예전 검색어가 남아 있으면 '그 반 + 검색어'가 동시에 걸려 결과가 0건이 될 수 있어요)
+    var input = document.getElementById('teacher-search-input');
+    if(teacherClassFilter && input) input.value = '';
     teacherPage = { q:1, r:1, l:1 };
     renderTeacherTables();
     if(teacherClassFilter) showToast('[' + code + '] 반 기록만 보여줍니다. 카드를 한 번 더 누르면 전체로 돌아가요.');
@@ -1915,7 +1932,8 @@
   function renderTeacherTables(){
     renderClassStats();
     var F = getTeacherFiltered();
-    var emptyNote = F.key ? '검색어와 일치하는 ' : '등록된 ';
+    var searchText = (document.getElementById('teacher-search-input').value || '').trim();
+    var emptyNote = searchText ? '검색어 "' + escapeHtml(searchText) + '"와 일치하는 ' : (teacherClassFilter ? '[' + escapeHtml(teacherClassFilter) + '] 반에 등록된 ' : '등록된 ');
     var caseNameOf = function(x){ return x.caseType && CASE_TYPES[x.caseType] ? CASE_TYPES[x.caseType].name : '-'; };
     document.getElementById('teacher-qk-all').textContent = F.questions.length + F.best.length;
     document.getElementById('teacher-qk-question').textContent = F.questions.length;
@@ -3215,6 +3233,7 @@
   window.changeTeacherPage = changeTeacherPage;
   window.onTeacherSearchInput = onTeacherSearchInput;
   window.setTeacherQKind = setTeacherQKind;
+  window.teacherSearchSubmit = teacherSearchSubmit;
   window.toggleClassFilter = toggleClassFilter;
   window.populateBestLinkQSelect = populateBestLinkQSelect;
   window.teacherDelete = teacherDelete;
