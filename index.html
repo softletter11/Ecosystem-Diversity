@@ -750,7 +750,7 @@
           </div>
 
           <div>
-            <label class="field-label">관찰 대상 생물다양성 영역</label>
+            <label class="field-label">관찰 대상 생물다양성 영역 <span class="hint">— 내가 관찰한 것이 어느 수준의 다양성인지 직접 골라보세요</span></label>
             <div class="radio-grid" id="diversity-radio"></div>
           </div>
 
@@ -1383,6 +1383,33 @@
     { value:"ecosystem-div", label:"생태계다양성", sub:"서식지 환경 차이" }
   ];
 
+  // 학생이 고른 생물다양성 영역과 질문 내용이 이어지는지 확인해 한 줄 피드백을 만듭니다. (점수에는 반영하지 않아요)
+  var DIVERSITY_FEEDBACK = {
+    "종다양성": {
+      words: ["종다양성","종 수","종수","종류","개체수","생물종","여러 종","다양한 종"],
+      ok: "종다양성을 골랐고, 질문에도 '{hit}'처럼 종의 다양성을 나타내는 말이 들어 있어요.",
+      tip: "종다양성을 골랐다면 '종 수', '개체수', '종류' 같은 말을 넣어서 질문이 생물 종의 다양성을 다룬다는 걸 드러내 보자."
+    },
+    "유전적 다양성": {
+      words: ["유전적 다양성","유전","변이","형질","개체 간","개체마다","크기 차이","색깔","모양"],
+      ok: "유전적 다양성을 골랐고, 질문에도 '{hit}'처럼 같은 종 안의 차이를 나타내는 말이 들어 있어요.",
+      tip: "유전적 다양성을 골랐다면 '변이', '형질', '크기·색·모양 차이'처럼 같은 종 안에서 개체마다 다른 점을 질문에 넣어 보자."
+    },
+    "생태계다양성": {
+      words: ["생태계다양성","생태계","서식지","서식 환경","환경 차이","습지","생태숲","연못"],
+      ok: "생태계다양성을 골랐고, 질문에도 '{hit}'처럼 서식지·환경의 차이를 나타내는 말이 들어 있어요.",
+      tip: "생태계다양성을 골랐다면 '서식지', '생태계', '환경 차이'처럼 숲·습지·텃밭 같은 서로 다른 환경을 비교하는 말을 넣어 보자."
+    }
+  };
+  function diversityTip(diversity, text){
+    var fb = DIVERSITY_FEEDBACK[diversity];
+    if(!fb) return '';
+    var t = text || '';
+    var hit = null;
+    fb.words.some(function(w){ if(t.indexOf(w) !== -1){ hit = w; return true; } return false; });
+    return hit ? '🌱 ' + fb.ok.replace('{hit}', hit) : '🌱 ' + fb.tip;
+  }
+
   var CAUSALITY_WORDS = ["왜","하면","한다면","때문","그 결과","그러면","영향","달라질까","변할까","늘어날까","줄어들까","무엇일까"];
   var CONCEPT_WORDS = ["서식지","개체수","종다양성","유전적 다양성","생태계다양성","먹이그물","자연선택","변이","적응","멸종","외래종","외래생물","보전","군집","개체군","서식","피복도"];
   var METRIC_UNIT_WORDS = ["회","%","개","마리","㎡","m2","m²","종","g","cm","건"];
@@ -1858,7 +1885,7 @@
       html += '<img class="tqm-photo" src="' + escapeHtml(x.photo) + '" alt="관찰 사진">';
     }
     if(x.coach){
-      html += '<div class="tqm-coach">💬 ' + escapeHtml(x.coach) + '</div>';
+      html += '<div class="tqm-coach">💬 ' + escapeHtml(x.coach) + (x.diversityTip ? '<br>' + escapeHtml(x.diversityTip) : '') + '</div>';
     }
     if(isBest && x.comments && x.comments.length){
       html += '<p class="field-label" style="margin:14px 0 6px;">댓글 ' + x.comments.length + '개</p>' +
@@ -2212,8 +2239,8 @@
     wrap.innerHTML = '';
     DIVERSITY_OPTIONS.forEach(function(opt, i){
       var label = document.createElement('label');
-      label.className = 'radio-card' + (i===0 ? ' checked' : '');
-      label.innerHTML = '<input type="radio" name="q-diversity" value="'+opt.label+'" '+(i===0?'checked':'')+'>' +
+      label.className = 'radio-card';
+      label.innerHTML = '<input type="radio" name="q-diversity" value="'+opt.label+'">' +
         '<span class="t">'+opt.label+'</span><span class="s">'+opt.sub+'</span>';
       label.querySelector('input').addEventListener('change', function(){
         document.querySelectorAll('#diversity-radio .radio-card').forEach(function(el){ el.classList.remove('checked'); });
@@ -2438,6 +2465,9 @@
     if(score.tooShort){
       coachBox.textContent += ' ✏️ 질문이 너무 짧아요. 단어만 나열하지 말고, 원인과 결과가 드러나는 완전한 문장으로 다시 써보세요.';
     }
+    if(ctx && ctx.diversity){
+      coachBox.textContent += ' ' + diversityTip(ctx.diversity, ctx.text);
+    }
 
     var dg = document.getElementById('detail-grid');
     dg.innerHTML =
@@ -2473,10 +2503,17 @@
     var team = document.getElementById('q-team').value;
     var author = document.getElementById('q-author').value.trim();
     var target = document.getElementById('q-target').value.trim();
-    var diversity = document.querySelector('input[name="q-diversity"]:checked').value;
+    var diversityEl = document.querySelector('input[name="q-diversity"]:checked');
+    var diversity = diversityEl ? diversityEl.value : '';
 
     if(!state.selectedCase){
       showToast('먼저 위 브리핑 카드에서 보전사례 유형을 선택해주세요.', 'error');
+      return;
+    }
+    if(!diversity){
+      showToast('관찰 대상 생물다양성 영역(종다양성 · 유전적 다양성 · 생태계다양성)을 하나 골라주세요.', 'error');
+      var dw = document.getElementById('diversity-radio');
+      if(dw) dw.scrollIntoView({ behavior:'smooth', block:'center' });
       return;
     }
     if(!text || !author || !target){
@@ -2492,7 +2529,7 @@
     // 점수 계산과 화면 표시는 Firebase 연결 상태와 무관하게 항상 즉시 이루어집니다.
     var score = scoreQuestion(text, metric, state.selectedCase);
     var total = score.causality + score.concept + score.feasibility + score.conservation;
-    var ctx = { text:text, metric:metric, target:target, caseKey:state.selectedCase };
+    var ctx = { text:text, metric:metric, target:target, caseKey:state.selectedCase, diversity:diversity };
     var fb = pickFeedback(score, ctx);
     renderScorePanel(score, total, ctx);
 
@@ -2507,6 +2544,7 @@
         team:team, author:author, caseType:state.selectedCase, diversity:diversity,
         target:target, question:text, metric:metric, score:score, total:total,
         coach: total>=90 ? '완성도 높은 A등급 질문입니다.' : fb.msg,
+        diversityTip: diversityTip(diversity, text),
         photo: state.photoData || DEFAULT_PHOTO,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
