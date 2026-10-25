@@ -473,15 +473,18 @@
   .teacher-tab:hover:not(.active){ border-color:var(--border-strong); color:var(--ink); }
   .class-stats-head{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:18px 0 8px; }
   .class-stats-head h3{ font-size:14px; margin:0; }
-  .class-stats-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:10px; margin-bottom:16px; }
-  .class-stat-card{ text-align:left; border:1px solid var(--border-strong); background:transparent; color:var(--ink); border-radius:10px; padding:10px 12px; cursor:pointer; font:inherit; }
-  .class-stat-card:hover{ border-color:var(--accent); }
-  .class-stat-card.active{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 1px var(--accent) inset; }
-  .class-stat-card .cs-code{ font-weight:800; font-size:15px; display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
-  .class-stat-card .cs-avg{ font-size:11px; font-weight:700; color:var(--accent); white-space:nowrap; }
-  .class-stat-card dl{ display:grid; grid-template-columns:auto 1fr; gap:2px 10px; margin:8px 0 0; font-size:12px; }
-  .class-stat-card dt{ color:var(--ink-muted); }
-  .class-stat-card dd{ margin:0; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+  .class-stats-grid{ max-height:300px; overflow:auto; border:1px solid var(--border); border-radius:10px; margin-bottom:16px; }
+  .class-stats-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .class-stats-table th{ position:sticky; top:0; z-index:1; background:var(--surface, #fff); color:var(--ink-muted); font-weight:700; text-align:right; padding:7px 10px; border-bottom:1px solid var(--border-strong); white-space:nowrap; }
+  .class-stats-table th:first-child, .class-stats-table td:first-child{ text-align:left; }
+  .class-stats-table td{ padding:6px 10px; border-bottom:1px solid var(--border); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .class-stats-table tbody tr{ cursor:pointer; }
+  .class-stats-table tbody tr:hover{ background:var(--accent-soft); }
+  .class-stats-table tbody tr.active{ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+  .class-stats-table tbody tr.active td:first-child{ color:var(--accent); }
+  .class-stats-table td:first-child{ font-weight:800; }
+  .class-stats-table .cs-zero{ color:var(--ink-faint); font-weight:400; }
+  .class-stats-table .cs-avg{ color:var(--accent); font-weight:700; }
   .q-kind-filter{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
   .q-kind-btn{ border:1px solid var(--border-strong); background:transparent; color:var(--ink); border-radius:999px; padding:5px 12px; font-size:12px; cursor:pointer; }
   .q-kind-btn.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); font-weight:700; }
@@ -1038,7 +1041,7 @@
 
       <div class="class-stats-head">
         <h3>반별 현황</h3>
-        <span class="hint">카드를 누르면 그 반 기록만 보여요. 한 번 더 누르면 전체로 돌아가요.</span>
+        <span class="hint">줄을 누르면 그 반 기록만 보여요. 한 번 더 누르면 전체로 돌아가요. 반 선택과 검색어 중 나중에 고른 것만 적용돼요.</span>
       </div>
       <div class="class-stats-grid" id="class-stats-grid">
         <p class="hint">기록을 불러오는 중…</p>
@@ -1670,6 +1673,9 @@
   }
 
   function onTeacherSearchInput(){
+    // 반 선택과 검색어 중 '나중에 고른 것'만 적용합니다. 검색어를 입력하면 선택한 반은 해제돼요.
+    var el = document.getElementById('teacher-search-input');
+    if(teacherClassFilter && el && el.value.trim()) teacherClassFilter = '';
     teacherPage = { q:1, r:1, l:1 };
     renderTeacherTables();
   }
@@ -1823,31 +1829,35 @@
       return;
     }
     var current = teacherClassFilter;
-    grid.innerHTML = list.map(function(st){
-      var students = Object.keys(st.authors).length;
-      var avg = st.q ? Math.round(st.sum / st.q) : null;
-      var active = current && current === st.code;
-      return '<button type="button" class="class-stat-card'+(active ? ' active' : '')+'" data-code="'+escapeHtml(st.code)+'" onclick="toggleClassFilter(this.dataset.code)">' +
-        '<div class="cs-code"><span>'+escapeHtml(st.code)+'</span><span class="cs-avg">'+(avg!=null ? '평균 '+avg+'점' : '점수 없음')+'</span></div>' +
-        '<dl>' +
-          '<dt>참여 학생</dt><dd>'+students+'명</dd>' +
-          '<dt>탐구질문</dt><dd>'+st.q+'개</dd>' +
-          '<dt>🏆 베스트 질문</dt><dd>'+st.best+'개</dd>' +
-          '<dt>보전점검표</dt><dd>'+st.rules+'개</dd>' +
-          '<dt>실천로그</dt><dd>'+st.logs+'건'+(st.logs ? ' (달성 '+st.achieved+')' : '')+'</dd>' +
-        '</dl>' +
-      '</button>';
-    }).join('');
+    var n = function(v, unit){ return v ? v + unit : '<span class="cs-zero">0</span>'; };
+    grid.innerHTML = '<table class="class-stats-table"><thead><tr>' +
+        '<th>반 코드</th><th>참여 학생</th><th>탐구질문</th><th>🏆 베스트</th><th>점검표</th><th>실천로그 (달성)</th><th>평균 점수</th>' +
+      '</tr></thead><tbody>' +
+      list.map(function(st){
+        var students = Object.keys(st.authors).length;
+        var avg = st.q ? Math.round(st.sum / st.q) : null;
+        var active = current && current === st.code;
+        return '<tr class="'+(active ? 'active' : '')+'" data-code="'+escapeHtml(st.code)+'" onclick="toggleClassFilter(this.dataset.code)" title="누르면 이 반 기록만 보기">' +
+          '<td>'+escapeHtml(st.code)+'</td>' +
+          '<td>'+n(students,'명')+'</td>' +
+          '<td>'+n(st.q,'개')+'</td>' +
+          '<td>'+n(st.best,'개')+'</td>' +
+          '<td>'+n(st.rules,'개')+'</td>' +
+          '<td>'+(st.logs ? st.logs+'건 ('+st.achieved+')' : '<span class="cs-zero">0</span>')+'</td>' +
+          '<td>'+(avg!=null ? '<span class="cs-avg">'+avg+'점</span>' : '<span class="cs-zero">-</span>')+'</td>' +
+        '</tr>';
+      }).join('') +
+      '</tbody></table>';
   }
 
   function toggleClassFilter(code){
     teacherClassFilter = (teacherClassFilter === code) ? '' : code;
-    // 카드를 고르면 검색창은 비웁니다. (예전 검색어가 남아 있으면 '그 반 + 검색어'가 동시에 걸려 결과가 0건이 될 수 있어요)
+    // 반을 고르면 검색창은 비웁니다. (예전 검색어가 남아 있으면 '그 반 + 검색어'가 동시에 걸려 결과가 0건이 될 수 있어요)
     var input = document.getElementById('teacher-search-input');
     if(teacherClassFilter && input) input.value = '';
     teacherPage = { q:1, r:1, l:1 };
     renderTeacherTables();
-    if(teacherClassFilter) showToast('[' + code + '] 반 기록만 보여줍니다. 카드를 한 번 더 누르면 전체로 돌아가요.');
+    if(teacherClassFilter) showToast('[' + code + '] 반 기록만 보여줍니다. 같은 줄을 한 번 더 누르면 전체로 돌아가요.');
   }
 
   // 예전 버튼/코드 호환용
