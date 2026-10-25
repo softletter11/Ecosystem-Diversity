@@ -21,6 +21,9 @@
     --accent-ink:#FFFFFF;
     --accent-soft:#E1E7F0;
     --accent-soft-hover:#D3DDEC;
+    --label-ink:#123F7D;
+    --label-bar:#3F78C2;
+    --label-bg:#E8EFF9;
     --warn:#B8650F;
     --warn-soft:#FBEBD9;
     --critical:#B4402E;
@@ -45,6 +48,9 @@
       --accent-ink:#090D13;
       --accent-soft:#1E2733;
       --accent-soft-hover:#26344A;
+      --label-ink:#B5D0F2;
+      --label-bar:#5A8FD4;
+      --label-bg:#1C2838;
       --warn:#D6912A;
       --warn-soft:#3A2A15;
       --critical:#E06456;
@@ -69,6 +75,9 @@
     --accent-ink:#090D13;
     --accent-soft:#1E2733;
     --accent-soft-hover:#26344A;
+    --label-ink:#B5D0F2;
+    --label-bar:#5A8FD4;
+    --label-bg:#1C2838;
     --warn:#D6912A;
     --warn-soft:#3A2A15;
     --critical:#E06456;
@@ -146,13 +155,14 @@
   nav.tabs button{
     display:flex; align-items:center; gap:7px; white-space:nowrap; flex-shrink:0;
     border:none; background:transparent; cursor:pointer;
-    padding:8px 13px; border-radius:9px;
-    font-size:13px; font-weight:600; color:var(--ink-muted);
+    padding:9px 14px; border-radius:9px;
+    font-size:14px; font-weight:700; color:var(--ink);
     transition:background .15s,color .15s;
   }
-  nav.tabs button svg{ width:15px; height:15px; }
-  nav.tabs button.active{ background:var(--surface); color:var(--accent); box-shadow:0 1px 2px rgba(0,0,0,.06); }
-  nav.tabs button:not(.active):hover{ background:var(--accent-soft-hover); color:var(--ink); }
+  nav.tabs button svg{ width:16px; height:16px; stroke-width:1.8; color:var(--label-bar); }
+  nav.tabs button.active{ background:var(--accent); color:#fff; box-shadow:0 1px 3px rgba(18,71,146,.35); }
+  nav.tabs button.active svg{ color:#fff; }
+  nav.tabs button:not(.active):hover{ background:var(--surface); color:var(--accent); }
 
   /* ---------- Class code bar ---------- */
   .class-bar{
@@ -337,7 +347,12 @@
   .brief-ex{ display:none; }
 
   /* ---------- Forms ---------- */
-  label.field-label{ display:block; font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:6px; letter-spacing:-.005em; }
+  label.field-label{ display:block; font-size:15px; font-weight:800; color:var(--label-ink); margin-bottom:8px; letter-spacing:-.01em;
+    background:var(--label-bg); border-left:4px solid var(--label-bar); border-radius:4px 6px 6px 4px;
+    padding:5px 10px; line-height:1.35; }
+  label.field-label .hint{ font-weight:500; font-size:12px; }
+  .row-between > label.field-label{ flex:1 1 auto; margin-right:8px !important; }
+  .row-between:has(> label.field-label){ margin-bottom:8px; }
   .hint{ font-size:11px; color:var(--ink-faint); font-weight:500; }
   input[type=text], textarea, select{
     width:100%; background:var(--input-bg); border:1px solid var(--border);
